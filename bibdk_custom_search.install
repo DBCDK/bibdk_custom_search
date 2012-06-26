@@ -46,6 +46,13 @@ function bibdk_custom_search_schema() {
         'default' => '',
         'description' => t('Page title'),
       ),
+      'page_path' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Page path'),
+      ),
       'menu_title' => array(
         'type' => 'varchar',
         'length' => 255,
@@ -56,7 +63,7 @@ function bibdk_custom_search_schema() {
       'delimiter' => array(
         'type' => 'varchar',
         'length' => 255,
-        'not null' => TRUE,
+        'not null' => FALSE,
         'default' => '',
         'description' => t('Search delimiter for the combined search expression'),
       ),

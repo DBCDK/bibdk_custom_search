@@ -181,6 +181,7 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
   /* $page = array(
     'pid' => '2',
     'page_title' => 'Artikels&oslash;g',
+    'page_path' => 'artikel',
     'menu_title' => 'Artikler',
     'sort' => '2',
     'delimiter' => 'ma=fi',
@@ -209,6 +210,7 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
   $result = db_update('bibdk_custom_search')
     ->fields(array(
       'page_title' => check_plain($page['page_title']),
+      'page_path' => check_plain($page['page_path']),
       'menu_title' => check_plain($page['menu_title']),
       'delimiter' => check_plain($page['delimiter']),
       'expand' => check_plain($page['expand']),

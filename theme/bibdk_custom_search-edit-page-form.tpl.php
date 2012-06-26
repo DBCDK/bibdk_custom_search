@@ -13,6 +13,7 @@
     <tr>
       <td><?php print drupal_render($form['page_title']); ?></td>
       <td><?php print drupal_render($form['menu_title']); ?></td>
+      <td><?php print drupal_render($form['page_path']); ?></td>
       <td><?php print drupal_render($form['delimiter']); ?></td>
       <td><?php print drupal_render($form['expand']); ?></td>
     </tr>

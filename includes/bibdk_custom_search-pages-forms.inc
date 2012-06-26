@@ -125,14 +125,21 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['page_title'],
     '#title'          => t('Page title'),
-    '#size'           => 36,
+    '#size'           => 28,
+  );
+
+  $form['bibdk_custom_search']['page']['page_path'] = array(
+    '#type'           => 'textfield',
+    '#default_value'  => $page['page_path'],
+    '#title'          => t('Page path'),
+    '#size'           => 20,
   );
 
   $form['bibdk_custom_search']['page']['menu_title'] = array(
     '#type'           => 'textfield',
     '#default_value'  => $page['menu_title'],
     '#title'          => t('Menu title'),
-    '#size'           => 36,
+    '#size'           => 28,
   );
 
   $form['bibdk_custom_search']['page']['delimiter'] = array(
