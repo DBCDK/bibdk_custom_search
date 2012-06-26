@@ -1,0 +1,373 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the custom search module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function bibdk_custom_search_install() {
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function bibdk_custom_search_uninstall() {
+
+}
+
+/**
+ * Implements hook_enable().
+ */
+function bibdk_custom_search_enable() {
+  drupal_set_message(t('Custom Search enabled. Don\'t forget to <a href="@link">set permissions</a>.', array('@link' => url('admin/people/permissions', array('fragment' => 'module-bibdk_custom_search')))));
+}
+
+/**
+ * Implementation of hook_schema().
+ */
+function bibdk_custom_search_schema() {
+  $schema['bibdk_custom_search'] = array(
+    'description' => t('Stores bibdk search pages'),
+    'fields' => array(
+      'pid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Page ID.'),
+      ),
+      'page_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Page title'),
+      ),
+      'menu_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Menu title'),
+      ),
+      'delimiter' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Search delimiter for the combined search expression'),
+      ),
+      'expand' => array(
+        'type' => 'int',
+        'length' => 1,
+        'size' => 'tiny',
+        'default' => 0,
+        'description' => t('0 = extra search options are NOT displayed by default, 1 =  extra search options are displayed by default'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Page sort value'),
+      ),
+
+    ),
+    'indexes' => array(
+      'bibdk_custom_search_id' => array('pid'),
+    ),
+    'primary key' => array('pid'),
+  );
+
+
+  $schema['bibdk_custom_search_map_elements'] = array(
+    'description' => t('Maps elements bibdk search pages'),
+    'fields' => array(
+      'mid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Element map ID.'),
+      ),
+      'pid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Page ID.'),
+      ),
+      'eid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Element ID.'),
+      ),
+      'region' => array(
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Page element region'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Page element sort value'),
+      ),
+
+    ),
+    'indexes' => array(
+      'bibdk_custom_search_map_elements_id' => array('mid'),
+      'bibdk_custom_search_map_elements_pid' => array('pid'),
+    ),
+    'primary key' => array('mid'),
+    'foreign keys' => array(
+        'page_id' => array(
+          'table' => 'bibdk_custom_search',
+          'columns' => array('pid' => 'pid'),
+         ),
+        'element_id' => array(
+          'table' => 'bibdk_custom_search_elements',
+          'columns' => array('eid' => 'eid'),
+         ),
+    ),
+  );
+
+
+  $schema['bibdk_custom_search_elements'] = array(
+    'description' => t('Stores the elements a bibdk search page is made of'),
+    'fields' => array(
+      'eid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Element ID.'),
+      ),
+      'element_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Element title'),
+      ),
+      'element_label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Element label'),
+      ),
+      'description' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Short desription of the search element'),
+      ),
+      'help_text' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Help text for the search element'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Page sort value'),
+      ),
+      'tab_index' => array(
+        'type' => 'int',
+        'length' => 10,
+        'default' => 0,
+        'description' => t('Tab index'),
+      ),
+      'access_key' => array(
+        'type' => 'varchar',
+        'length' => 5,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Access key'),
+      ),
+    ),
+    'indexes' => array(
+      'bibdk_custom_search_elements_id' => array('eid'),
+    ),
+    'primary key' => array('eid'),
+  );
+
+
+  $schema['bibdk_custom_search_map_values'] = array(
+    'description' => t('Maps elements bibdk search pages'),
+    'fields' => array(
+      'mid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Value map ID.'),
+      ),
+      'eid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Element ID.'),
+      ),
+      'vid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Value ID.'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Sort value'),
+      ),
+
+    ),
+    'indexes' => array(
+      'bibdk_custom_search_map_values_id' => array('mid'),
+      'bibdk_custom_search_map_values_eid' => array('eid'),
+    ),
+    'primary key' => array('mid'),
+    'foreign keys' => array(
+      'element_id' => array(
+        'table' => 'bibdk_custom_search_elements',
+        'columns' => array('eid' => 'eid'),
+       ),
+      'value_id' => array(
+        'table' => 'bibdk_custom_search_values',
+        'columns' => array('vid' => 'vid'),
+       ),
+    ),
+  );
+
+
+  $schema['bibdk_custom_search_values'] = array(
+    'description' => t('Stores the values of a bibdk search page element'),
+    'fields' => array(
+      'vid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Values ID'),
+      ),
+      'value_title' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Value title'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Sort value'),
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Value type: "text", "textarea", "select", "select multiple", "radio", "checkbox", "checkboxes", "hidden"'),
+      ),
+      'search_code' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Search code'),
+      ),
+      'default_value' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Default value'),
+      ),
+      'expand' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Expand values. References bibdk_custom_search_values.vid'),
+      ),
+    ),
+    'indexes' => array(
+      'vid' => array('vid'),
+    ),
+    'primary key' => array('vid'),
+  );
+
+
+  $schema['bibdk_custom_search_options'] = array(
+    'description' => t('Stores the options of a bibdk search page value'),
+    'fields' => array(
+      'oid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'length' => 10,
+        'description' => t('Option ID'),
+      ),
+      'vid' => array(
+        'type' => 'int',
+        'length' => 10,
+        'default' => 0,
+        'description' => t('Value ID'),
+      ),
+      'sort' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Sort value'),
+      ),
+      'label' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Option label'),
+      ),
+      'value' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Option value'),
+      ),
+      'expand' => array(
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => t('Expand values. References bibdk_custom_search_values.vid'),
+      ),
+    ),
+    'indexes' => array(
+      'bibdk_custom_search_options_id' => array('oid'),
+      'bibdk_custom_search_options_vid' => array('vid'),
+    ),
+    'primary key' => array('oid'),
+    'foreign keys' => array(
+      'value_id' => array(
+        'table' => 'bibdk_custom_search_values',
+        'columns' => array('vid' => 'vid'),
+       ),
+    ),
+  );
+
+
+  return $schema;
+}

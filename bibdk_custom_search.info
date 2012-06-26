@@ -1,0 +1,12 @@
+
+name = Bibliotek.dk extended search
+description = Customize the default search, add custom search pages, and change input types, labels, values & ordering.
+core = 7.x
+package = "Bibliotek.dk"
+
+;dependencies[] = search
+
+files[] = bibdk_custom_search.admin.inc
+;files[] = bibdk_custom_search.pages.inc
+
+configure = admin/config/search/bibdk_custom_search

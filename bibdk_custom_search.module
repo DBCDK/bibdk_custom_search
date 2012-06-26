@@ -1,0 +1,205 @@
+<?php
+
+/**
+ * @file
+ * Bring customizations to the default search box
+ */
+
+/**
+ * Includes
+ */
+// module_load_include('inc', 'bibdk_custom_search', 'includes/forms');
+
+/**
+ * Implements hook_menu().
+ */
+function bibdk_custom_search_menu() {
+  $items['admin/config/search/bibdk_custom_search'] = array(
+    'title'             => 'bibdk search pages',
+    'description'       => 'Customize the default search, add custom search pages, and change labels, values & ordering.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_admin'),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.pages.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/settings'] = array(
+    'title'             => 'Pages',
+    'description'       => 'Create, alter or delete search pages.',
+    'access arguments'  => array('administer bibdk search pages'),
+    'type'              => MENU_DEFAULT_LOCAL_TASK,
+    'weight'            => 0,
+  );
+  $items['admin/config/search/bibdk_custom_search/%/edit'] = array(
+    'title'             => 'Edit search page',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_page_edit', 4),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.pages.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/%/remove_element/%'] = array(
+    'title'             => 'Edit search page',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_page_edit', 4,6),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.pages.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/%/delete'] = array(
+    'title'             => 'Edit search page',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_delete_page', 4),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.pages.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/elements'] = array(
+    'title'             => 'Elements',
+    'description'       => 'Create, alter or delete search options in the search block.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_elements_admin'),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.elements.admin.inc',
+    'type'              => MENU_LOCAL_TASK,
+    'weight'            => 1,
+  );
+  $items['admin/config/search/bibdk_custom_search/elements/%/edit'] = array(
+    'title'             => 'Edit search element',
+    'description'       => 'Edit and add values to a search element.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_element_edit',5),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.elements.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/elements/%/remove_value/%'] = array(
+    'title'             => 'Edit search element',
+    'description'       => 'Edit and add values to a search element.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_element_edit',5,7),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.elements.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/elements/%/delete'] = array(
+    'title'             => 'Delete search element',
+    'description'       => 'Delete a search element.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_element_delete',5),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.elements.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/values'] = array(
+    'title'             => 'Values',
+    'description'       => 'Create, alter or delete search element values.',
+    'page arguments'    => array('bibdk_custom_search_values_admin'),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.values.admin.inc',
+    'type'              => MENU_LOCAL_TASK,
+    'weight'            => 4,
+  );
+  $items['admin/config/search/bibdk_custom_search/values/%/edit'] = array(
+    'title'             => 'Edit search value',
+    'description'       => 'Edit and add values to a search value.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_value_edit',5),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.values.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/values/%/delete'] = array(
+    'title'             => 'Delete search value',
+    'description'       => 'Delete a search value.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_value_delete',5),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.values.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/values/%/delete_option/%'] = array(
+    'title'             => 'Delete search value',
+    'description'       => 'Delete a search value.',
+    'page callback'     => 'drupal_get_form',
+    'page arguments'    => array('bibdk_custom_search_value_edit',5,7),
+    'access arguments'  => array('administer bibdk search pages'),
+    'file'              => 'bibdk_custom_search.values.admin.inc',
+  );
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function bibdk_custom_search_permission() {
+  return array(
+    'Administer bibdk search pages' => array(
+      'title'       => t('administer bibdk search pages'),
+      'description' => t('Allow users to administer bibdk search pages settings')
+    ),
+  );
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function bibdk_custom_search_form_alter(&$form, &$form_state, $form_id) {
+
+  $form['#submit'][] = 'bibdk_custom_search_submit';
+
+}
+
+/**
+ * Alter the search to respect the search modes selected.
+ */
+function bibdk_custom_search_submit($form, &$form_state) {
+
+}
+
+/**
+ * Implements hook_theme().
+ */
+function bibdk_custom_search_theme() {
+  $path = drupal_get_path('module', 'bibdk_custom_search') . '/theme';
+  $bibdk_custom_search_theme_array = array(
+    'bibdk_custom_search-sort-pages-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-sort-pages-form',
+    ),
+    'bibdk_custom_search-edit-page-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-edit-page-form',
+    ),
+    'bibdk_custom_search-edit-page-elements-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-sort-region-form',
+    ),
+    'bibdk_custom_search-list-elements-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-sort-elements-form',
+    ),
+    'bibdk_custom_search-edit-element-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-edit-element-form',
+    ),
+    'bibdk_custom_search-edit-element-values-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-edit-element-values-form',
+    ),
+    'bibdk_custom_search-list-values-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-sort-values-form',
+    ),
+    'bibdk_custom_search-edit-value-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-edit-value-form',
+    ),
+    'bibdk_custom_search-list-options-form' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk_custom_search-sort-options-form',
+    ),
+  );
+
+  return $bibdk_custom_search_theme_array;
+}
