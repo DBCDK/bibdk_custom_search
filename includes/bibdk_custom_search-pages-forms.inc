@@ -75,6 +75,7 @@ function _bibdk_custom_search_default_admin_form($elements) {
   );
   $form['bibdk_custom_search'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 50,
     '#title'          => t('Weight'),
     '#default_value'  => 10,
     '#attributes'     => array('class' => array('element-weight')),
@@ -117,6 +118,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
 
   $form['bibdk_custom_search']['page']['sort'] = array(
     '#type'           => 'hidden',
+    '#delta'          => 50,
     '#default_value'  => $page['sort'],
     '#title'          => t('Weight'),
   );
@@ -152,7 +154,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
   $form['bibdk_custom_search']['page']['expand'] = array(
     '#type'           => 'checkbox',
     '#default_value'  => $page['expand'],
-    '#title'          => t('Expand options'),
+    '#title'          => t('Collapse options'),
     '#title_display' => 'before',
   );
 
@@ -216,6 +218,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     );
     $form['bibdk_custom_search']['elements'][$i]['sort'] = array(
       '#type'           => 'weight',
+      '#delta'          => 50,
       '#title'          => t('Weight'),
       '#title_display' => 'invisible',
       '#default_value'  => $element['sort'],
@@ -243,6 +246,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
   );
   $form['bibdk_custom_search']['elements'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 50,
     '#title'          => t('Weight'),
     '#default_value'  => 10,
     '#attributes'     => array('class' => array('sort-select', 'sort-select-add')),

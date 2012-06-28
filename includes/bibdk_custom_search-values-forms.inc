@@ -50,6 +50,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
     );
     $form['bibdk_custom_search'][$i]['sort'] = array(
       '#type'           => 'weight',
+      '#delta'          => 100,
       '#title'          => t('Weight'),
       '#title_display' => 'invisible',
       '#default_value'  => $data['sort'],
@@ -76,6 +77,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
   );
   $form['bibdk_custom_search'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 100,
     '#title'          => t('Weight'),
     '#default_value'  => 10,
     '#attributes'     => array('class' => array('element-weight')),
@@ -120,6 +122,13 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#size'           => 36,
   );
 
+  $form['element_value']['value_name'] = array(
+    '#type'           => 'textfield',
+    '#default_value'  => $value['value_name'],
+    '#title'          => t('Name'),
+    '#size'           => 18,
+  );
+
   $form['element_value']['type'] = array(
     '#type'           => 'select',
     '#options'        => array(
@@ -129,6 +138,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
                           'select-multi' => t('Select multiple'),
                           'radio' => t('Radio'),
                           'checkbox' => t('Checkbox'),
+                          'checkboxes' => t('Checkboxes'),
     ),
     '#default_value'  => $value['type'],
     '#title'          => t('Type'),
@@ -212,6 +222,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     );
     $form['element_value_options'][$i]['sort'] = array(
       '#type'           => 'weight',
+      '#delta'          => 100,
       '#title'          => t('Weight'),
       '#title_display' => 'invisible',
       '#default_value'  => $option['sort'],
@@ -252,6 +263,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   );
   $form['element_value_options'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 100,
     '#title'          => t('Weight'),
     '#title_display'  => 'invisible',
     '#default_value'  => 10,
@@ -259,38 +271,48 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   );
   $i++;
 
-  $form['element_value_options'][$i] = array(
+  $form['add_options']['element_value_options'] = array(
+    '#type'         => 'fieldset',
+    '#title'        => t('Add value submenu'),
+    '#tree'         => TRUE,
+    '#collapsible'  => TRUE,
+    '#collapsed'    => TRUE,
+    '#theme'        => 'bibdk_custom_search-list-options-form',
+  );
+
+  $form['add_options']['element_value_options'][$i] = array(
       '#title'        => 'Add search element value',
       '#weight'       => '110',
   );
-  $form['element_value_options'][$i]['oid'] = array(
+  $form['add_options']['element_value_options'][$i]['oid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Option ID'),
     '#title_display'  => 'invisible',
     '#default_value'  => '_submenu',
   );
-  $form['element_value_options'][$i]['label'] = array(
+  $form['add_options']['element_value_options'][$i]['label'] = array(
     '#type'           => 'textfield',
     '#title'          => t('Option label'),
     '#title_display'  => 'invisible',
     '#default_value'  => '',
     '#size'           => 36,
   );
-  $form['element_value_options'][$i]['value'] = array(
+  $form['add_options']['element_value_options'][$i]['value'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Option value'),
     '#title_display'  => 'invisible',
     '#default_value'  => '',
   );
-  $form['element_value_options'][$i]['expand'] = array(
+  $form['add_options']['element_value_options'][$i]['expand'] = array(
     '#type'           => 'select',
     '#options'        => $list_values,
     '#title_display'  => 'invisible',
     '#default_value'  => NULL,
     '#title'          => t('Value submenu'),
   );
-  $form['element_value_options'][$i]['sort'] = array(
+  $form['add_options']['element_value_options'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 100,
     '#title'          => t('Weight'),
     '#title_display'  => 'invisible',
     '#default_value'  => 10,

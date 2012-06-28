@@ -48,8 +48,9 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
     );
     $form['bibdk_custom_search_page_elements'][$i]['sort'] = array(
       '#type'           => 'weight',
+      '#delta'          => 100,
       '#title'          => t('Weight'),
-      '#title_display' => 'invisible',
+      '#title_display'  => 'invisible',
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
@@ -74,6 +75,7 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
   );
   $form['bibdk_custom_search_page_elements'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 100,
     '#title'          => t('Weight'),
     '#default_value'  => 10,
     '#attributes'     => array('class' => array('element-weight')),
@@ -208,6 +210,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     );
     $form['bibdk_custom_search_page_element_values'][$i]['sort'] = array(
       '#type'           => 'weight',
+      '#delta'          => 100,
       '#title'          => t('Weight'),
       '#title_display' => 'invisible',
       '#default_value'  => $value['sort'],
@@ -236,6 +239,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
 
   $form['bibdk_custom_search_page_element_values'][$i]['sort'] = array(
     '#type'           => 'weight',
+    '#delta'          => 100,
     '#title'          => t('Weight'),
     '#default_value'  => 10,
     '#attributes'     => array('class' => array('element-weight')),

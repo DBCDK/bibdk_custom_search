@@ -84,6 +84,7 @@ function bibdk_custom_search_schema() {
     ),
     'indexes' => array(
       'bibdk_custom_search_id' => array('pid'),
+      'bibdk_custom_search_page_path' => array('page_path'),
     ),
     'primary key' => array('pid'),
   );
@@ -278,6 +279,13 @@ function bibdk_custom_search_schema() {
         'default' => '',
         'description' => t('Value title'),
       ),
+      'value_name' => array(
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => t('Value name'),
+      ),
       'sort' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -289,7 +297,7 @@ function bibdk_custom_search_schema() {
         'length' => 255,
         'not null' => TRUE,
         'default' => '',
-        'description' => t('Value type: "text", "textarea", "select", "select multiple", "radio", "checkbox", "checkboxes", "hidden"'),
+        'description' => t('Value type: "textfield", "textarea", "select", "select multiple", "radio", "checkbox", "checkboxes", "hidden"'),
       ),
       'search_code' => array(
         'type' => 'varchar',
@@ -377,4 +385,18 @@ function bibdk_custom_search_schema() {
 
 
   return $schema;
+}
+
+
+ /*
+ * Add column for value name.
+ */
+function bibdk_custom_search_update_7000(&$sandbox) {
+  db_add_field('bibdk_custom_search_values', 'value_name', array(
+    'type' => 'varchar',
+    'length' => 255,
+    'not null' => TRUE,
+    'default' => '',
+    'description' => t('Value name'),
+  ));
 }

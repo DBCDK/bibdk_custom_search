@@ -14,6 +14,7 @@ drupal_add_js(drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_cust
   <tbody>
     <tr>
       <td><?php print drupal_render($form['value_title']); ?></td>
+      <td><?php print drupal_render($form['value_name']); ?></td>
       <td><?php print drupal_render($form['type']); ?></td>
       <td><?php print drupal_render($form['search_code']); ?></td>
       <td><?php print drupal_render($form['default_value']); ?></td>

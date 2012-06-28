@@ -125,6 +125,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
   $value = array(
     'vid'             => '2',
     'value_title'     => 'Materialetyper, musik',
+    'value_name '     => 'title',
     'type'            => 'checkbox',
     'search_code'     => 'dc.title', // NULL if textfield
     'default_value'   => '',  // NULL if not textfield
@@ -157,7 +158,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
 
   $query = db_select('bibdk_custom_search_values', 'v');
   $query
-    ->fields('v', array('vid','value_title','sort'))
+    ->fields('v', array('vid','value_title','value_name','sort'))
     ->orderBy('sort', 'DESC');
   $result = $query->execute();
 
@@ -203,6 +204,7 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
   $result = db_update('bibdk_custom_search_values')
     ->fields(array(
       'value_title' => check_plain($element_value['value_title']),
+      'value_name' => check_plain($element_value['value_name']),
       'type' => check_plain($element_value['type']),
       'search_code' => check_plain($element_value['search_code']),
       'default_value' => check_plain($element_value['default_value']),
