@@ -52,6 +52,9 @@ function bibdk_custom_search_admin_submit($form, &$form_state) {
       _bibdk_custom_search_page_update($page);
     }
   }
+
+  cache_clear_all('bibdk_custom_search', 'cache', TRUE);
+
   drupal_set_message(t('The configuration options have been saved.'));
 }
 
@@ -95,19 +98,23 @@ function bibdk_custom_search_admin_validate($form, &$form_state) {
  * bibdk_custom_search_delete_page confirmation form;
  */
 function bibdk_custom_search_delete_page($form_id, $form_state, $page_id) {
+
   $result = db_select('bibdk_custom_search', 'p')
     ->fields('p',array('page_title'))
     ->condition('pid', $page_id,'=')
     ->execute()
     ->fetchAssoc();
+
   $form['page_id'] = array(
     '#type' => 'value',
     '#value' => $page_id,
   );
+
   $form['page_title'] = array(
     '#type' => 'hidden',
     '#value' => $result['page_title'],
   );
+
   return confirm_form($form, t("Are you sure you want to delete '@page'?", array('@page' => $result['page_title'])), 'admin/config/search/bibdk_custom_search');
 }
 
@@ -115,13 +122,19 @@ function bibdk_custom_search_delete_page($form_id, $form_state, $page_id) {
  * Submit handler for bibdk_custom_search_delete_page();
  */
 function bibdk_custom_search_delete_page_submit($form, &$form_state) {
+
   $result = db_delete('bibdk_custom_search_map_elements')
     ->condition('pid', (int)$form_state['values']['page_id'])
     ->execute();
+
   $result = db_delete('bibdk_custom_search')
     ->condition('pid', (int)$form_state['values']['page_id'])
     ->execute();
+
   drupal_set_message(t("'@page' deleted.", array('@page' => $form_state['values']['page_title'])));
+
+  cache_clear_all('bibdk_custom_search', 'cache', TRUE);
+
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search';
 }
 
@@ -228,6 +241,8 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
       _bibdk_custom_search_page_element_update($page_id,$page_element);
     }
   }
+
+  cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/' . $page_id . '/edit';
 }

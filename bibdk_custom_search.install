@@ -279,13 +279,6 @@ function bibdk_custom_search_schema() {
         'default' => '',
         'description' => t('Value title'),
       ),
-      'value_name' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
-        'description' => t('Value name'),
-      ),
       'sort' => array(
         'type' => 'int',
         'not null' => TRUE,
@@ -385,18 +378,4 @@ function bibdk_custom_search_schema() {
 
 
   return $schema;
-}
-
-
- /*
- * Add column for value name.
- */
-function bibdk_custom_search_update_7000(&$sandbox) {
-  db_add_field('bibdk_custom_search_values', 'value_name', array(
-    'type' => 'varchar',
-    'length' => 255,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => t('Value name'),
-  ));
 }

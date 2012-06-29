@@ -5,6 +5,13 @@
  * Bring customizations to the default search box
  */
 
+/*
+ *  TO DO: wildcard matching on search page path
+ *  TO DO: CSS
+ *  TO DO: value submenus
+ *  TO DO: element input combinations
+ */
+
 /**
  * Includes
  */
@@ -324,16 +331,48 @@ function bibdk_custom_search_submit($form, &$form_state) {
 dpm($form_id);
 dpm($form_state['values']);
 
-  $extended_fields = array(
-    'creator' => 'dc.creator',
-    'title' => 'dc.title',
-    'subject' => 'dc.subject',
-  );
+  $extended_fields = _bibdk_custom_search_get_field_searchcodes();
 
-  foreach ($extended_fields as $name => $index) {
-    if (!empty($form_state['values'][$name])) {
+  foreach ( $extended_fields as $name => $index ) {
+    if ( !empty($form_state['values'][$name]) ) {
       $value = $form_state['values'][$name];
-      $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+      if ( $index ) {
+        // search code is defined in 'search page values'
+        if ( !is_array($value) ) {
+          $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+        } else {
+          // handle checkboxes & select multiple
+          $checkbox_fields = array();
+          foreach ( $value as $n => $val ) {
+            if ( isset($val) && $val ) {
+              $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
+            }
+          }
+          if (!empty($checkbox_fields)) {
+            $fields[] = '(' . implode(' OR ', $checkbox_fields) . ')';
+          }
+        }
+      } else {
+        // search code and value are defined as [searchcode=value] in the form value.
+        if ( !is_array($value) ) {
+          if ( strpos($value, '=') ) {
+            $set = explode('=',$value);
+            $fields[] = $set[0] . '=' . (strpos($set[1], ' ') ? '"' . $set[1] . '"' : $set[1]);
+          }
+        } else {
+          // handle checkboxes & select multiple
+          $checkbox_fields = array();
+          foreach ( $value as $n => $val ) {
+            $set = explode('=',$val);
+            if ( isset($set[1]) && $set[1] ) {
+              $checkbox_fields[] = $set[0] . '=' . (strpos($set[1], ' ') ? '"' . $set[1] . '"' : $set[1]);
+            }
+          }
+          if (!empty($checkbox_fields)) {
+            $fields[] = '(' . implode(' OR ', $checkbox_fields) . ')';
+          }
+        }
+      }
     }
   }
 
@@ -341,6 +380,7 @@ dpm($form_state['values']);
   if (!empty($keys)) {
     $q[] = $keys;
   }
+
   if (!empty($fields)) {
     $q[] = '(' . implode(' AND ', $fields) . ')';
   }
@@ -392,20 +432,16 @@ dpm($form_state['values']);
 
 
 /**
- * get form fields from database ().
+ * get form fields from database.
  */
 function _bibdk_custom_search_get_fields() {
-
-  // TO DO: caching, template(s), css
-  // TO DO: checkbox subselects
-  // TO DO: selects w. searchcode as value
 
   $path = drupal_get_destination();
 
   // bibdk_custom_search
   $page = db_select('bibdk_custom_search', 'p')
     ->fields('p')
-    ->condition('page_path', $path,'=')
+    ->condition('page_path', $path['destination'],'=')
     ->execute()
     ->fetchAssoc();
 
@@ -413,101 +449,144 @@ function _bibdk_custom_search_get_fields() {
     return false;
   }
 
-  // bibdk_custom_search_elements
-  $query = db_select('bibdk_custom_search', 's');
-  $query -> leftjoin('bibdk_custom_search_map_elements', 'me', 's.pid = me.pid');
-  $query -> join('bibdk_custom_search_elements', 'e', 'me.eid = e.eid');
-  $query -> leftjoin('bibdk_custom_search_map_values', 'mv', 'e.eid = mv.eid');
-  $query -> join('bibdk_custom_search_values', 'v', 'mv.vid = v.vid');
-  $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.vid = o.vid');
-  $query -> fields('me', array('region','sort'));
-  $query -> fields('e', array('eid','element_label','description','help_text','access_key','tab_index'));
-  $query -> fields('mv', array('sort'));
-  $query -> fields('v', array('vid','value_title','value_name','type','search_code','default_value'));
-  $query -> fields('o', array('oid','sort','label','value'));
-  $query -> condition('s.pid', $page['pid'],'=');
-  // $query -> orderBy('o.sort', 'DESC');
-  // $query -> orderBy('mv.sort', 'DESC');
-  $query -> orderBy('region', 'DESC');
-  $query -> orderBy('me.sort', 'ASC');
-  $result = $query -> execute();
+  $cache_id = 'bibdk_custom_search_fields_' . str_replace('/','_',$path['destination']);
 
-  $elements = array();
+  if ($cache = cache_get($cache_id)) {
 
-  foreach ($result as $record) {
+    $form = $cache->data;
 
-    $eid = check_plain($record->eid);
-    $vid = check_plain($record->vid);
-    $oid = check_plain($record->oid);
+  } else {
 
-    if ( $eid && !isset($elements[$eid]) ) {
-      $elements[ $eid ] = array(
-        'element_label' => check_plain($record->element_label),
-        'description'   => check_plain($record->description),
-        'region'        => check_plain($record->region),
-        'help_text'     => check_plain($record->help_text),
-        'access_key'    => check_plain($record->access_key),
-        'tab_index'     => check_plain($record->tab_index),
-      );
+    // bibdk_custom_search_elements
+    $query = db_select('bibdk_custom_search', 's');
+    $query -> leftjoin('bibdk_custom_search_map_elements', 'me', 's.pid = me.pid');
+    $query -> join('bibdk_custom_search_elements', 'e', 'me.eid = e.eid');
+    $query -> leftjoin('bibdk_custom_search_map_values', 'mv', 'e.eid = mv.eid');
+    $query -> join('bibdk_custom_search_values', 'v', 'mv.vid = v.vid');
+    $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.vid = o.vid');
+    $query -> fields('me', array('region','sort'));
+    $query -> fields('e', array('eid','element_label','description','help_text','access_key','tab_index'));
+    $query -> fields('mv', array('sort'));
+    $query -> fields('v', array('vid','value_title','type','search_code','default_value'));
+    $query -> fields('o', array('oid','sort','label','value'));
+    $query -> condition('s.pid', $page['pid'],'=');
+    // $query -> orderBy('o.sort', 'DESC');
+    // $query -> orderBy('mv.sort', 'DESC');
+    $query -> orderBy('region', 'DESC');
+    $query -> orderBy('me.sort', 'ASC');
+    $result = $query -> execute();
+
+    $elements = array();
+
+    foreach ($result as $record) {
+
+      $eid = check_plain($record->eid);
+      $vid = check_plain($record->vid);
+      $oid = check_plain($record->oid);
+
+      if ( $eid && !isset($elements[$eid]) ) {
+        $elements[ $eid ] = array(
+          'element_label' => check_plain($record->element_label),
+          'description'   => check_plain($record->description),
+          'region'        => check_plain($record->region),
+          'help_text'     => check_plain($record->help_text),
+          'access_key'    => check_plain($record->access_key),
+          'tab_index'     => check_plain($record->tab_index),
+        );
+      }
+
+      if ( $vid && !isset($elements[$eid]['values'][$vid]) ) {
+        $elements[ $eid ]['values'][ $vid ] = array(
+          'value_title'   => check_plain($record->value_title),
+          'type'          => check_plain($record->type),
+          'search_code'   => check_plain($record->search_code),
+          'default_value' => check_plain($record->default_value),
+        );
+      }
+
+      if ( $oid ) {
+        $elements[ $eid ]['values'][ $vid ]['options'][ check_plain($record->value) ] = check_plain($record->label);
+      }
+
     }
 
-    if ( $vid && !isset($elements[$eid]['values'][$vid]) ) {
-      $elements[ $eid ]['values'][ $vid ] = array(
-        'value_title'   => check_plain($record->value_title),
-        'value_name'   => check_plain($record->value_name),
-        'type'          => check_plain($record->type),
-        'search_code'   => check_plain($record->search_code),
-        'default_value' => check_plain($record->default_value),
+    $form = array();
+    foreach ($elements as $key => $element) {
+      $form['bibdk_custom_search_element_' . $key] = array(
+        '#type'         => 'fieldset',
+        '#collapsible'  => FALSE,
+        '#collapsed'    => FALSE,
+        '#tree'         => FALSE,
+        '#title'        => $element['element_label'],
+        '#description'  => $element['description'],
+        '#region'       => $element['region'],
+        '#theme'        => 'bibdk_search_element',
+        '#help_text'    => $element['help_text'],
       );
-    }
-
-    if ( $oid ) {
-      $elements[ $eid ]['values'][ $vid ]['options'][ check_plain($record->value) ] = check_plain($record->label);
-    }
-
-  }
-
-  $form = array();
-  foreach ($elements as $key => $element) {
-    $form['bibdk_custom_search_element_' . $key] = array(
-      '#type'         => 'fieldset',
-      '#collapsible'  => FALSE,
-      '#collapsed'    => FALSE,
-      '#tree'         => FALSE,
-      '#title'        => $element['element_label'],
-      '#description'  => $element['description'],
-      '#region'       => $element['region'],
-      '#theme'        => 'bibdk_search_element',
-      '#help_text'    => $element['help_text'],
-    );
-    foreach ($element['values'] as $value) {
-      $form['bibdk_custom_search_element_' . $key][ $value['value_name'] ] = array(
-        '#type'           => $value['type'],
-        '#title'          => $value['value_title'],
-        '#title_display'  => 'invisible',
-        '#default_value'  => $value['default_value'],
-        '#attributes'     => array('tabindex' => array($element['tab_index']),'accesskey' => array($element['access_key'])),
-      );
-      switch ( $value['type'] ) {
-        CASE 'hidden':
-        CASE 'textfield':
-        CASE 'textarea':
-          $form['bibdk_custom_search_element_' . $key][ $value['value_name'] ]['#size'] = 30;
-          $form['bibdk_custom_search_element_' . $key][ $value['value_name'] ]['#maxlength'] = 64;
-          break;
-        CASE 'select':
-        CASE 'radio':
-        CASE 'checkboxes':
-          $form['bibdk_custom_search_element_' . $key][ $value['value_name'] ]['#default_value'] = array($value['default_value']);
-          $form['bibdk_custom_search_element_' . $key][ $value['value_name'] ]['#options'] = $value['options'];
-          break;
-        DEFAULT:
-          break;
+      foreach ($element['values'] as $vid => $value) {
+        $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ] = array(
+          '#type'           => $value['type'],
+          '#title'          => $value['value_title'],
+          '#title_display'  => 'invisible',
+          '#default_value'  => $value['default_value'],
+          '#attributes'     => array('tabindex' => array($element['tab_index']),'accesskey' => array($element['access_key'])),
+        );
+        switch ( $value['type'] ) {
+          CASE 'hidden':
+          CASE 'textfield':
+          CASE 'textarea':
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#size'] = 30;
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#maxlength'] = 64;
+            break;
+          CASE 'select':
+          CASE 'radio':
+          CASE 'checkboxes':
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            break;
+          DEFAULT:
+            break;
+        }
       }
     }
+
+    cache_set($cache_id, $form, 'cache');
+
   }
 
   return $form;
 
 }
 
+/**
+ * get form fields and search codes from database.
+ */
+function _bibdk_custom_search_get_field_searchcodes() {
+
+  $fields = &drupal_static(__FUNCTION__);
+
+  if (!isset($fields)) {
+
+    if ($cache = cache_get('bibdk_custom_search_field_searchcodes')) {
+
+      $fields = $cache->data;
+
+    } else {
+
+      $query = db_select('bibdk_custom_search_values', 'v');
+      $query -> fields('v', array('vid','value_title','type','search_code','default_value'));
+      $result = $query -> execute();
+
+      $fields = array();
+      foreach ($result as $record) {
+        $fields[ 'term' . check_plain($record->vid) ] = check_plain($record->search_code);
+      }
+
+      cache_set('bibdk_custom_search_field_searchcodes', $fields, 'cache');
+
+    }
+  }
+
+  return $fields;
+
+}
