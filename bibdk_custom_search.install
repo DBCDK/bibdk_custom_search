@@ -9,6 +9,15 @@
  * Implements hook_install().
  */
 function bibdk_custom_search_install() {
+  $weight = db_select('system', 's')
+              ->fields('s', array('weight'))
+              ->condition('name', 'ting_search', '=')
+              ->execute()
+              ->fetchField();
+  db_update('system')
+    ->fields(array('weight' => $weight +1))
+    ->condition('name', 'bibdk_custom_search', '=')
+    ->execute();
 }
 
 /**
@@ -22,7 +31,7 @@ function bibdk_custom_search_uninstall() {
  * Implements hook_enable().
  */
 function bibdk_custom_search_enable() {
-  drupal_set_message(t('Custom Search enabled. Don\'t forget to <a href="@link">set permissions</a>.', array('@link' => url('admin/people/permissions', array('fragment' => 'module-bibdk_custom_search')))));
+  // drupal_set_message(t('Custom Search enabled. Don\'t forget to <a href="@link">set permissions</a>.', array('@link' => url('admin/people/permissions', array('fragment' => 'module-bibdk_custom_search')))));
 }
 
 /**

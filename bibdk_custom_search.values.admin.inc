@@ -168,26 +168,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
     $list_values[$vid] = $value_title;
   }
 
-  $options = array();
-
-  $query = db_select('bibdk_custom_search_options', 'o');
-  $query
-    ->fields('o', array('oid','label','value','expand','sort'))
-    ->condition('vid', $value_id,'=')
-    ->orderBy('sort', 'DESC');
-  $result = $query->execute();
-
-  foreach ($result as $option) {
-    $row = array(
-      'oid' => check_plain($option->oid),
-      'label' => check_plain($option->label),
-      'value' => ( $option->expand ) ? check_plain($list_values[$option->expand]) : check_plain($option->value),
-      'expand' => check_plain($option->expand),
-      'sort' => check_plain($option->sort),
-    );
-    $options[] = $row;
-  }
-  $value['options'] = $options;
+  $value['options'] = _bibdk_custom_search_get_options($value_id);
 
   $form = _bibdk_custom_search_edit_value_form($value,$list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/values/' . $value_id . '/edit');

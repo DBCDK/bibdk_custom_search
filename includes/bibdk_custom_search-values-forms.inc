@@ -186,10 +186,11 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     );
     if ( $option['expand'] ) {
       $form['element_value_options'][$i]['value'] = array(
-        '#type'           => 'hidden',
+        '#type'           => 'textfield',
         '#title_display'  => 'invisible',
         '#title'          => t('Value submenu'),
         '#default_value'  => $option['value'],
+        '#size'           => 36,
       );
       $form['element_value_options'][$i]['expand'] = array(
         '#type'           => 'select',
@@ -298,10 +299,11 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#size'           => 36,
   );
   $form['add_options']['element_value_options'][$i]['value'] = array(
-    '#type'           => 'hidden',
+    '#type'           => 'textfield',
     '#title'          => t('Option value'),
     '#title_display'  => 'invisible',
     '#default_value'  => '',
+    '#size'           => 36,
   );
   $form['add_options']['element_value_options'][$i]['expand'] = array(
     '#type'           => 'select',

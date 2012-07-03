@@ -4,7 +4,7 @@ description = Customize the default search, add custom search pages, and change 
 core = 7.x
 package = "Bibliotek.dk"
 
-;dependencies[] = search
+dependencies[] = ting_search
 
 files[] = bibdk_custom_search.admin.inc
 ;files[] = bibdk_custom_search.pages.inc
