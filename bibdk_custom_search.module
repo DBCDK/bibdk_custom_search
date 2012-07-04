@@ -509,14 +509,22 @@ function _bibdk_custom_search_get_fields() {
       }
 
       if ( $oid && $record->expand ) {
+        /*
         $elements[ $eid ]['values'][ $vid ]['subgroup'] = check_plain($record->value) . '#';
         $expand = _bibdk_custom_search_get_options( check_plain($record->expand) );
         foreach ($expand as $option) {
           $elements[ $eid ]['values'][ $vid ]['options'][ $option['value'] ] = $option['label'];
           $elements[ $eid ]['values'][ $vid ]['subgroup'] .= $option['value'] . '|';
         }
+        */
+        $subgroup['parentElem'] = check_plain($record->value);
+        $expand = _bibdk_custom_search_get_options( check_plain($record->expand) );
+        foreach ($expand as $option) {
+          $elements[ $eid ]['values'][ $vid ]['options'][ $option['value'] ] = $option['label'];
+          $subgroup['childElem'][] = $option['value'];
+        }
+        $elements[ $eid ]['values'][ $vid ]['attached'] = $subgroup;
       }
-
     }
 
     $form = array();
@@ -556,10 +564,17 @@ function _bibdk_custom_search_get_fields() {
           DEFAULT:
             break;
         }
-        if ( isset($value['subgroup']) ) {
-          $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#attributes']['data'] = $value['subgroup'];
+        if ( isset($value['attached']) ) {
+          $attached[] = $value['attached'];
         }
       }
+    }
+
+    if ( isset($attached) ) {
+      $form['#attached']['js'][] = array(
+        'data' => array('expanded' => $attached),
+        'type' => 'setting',
+      );
     }
 
     cache_set($cache_id, $form, 'cache');

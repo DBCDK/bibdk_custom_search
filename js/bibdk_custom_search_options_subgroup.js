@@ -2,23 +2,29 @@
 
   $(document).ready(function() {
     Drupal.bibdkCustomSearchOptionsSubgroup();
+    $('.bibdk-subgroup').hide();
   });
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
-      $('input[type=checkbox]').each(function(index) {
-        if ( $(this).attr('data') != 'undefined' ) {
-          var sThisValue = $(this).attr('value');
-          var sThisData = $(this).attr('data').split('#');
-          var sThisDataParent = sThisData[0];
-          if ( sThisValue == sThisDataParent ) {
-            $(this).attr('data', 'isParent:' + $(this).attr('id'));
-          }
-          var sThisChildren = sThisData[1].split('|');
-          $.each(sThisChildren, function(key, val) {
-            $('input[value='+val+']').attr('data', 'hasParent:' + sThisDataParent);
-          });
-        }
+    $.each(Drupal.settings.expanded, function(key, val) {
+
+      var ExpandTrigger = $('<div data="subgroup-' + key + '" class="toggle-subgroup"> + </div>');
+      ExpandTrigger.toggle(function() {
+        var subgroup = $(this).attr('data');
+        $('#' + subgroup).show();
+      }, function() {
+        var subgroup = $(this).attr('data');
+        $('#' + subgroup).hide();
       });
+      $('input[value=' + val.parentElem + ']').after(ExpandTrigger);
+
+      var subElem = $('<div id="subgroup-' + key + '" class="bibdk-subgroup"></div>');
+      $.each(val.childElem, function(key2, val2) {
+        subElem.append( $('input[value=' + val2 + ']').closest("div") );
+      });
+
+      $('input[value=' + val.parentElem + ']').closest("div").after(subElem);
+    });
   };
 
 } (jQuery));
