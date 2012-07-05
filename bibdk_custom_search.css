@@ -23,3 +23,15 @@ tr.region-title-expand, tr.region-title-add {
   margin: 0 0.5em;
   padding: 0 0.25em;
 }
+
+.bibdk-subgroup {
+  margin-left: 1em;
+}
+
+.toggle-subgroup {
+  border: 1px solid black;
+  cursor: pointer;
+  display: inline;
+  margin: 0 0.25em;
+  padding: 0;
+}

@@ -470,10 +470,10 @@ function _bibdk_custom_search_get_fields() {
     $query -> fields('v', array('vid','value_title','type','search_code','default_value'));
     $query -> fields('o', array('oid','sort','label','value','expand'));
     $query -> condition('s.pid', $page['pid'],'=');
-    $query -> orderBy('o.sort', 'ASC');
-    // $query -> orderBy('mv.sort', 'DESC');
-    $query -> orderBy('region', 'DESC');
     $query -> orderBy('me.sort', 'ASC');
+    $query -> orderBy('region', 'ASC');
+    $query -> orderBy('mv.sort', 'ASC');
+    $query -> orderBy('o.sort', 'ASC');
     $result = $query -> execute();
 
     $elements = array();
@@ -509,21 +509,17 @@ function _bibdk_custom_search_get_fields() {
       }
 
       if ( $oid && $record->expand ) {
-        /*
-        $elements[ $eid ]['values'][ $vid ]['subgroup'] = check_plain($record->value) . '#';
-        $expand = _bibdk_custom_search_get_options( check_plain($record->expand) );
-        foreach ($expand as $option) {
-          $elements[ $eid ]['values'][ $vid ]['options'][ $option['value'] ] = $option['label'];
-          $elements[ $eid ]['values'][ $vid ]['subgroup'] .= $option['value'] . '|';
-        }
-        */
-        $subgroup['parentElem'] = check_plain($record->value);
-        $expand = _bibdk_custom_search_get_options( check_plain($record->expand) );
-        foreach ($expand as $option) {
-          $elements[ $eid ]['values'][ $vid ]['options'][ $option['value'] ] = $option['label'];
-          $subgroup['childElem'][] = $option['value'];
-        }
-        $elements[ $eid ]['values'][ $vid ]['attached'] = $subgroup;
+        $options = array();
+        $subgroup = array();
+        if ( !isset($elements[ $eid ]['values'][ $vid ]['options']) ) $elements[ $eid ]['values'][ $vid ]['options'] = array();
+        if ( !isset($elements[ $eid ]['values'][ $vid ]['attached']) ) $elements[ $eid ]['values'][ $vid ]['attached'] = array();
+        _bibdk_custom_search_get_options( $oid, check_plain($record->value), check_plain($record->expand), $options, $subgroup );
+dpm($options);
+dpm($subgroup);
+        $elements[ $eid ]['values'][ $vid ]['options'] = array_merge( $elements[ $eid ]['values'][ $vid ]['options'], $options);
+        $elements[ $eid ]['values'][ $vid ]['attached'] = array_merge( $elements[ $eid ]['values'][ $vid ]['attached'], $subgroup);
+        // $elements[ $eid ]['values'][ $vid ]['attached'] = $subgroup;
+
       }
     }
 
@@ -565,12 +561,13 @@ function _bibdk_custom_search_get_fields() {
             break;
         }
         if ( isset($value['attached']) ) {
-          $attached[] = $value['attached'];
+          $attached[$vid] = $value['attached'];
         }
       }
     }
 
     if ( isset($attached) ) {
+      dpm($attached);
       $form['#attached']['js'][] = array(
         'data' => array('expanded' => $attached),
         'type' => 'setting',
@@ -590,7 +587,27 @@ function _bibdk_custom_search_get_fields() {
 /**
  *
  */
-function _bibdk_custom_search_get_options($value_id) {
+function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subgroup) {
+
+  $subgroup[$oid]['parentElem'] = check_plain($value);
+
+  $expand = _bibdk_custom_search_get_options_db( check_plain($vid) );
+
+  foreach ($expand as $option) {
+    if ( $option['expand'] ) {
+      _bibdk_custom_search_get_options( $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
+    }
+    $options[ $option['value'] ] = $option['label'];
+    $subgroup[$oid]['childElem'][] = $option['value'];
+  }
+
+}
+
+
+/**
+ *
+ */
+function _bibdk_custom_search_get_options_db($value_id) {
   /* TO DO: caching */
   $options = array();
 
