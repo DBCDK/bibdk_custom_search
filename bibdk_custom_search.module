@@ -235,8 +235,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       $form[ $field['#region'] ][$name] = $field;
     }
 
-// dpm($form);
-
   }
 
   $form['#submit'] = array('bibdk_custom_search_submit');
@@ -328,8 +326,6 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $form_id = $form['form_id']['#value']; // 'search_block_form'
   $keys = $form_state['values'][$form_id];
   $fields = array();
-// dpm($form_id);
-// dpm($form_state['values']);
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
 
@@ -514,12 +510,8 @@ function _bibdk_custom_search_get_fields() {
         if ( !isset($elements[ $eid ]['values'][ $vid ]['options']) ) $elements[ $eid ]['values'][ $vid ]['options'] = array();
         if ( !isset($elements[ $eid ]['values'][ $vid ]['attached']) ) $elements[ $eid ]['values'][ $vid ]['attached'] = array();
         _bibdk_custom_search_get_options( $oid, check_plain($record->value), check_plain($record->expand), $options, $subgroup );
-dpm($options);
-dpm($subgroup);
         $elements[ $eid ]['values'][ $vid ]['options'] = array_merge( $elements[ $eid ]['values'][ $vid ]['options'], $options);
         $elements[ $eid ]['values'][ $vid ]['attached'] = array_merge( $elements[ $eid ]['values'][ $vid ]['attached'], $subgroup);
-        // $elements[ $eid ]['values'][ $vid ]['attached'] = $subgroup;
-
       }
     }
 
@@ -561,24 +553,18 @@ dpm($subgroup);
             break;
         }
         if ( isset($value['attached']) ) {
-          $attached[$vid] = $value['attached'];
+          $form['bibdk_custom_search_element_' . $key]['#attached']['js'][] = array(
+            'data' => array('expanded' => array($vid => $value['attached'])),
+            'type' => 'setting',
+          );
         }
       }
-    }
-
-    if ( isset($attached) ) {
-      dpm($attached);
-      $form['#attached']['js'][] = array(
-        'data' => array('expanded' => $attached),
-        'type' => 'setting',
-      );
     }
 
     cache_set($cache_id, $form, 'cache');
 
   }
 
-  // dpm($form);
   return $form;
 
 }
@@ -589,7 +575,8 @@ dpm($subgroup);
  */
 function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subgroup) {
 
-  $subgroup[$oid]['parentElem'] = check_plain($value);
+  $subgroup[$vid]['parentElem'] = check_plain($value);
+  $subgroup[$vid]['parentElemId'] = $vid;
 
   $expand = _bibdk_custom_search_get_options_db( check_plain($vid) );
 
@@ -598,7 +585,7 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
       _bibdk_custom_search_get_options( $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
     }
     $options[ $option['value'] ] = $option['label'];
-    $subgroup[$oid]['childElem'][] = $option['value'];
+    $subgroup[$vid]['childElem'][ $option['oid'] ] = $option['value'];
   }
 
 }

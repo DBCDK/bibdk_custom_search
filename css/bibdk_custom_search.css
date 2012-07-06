@@ -1,0 +1,37 @@
+
+tr.region-populated {
+  display:none;
+}
+
+tr.region-title-expand, tr.region-title-add {
+  border-top: 1px solid #ccc;
+}
+
+#edit-search-page-value {
+  width: auto;
+}
+
+#edit-bibdk-custom-search-element-3,
+#edit-bibdk-custom-search-element-1 {
+  clear: both;
+}
+
+.bibdk-custom-search-element .helptext {
+  border: 1px solid #aaa;
+  background-color: #cae;
+  display: inline;
+  margin: 0 0.5em;
+  padding: 0 0.25em;
+}
+
+.bibdk-subgroup {
+  margin-left: 1em;
+}
+
+.toggle-subgroup {
+  border: 1px solid black;
+  cursor: pointer;
+  display: inline;
+  margin: 0 0.25em;
+  padding: 0;
+}

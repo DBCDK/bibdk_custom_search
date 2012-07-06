@@ -10,7 +10,7 @@
       $.each(valueGroup, function(key, val) {
 
         // create toggle element and bind an event handler to it
-        var ExpandTrigger = $('<div data="subgroup-' + key + '" class="toggle-subgroup"> + </div>');
+        var ExpandTrigger = $('<div data="subgroup-' + val.parentElemId + '" class="toggle-subgroup"> + </div>');
         ExpandTrigger.toggle(function() {
           var subgroup = $(this).attr('data');
           $('#' + subgroup).show('fast');
@@ -39,7 +39,7 @@
         });
 
         // move child options into a div under parent.
-        var subElem = $('<div id="subgroup-' + key + '" class="bibdk-subgroup"></div>');
+        var subElem = $('<div id="subgroup-' + val.parentElemId + '" class="bibdk-subgroup"></div>');
         $.each(val.childElem, function(key2, val2) {
           subElem.append( $('input[value=' + val2 + ']').closest("div") );
         });

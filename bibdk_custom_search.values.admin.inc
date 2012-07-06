@@ -168,7 +168,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
     $list_values[$vid] = $value_title;
   }
 
-  $value['options'] = _bibdk_custom_search_get_options($value_id);
+  $value['options'] = _bibdk_custom_search_get_options_db($value_id);
 
   $form = _bibdk_custom_search_edit_value_form($value,$list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/values/' . $value_id . '/edit');

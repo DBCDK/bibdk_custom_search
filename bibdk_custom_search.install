@@ -9,13 +9,8 @@
  * Implements hook_install().
  */
 function bibdk_custom_search_install() {
-  $weight = db_select('system', 's')
-              ->fields('s', array('weight'))
-              ->condition('name', 'ting_search', '=')
-              ->execute()
-              ->fetchField();
   db_update('system')
-    ->fields(array('weight' => $weight +1))
+    ->fields(array('weight' => 10))
     ->condition('name', 'bibdk_custom_search', '=')
     ->execute();
 }
