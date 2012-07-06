@@ -544,7 +544,12 @@ function _bibdk_custom_search_get_fields() {
             $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#maxlength'] = 64;
             break;
           CASE 'select':
-          CASE 'radio':
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            break;
+          CASE 'radios':
+            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            break;
           CASE 'checkboxes':
             $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
             $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
