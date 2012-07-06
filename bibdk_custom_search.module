@@ -312,8 +312,6 @@ function bibdk_custom_search_theme() {
  */
 function bibdk_custom_search_submit($form, &$form_state) {
 
-  // TO DO: set module weight to 'ting_search' + 10
-
   $controls = array();
   // The search form relies on control of the redirect destination for its
   // functionality, so we override any static destination set in the request,
@@ -328,7 +326,6 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $fields = array();
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
-
   foreach ( $extended_fields as $name => $index ) {
     if ( !empty($form_state['values'][$name]) ) {
       $value = $form_state['values'][$name];
@@ -370,6 +367,11 @@ function bibdk_custom_search_submit($form, &$form_state) {
         }
       }
     }
+  }
+
+  $delimiter = $form_state['values']['delimiter'];
+  if ( $delimiter != "" ) {
+    $fields[] = $delimiter;
   }
 
   $q = array();
@@ -564,6 +566,14 @@ function _bibdk_custom_search_get_fields() {
           );
         }
       }
+    }
+
+    if ( $page['delimiter'] ) {
+      $form['delimiter'] = array(
+        '#type'   => 'hidden',
+        '#region' => 'main',
+        '#value'  => $page['delimiter'],
+      );
     }
 
     cache_set($cache_id, $form, 'cache');
