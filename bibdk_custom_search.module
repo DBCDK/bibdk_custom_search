@@ -199,9 +199,11 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 */
 
   if ( $advanced_fields ) {
+
+/*
     $form['main'] = array(
       '#type' => 'fieldset',
-      '#title' => t('Main search'),
+      '#title' => $advanced_fields['#main_search_name'],
       '#title_display'  => 'invisible',
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
@@ -213,12 +215,13 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     $form['main']['actions'] = $form['actions'];
     unset($form['search_block_form']);
     unset($form['actions']);
+*/
 
     $form['expand'] = array(
       '#type' => 'fieldset',
       '#title' => t('Advanced search'),
       '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
+      '#collapsed' => ( $advanced_fields['#collapsed'] ) ? $advanced_fields['#collapsed'] : FALSE,
       '#weight' => 102,
     );
 
@@ -232,7 +235,13 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     );
 
     foreach ($advanced_fields as $name => $field) {
-      $form[ $field['#region'] ][$name] = $field;
+      if ( is_array($field) ) {
+        if ( $field['#region'] == 'main' ) {
+          $form[$name] = $field;
+        } else {
+          $form[ $field['#region'] ][$name] = $field;
+        }
+      }
     }
 
   }
@@ -369,9 +378,10 @@ function bibdk_custom_search_submit($form, &$form_state) {
     }
   }
 
-  $delimiter = $form_state['values']['delimiter'];
-  if ( $delimiter != "" ) {
-    $fields[] = $delimiter;
+  if ( $delimiter = $form_state['values']['delimiter'] ) {
+    if ( $delimiter != "" ) {
+      $fields[] = $delimiter;
+    }
   }
 
   $q = array();
@@ -575,6 +585,10 @@ function _bibdk_custom_search_get_fields() {
         '#value'  => $page['delimiter'],
       );
     }
+
+    $form['#collapsed'] = ( $page['expand'] ) ? $page['expand'] : FALSE;
+
+    $form['#main_search_name'] = ( $page['page_title'] ) ? $page['page_title'] : FALSE;
 
     cache_set($cache_id, $form, 'cache');
 

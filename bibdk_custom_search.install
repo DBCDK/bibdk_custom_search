@@ -383,3 +383,19 @@ function bibdk_custom_search_schema() {
 
   return $schema;
 }
+
+/**
+ * Alter help text column to blob
+ */
+function bibdk_custom_search_update_7001(&$sandbox) {
+
+  db_change_field('bibdk_custom_search_elements', 'help_text', 'help_text',
+    array(
+      'type' => 'blob',
+      'not null' => FALSE,
+      'size' => 'big',
+      'description' => t('Help text for the search element'),
+    )
+  );
+
+}
