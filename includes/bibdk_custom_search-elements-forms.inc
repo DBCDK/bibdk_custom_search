@@ -112,14 +112,6 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#title_display'  => 'invisible',
   );
 
-/*
-  $form['bibdk_custom_search_page_element']['sort'] = array(
-    '#type'           => 'hidden',
-    '#default_value'  => $element['sort'],
-    '#title'          => t('Weight'),
-  );
-*/
-
   $form['bibdk_custom_search_page_element']['element_title'] = array(
     '#type'           => 'textfield',
     '#default_value'  => $element['element_title'],
@@ -164,11 +156,15 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
 
   $form['bibdk_custom_search_page_element_values'] = array(
     '#type'         => 'fieldset',
-    '#title'        => t('Elements ordering'),
+    '#title'        => t('Values ordering'),
     '#description'  => t('Order the form element values as you want them to be displayed.'),
     '#theme'        => 'bibdk_custom_search-edit-element-values-form',
     '#tree'         => TRUE,
   );
+
+  if ( sizeof($element['values']) > 1 ) {
+    $form['bibdk_custom_search_page_element_values']['#description'] .= "<br>".t('You may need a pre-search processor for these values: @file', array('@file' => 'includes/pre_search_processor_' . $element['eid'] . '.incl.php'));
+  }
 
   $i = 0;
   foreach ($element['values'] as $key => $value) {

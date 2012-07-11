@@ -202,6 +202,9 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
     }
   }
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
+
+  drupal_set_message(t('The value options have been saved.'));
+
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/values/' . $value_id . '/edit';
 }
 
@@ -245,7 +248,7 @@ function _bibdk_custom_search_values_options_update($value_id,$value_option) {
  * bibdk_custom_search_value_delete confirmation form;
  */
 function bibdk_custom_search_value_delete($form_id, $form_state, $value_id) {
-  _bibdk_custom_search_element_validate_element_pointers($value_id, &$form);
+  _bibdk_custom_search_element_validate_element_pointers($value_id, $form);
   $result = db_select('bibdk_custom_search_values', 'v')
     ->fields('v',array('value_title'))
     ->condition('vid', $value_id,'=')
@@ -268,7 +271,7 @@ function bibdk_custom_search_value_delete($form_id, $form_state, $value_id) {
  * Validation handler for bibdk_custom_search_value_delete();
  */
 function _bibdk_custom_search_value_delete_validate($form, &$form_state) {
-  _bibdk_custom_search_element_validate_element_pointers($form_state['values']['vid'], &$form);
+  _bibdk_custom_search_element_validate_element_pointers($form_state['values']['vid'], $form);
 }
 
 /**

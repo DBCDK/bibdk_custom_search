@@ -8,7 +8,7 @@
 /*
  *  TO DO: wildcard matching on search page path
  *  TO DO: CSS
- *  TO DO: value submenus
+ *  DONE:  value submenus
  *  TO DO: element input combinations
  */
 
@@ -16,6 +16,8 @@
  * Includes
  */
 // module_load_include('inc', 'bibdk_custom_search', 'includes/forms');
+
+
 
 /**
  * Implements hook_menu().
@@ -127,11 +129,16 @@ function bibdk_custom_search_menu() {
   return $items;
 }
 
+
 /**
  * Implements hook_permission().
  */
 function bibdk_custom_search_permission() {
   return array(
+    'access bibdk search pages' => array(
+      'title'       => t('access bibdk search pages'),
+      'description' => t('Allow users to access bibdk search pages')
+    ),
     'Administer bibdk search pages' => array(
       'title'       => t('administer bibdk search pages'),
       'description' => t('Allow users to administer bibdk search pages settings')
@@ -234,6 +241,12 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       )
     );
 
+    if ( isset($advanced_fields['#bibdk_pre_search_process']) )  {
+      $form['#bibdk_pre_search_process'] = $advanced_fields['#bibdk_pre_search_process'];
+      $form['#attached']['js'] = array_merge( $form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js',$advanced_fields['#bibdk_pre_search_process']));
+      unset($advanced_fields['#bibdk_pre_search_process']);
+    }
+
     foreach ($advanced_fields as $name => $field) {
       if ( is_array($field) ) {
         if ( $field['#region'] == 'main' ) {
@@ -303,11 +316,15 @@ function bibdk_custom_search_theme() {
       'path'            => $path,
       'template'        => 'bibdk_custom_search-sort-options-form',
     ),
-
     'bibdk_search_element' => array(
       'render element'  => 'form',
       'path'            => $path,
       'template'        => 'bibdk_custom_search-search-element-form',
+    ),
+    'bibdk_custom_search-menu' => array(
+      'path'            => $path,
+      'variables'       => array('pages'=>array()),
+      'template'        => 'bibdk-custom-search-menu',
     ),
   );
 
@@ -335,7 +352,10 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $fields = array();
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
-  foreach ( $extended_fields as $name => $index ) {
+
+  $fields = module_invoke_all('bibdk_custom_search_field_preprocess',$form_state);
+
+  foreach ( $extended_fields as $name => $index ) { // f.ex.: 'term3' => 'dc.title'
     if ( !empty($form_state['values'][$name]) ) {
       $value = $form_state['values'][$name];
       if ( $index ) {
@@ -378,13 +398,14 @@ function bibdk_custom_search_submit($form, &$form_state) {
     }
   }
 
-  if ( $delimiter = $form_state['values']['delimiter'] ) {
+  if ( isset($form_state['values']['delimiter']) && $delimiter = $form_state['values']['delimiter'] ) {
     if ( $delimiter != "" ) {
       $fields[] = $delimiter;
     }
   }
 
   $q = array();
+
   if (!empty($keys)) {
     $q[] = $keys;
   }
@@ -438,6 +459,33 @@ function bibdk_custom_search_submit($form, &$form_state) {
 }
 
 
+
+/**
+ * Implements hook_block_info().
+ */
+function bibdk_custom_search_block_info() {
+  $blocks['bibdk-search-menu'] = array(
+      'info' => t('Bibliotek.dk search menu'),
+      'cache' => DRUPAL_CACHE_PER_PAGE,
+    );
+  return $blocks;
+}
+
+
+/**
+ * Implements hook_block_view().
+ */
+function bibdk_custom_search_block_view($delta = '') {
+  $block = array();
+  switch ($delta) {
+    case 'bibdk-search-menu':
+      $block['subject'] = t('Bibliotek.dk search menu');
+      $block['content'] = theme('bibdk_custom_search-menu', array('pages'=>_bibdk_custom_search_get_pages_db()));
+      break;
+  }
+  return $block;
+
+}
 
 /**
  * get form fields from database.
@@ -540,6 +588,9 @@ function _bibdk_custom_search_get_fields() {
         '#theme'        => 'bibdk_search_element',
         '#help_text'    => $element['help_text'],
       );
+      if ( sizeof($element['values']) > 1 ) {
+        $form['#bibdk_pre_search_process'][$key] = array_keys($element['values']);
+      }
       foreach ($element['values'] as $vid => $value) {
         $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ] = array(
           '#type'           => $value['type'],
@@ -623,6 +674,30 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
 /**
  *
  */
+function _bibdk_custom_search_get_pages_db() {
+  /* TO DO: caching */
+  $pages = array();
+
+  $query = db_select('bibdk_custom_search', 'p');
+  $query
+    ->fields('p')
+    ->orderBy('sort', 'ASC');
+  $result = $query->execute();
+
+  foreach ($result as $page) {
+    $row = array(
+      'title' => check_plain($page->menu_title),
+      'href' => check_plain($page->page_path),
+    );
+    $pages[] = $row;
+  }
+  return $pages;
+}
+
+
+/**
+ *
+ */
 function _bibdk_custom_search_get_options_db($value_id) {
   /* TO DO: caching */
   $options = array();
@@ -680,3 +755,4 @@ function _bibdk_custom_search_get_field_searchcodes() {
   return $fields;
 
 }
+

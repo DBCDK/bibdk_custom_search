@@ -82,6 +82,7 @@ function _bibdk_custom_search_page_update($page) {
     ->condition('pid', $page['pid'])
     ->execute();
   return $result;
+  drupal_set_message(t('The configuration options have been saved.'));
 }
 
 
@@ -191,25 +192,10 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
   }
   $page['elements'] = $page_elements;
 
-  /* $page = array(
-    'pid' => '2',
-    'page_title' => 'Artikels&oslash;g',
-    'page_path' => 'artikel',
-    'menu_title' => 'Artikler',
-    'sort' => '2',
-    'delimiter' => 'ma=fi',
-    'expand' => '1',
-    'elements' => array(
-      '0' => array('element_title' => t('Forfatter, inputbox'), 'eid' => '0', 'region' => 'main', 'sort' => -1),
-      '1' => array('element_title' => t('Titel, inputbox'), 'eid' => '1', 'region' => 'main', 'delete' => '1', 'sort' => 1),
-      '2' => array('element_title' => t('Emne, inputbox'), 'region' => 'main', 'eid' => '2', 'sort' => 2),
-    ),
-    'display_expanded_search' => '1',
-  );
-  */
   $form = _bibdk_custom_search_edit_page_form($page,$list_elements);
-// dpm($form);
+
   $form['#submit'][] = 'bibdk_custom_search_edit_page_submit';
+
   return $form;
 }
 
@@ -243,6 +229,8 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
   }
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
+
+  drupal_set_message(t('The page options have been saved.'));
 
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/' . $page_id . '/edit';
 }

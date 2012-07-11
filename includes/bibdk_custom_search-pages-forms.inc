@@ -134,6 +134,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['page_path'],
     '#title'          => t('Page path'),
+    '#description'    => t('path to site homepage [+ "/" + path to search form]'),
     '#size'           => 20,
   );
 
