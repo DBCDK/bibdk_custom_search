@@ -48,14 +48,14 @@ function bibdk_custom_search_admin_submit($form, &$form_state) {
   foreach ($pages as $key => $page) {
     if ( $page['pid'] == '_new' && !empty($page['page_title']) ) {
       _bibdk_custom_search_page_insert($page);
+      $message[] = t('The page "@page" have been created.',array('@page'=>$page['page_title']));
     } else {
       _bibdk_custom_search_page_update($page);
+      $message[] = t('The pages have been updated.');
     }
   }
-
+  drupal_set_message(implode('<br/>',array_unique($message)));
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
-
-  drupal_set_message(t('The configuration options have been saved.'));
 }
 
 /**

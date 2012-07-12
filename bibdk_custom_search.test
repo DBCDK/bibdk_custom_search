@@ -1,0 +1,58 @@
+<?php
+/**
+* Tests the functionality of the Simpletest example content type.
+*/
+class BibdkCustomSearchTestCase extends DrupalWebTestCase {
+  protected $privileged_user;
+
+  public static function getInfo() {
+    return array(
+      'name' => 'Bibdk Custom Search',
+      'description' => 'Bibdk Custom Search test.',
+      'group' => 'bibliotek.dk',
+    );
+
+  }
+
+  public function setUp() {
+    // Enable any modules required for the test
+    parent::setUp('bibdk_custom_search');
+    // Create and log in our privileged user.
+    $this->privileged_user = $this->drupalCreateUser(array(
+      'administer bibdk custom search pages',
+      ));
+    $this->drupalLogin($this->privileged_user);
+  }
+
+  // Test creation of a custom search page.
+  public function testBibdkCustomSearchCreatePage() {
+    $edit = array();
+    $edit['bibdk_custom_search[0][page_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search', $edit, t('Save'));
+    $this->assertText(
+      t('The page "@page" have been created.', array('@page' => $edit['bibdk_custom_search[0][page_title]']))
+    );
+  }
+
+  // Test creation of a custom search element.
+  public function testBibdkCustomSearchCreateElement() {
+    $edit = array();
+    $edit['bibdk_custom_search_page_elements[0][element_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements', $edit, t('Save'));
+    $this->assertText(
+      t('The element "@element" have been created.', array('@element' => $edit['bibdk_custom_search_page_elements[0][element_title]']))
+    );
+  }
+
+  // Test creation of a custom search value.
+  public function testBibdkCustomSearchCreateValue() {
+    $edit = array();
+    $edit['bibdk_custom_search[0][value_title]'] = $this->randomName(8);
+    $this->drupalPost('admin/config/search/bibdk_custom_search/values', $edit, t('Save'));
+    $this->assertText(
+      t('The value "@value" have been created.', array('@value' => $edit['bibdk_custom_search[0][value_title]']))
+    );
+  }
+
+
+}

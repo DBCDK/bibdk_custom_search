@@ -56,15 +56,15 @@ function bibdk_custom_search_elements_admin_submit($form, &$form_state) {
   foreach ( $values as $key => $value ) {
     if ( $value['eid']=='_new' && !empty($value['element_title']) ) {
       _bibdk_custom_search_elements_admin_insert($value);
+      $message[] = t('The element "@element" have been created.',array('@element'=>$value['element_title']));
     }
     if ( $value['eid'] != '_new' ) {
       _bibdk_custom_search_elements_admin_update($value);
+      $message[] = t('The elements have been updated.');
     }
   }
-
+  drupal_set_message(implode('<br/>',array_unique($message)));
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
-
-  drupal_set_message(t('The search element configuration have been saved.'));
 }
 
 /**

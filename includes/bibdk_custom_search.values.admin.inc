@@ -58,13 +58,15 @@ function _bibdk_custom_search_values_admin_submit($form, &$form_state) {
   foreach ($values as $key => $value) {
     if ($value['vid']=='_new' && !empty($value['value_title'])) {
       _bibdk_custom_search_values_admin_insert($value);
+      $message[] = t('The value "@value" have been created.',array('@value'=>$value['value_title']));
     }
     if ($value['vid']!='_new') {
       _bibdk_custom_search_values_admin_update($value);
+      $message[] = t('The values have been updated.');
     }
   }
+  drupal_set_message(implode('<br/>',array_unique($message)));
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
-  drupal_set_message(t('The search value configuration have been saved.'));
 }
 
 

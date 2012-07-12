@@ -86,7 +86,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save changes'),
+    '#value' => t('Save'),
   );
   return $form;
 }
@@ -325,7 +325,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
-    '#value' => t('Save changes'),
+    '#value' => t('Save'),
   );
 
   return $form;
