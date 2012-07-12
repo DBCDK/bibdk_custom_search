@@ -6,7 +6,8 @@ package = "Bibliotek.dk"
 
 // dependencies[] = ting_search
 
-files[] = bibdk_custom_search.admin.inc
+;files[] = bibdk_custom_search.admin.inc
 ;files[] = bibdk_custom_search.pages.inc
+files[] = simpletest_example.test
 
 configure = admin/config/search/bibdk_custom_search

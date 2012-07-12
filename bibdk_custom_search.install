@@ -183,10 +183,9 @@ function bibdk_custom_search_schema() {
         'description' => t('Short desription of the search element'),
       ),
       'help_text' => array(
-        'type' => 'varchar',
-        'length' => 255,
-        'not null' => TRUE,
-        'default' => '',
+        'type' => 'blob',
+        'not null' => FALSE,
+        'size' => 'big',
         'description' => t('Help text for the search element'),
       ),
       'sort' => array(

@@ -49,5 +49,27 @@
     });
   };
 
+  Drupal.behaviors.bibdkCustomSearchCheckboxes = {
+    attach: function(context, settings) {
+      $('.form-type-checkboxes input').change(function() {
+        if ( $(this).val() && $(this).is(':checked') ) {
+          $(this).closest("div.form-checkboxes").find("input").each(function (i) {
+            if ( !$(this).val() ) {
+              $(this).attr('checked', false);
+            }
+          })
+        }
+        if ( !$(this).val() && $(this).is(':checked') ) {
+          $(this).closest("div.form-checkboxes").find("input").each(function (i) {
+            if ( $(this).val() ) {
+              $(this).attr('checked', false);
+            }
+          })
+        }
+      });
+    }
+  };
+
+
 } (jQuery));
 

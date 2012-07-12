@@ -163,7 +163,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
   );
 
   if ( sizeof($element['values']) > 1 ) {
-    $form['bibdk_custom_search_page_element_values']['#description'] .= "<br>".t('You may need a pre-search processor for these values: @file', array('@file' => 'includes/pre_search_processor_' . $element['eid'] . '.incl.php'));
+    $form['bibdk_custom_search_page_element_values']['#description'] .= "<br>".t('You may need a pre-search processor for these values: Use hook_bibdk_custom_search_field_preprocess to combine values for element ID: @id', array('@id' => $element['eid']));
   }
 
   $i = 0;
