@@ -256,7 +256,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   }
 
   $form['#submit'] = array('bibdk_custom_search_submit');
-// dpm(user_permission_get_modules());
+
   return $form;
 }
 
@@ -411,12 +411,12 @@ function bibdk_custom_search_submit($form, &$form_state) {
   }
   $q = join(' AND ', $q);
 
-  $s = $form_state['values']['sort'];
+  $s = ( isset($form_state['values']['sort']) ) ? $form_state['values']['sort'] : '';
   if ( $s != "" ) {
     $controls['sort'] = $s;
   }
 
-  $s = $form_state['values']['size'];
+  $s = ( isset($form_state['values']['size']) ) ? $form_state['values']['size'] : '';
   if ( $s != "" ) {
     $controls['size'] = $s;
   }

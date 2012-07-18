@@ -202,6 +202,11 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
     ->execute()
     ->fetchAssoc();
 
+  if ( !$element ) {
+    drupal_set_message(t("The search element does not exist."),'warning');
+    return FALSE;
+  }
+
   // bibdk_custom_search_values
   $list_values[0] = 'Select values';
   $query = db_select('bibdk_custom_search_values', 'v');

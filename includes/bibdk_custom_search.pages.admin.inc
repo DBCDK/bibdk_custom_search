@@ -158,6 +158,11 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
     ->execute()
     ->fetchAssoc();
 
+  if ( !$page ) {
+    drupal_set_message(t("The search page does not exist."),'warning');
+    return FALSE;
+  }
+
   // bibdk_custom_search_elements
   $list_elements[0] = 'Select elements';
   $query = db_select('bibdk_custom_search_elements', 'e');

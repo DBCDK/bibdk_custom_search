@@ -156,6 +156,11 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
     ->execute()
     ->fetchAssoc();
 
+  if ( !$value ) {
+    drupal_set_message(t("The search value does not exist."),'warning');
+    return FALSE;
+  }
+
   $list_values[0] = t('Select submenu values');
 
   $query = db_select('bibdk_custom_search_values', 'v');

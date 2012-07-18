@@ -122,13 +122,6 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#size'           => 36,
   );
 
-  $form['element_value']['value_name'] = array(
-    '#type'           => 'textfield',
-    '#default_value'  => $value['value_name'],
-    '#title'          => t('Name'),
-    '#size'           => 18,
-  );
-
   $form['element_value']['type'] = array(
     '#type'           => 'select',
     '#options'        => array(

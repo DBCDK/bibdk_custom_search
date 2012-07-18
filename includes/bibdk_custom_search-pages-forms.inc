@@ -130,11 +130,12 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#size'           => 28,
   );
 
+  $frontpage = variable_get('site_frontpage', 'node');
   $form['bibdk_custom_search']['page']['page_path'] = array(
     '#type'           => 'textfield',
     '#default_value'  => $page['page_path'],
     '#title'          => t('Page path'),
-    '#description'    => t('path to site homepage [+ "/" + path to search form]'),
+    '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form]', array('%frontpage'=>$frontpage)),
     '#size'           => 20,
   );
 
