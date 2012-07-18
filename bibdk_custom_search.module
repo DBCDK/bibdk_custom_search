@@ -6,10 +6,7 @@
  */
 
 /*
- *  TO DO: wildcard matching on search page path
- *  TO DO: CSS
- *  DONE:  value submenus
- *  TO DO: element input combinations
+ *  TO DO (optionally): wildcard matching on search page path?
  */
 
 /**
@@ -166,7 +163,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   $advanced_fields = _bibdk_custom_search_get_fields();
 
-/*
+/* let's see if this part stay i ting_search
   // Parse extended search query parameters.
   if (arg(0) == 'search') {
     $parts = explode('/', $_GET['q']);
@@ -185,9 +182,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
     $form['search_block_form']['#default_value'] = $search_query;
   }
-*/
 
-/*
   $form['sort'] = array(
     '#type' => 'hidden',
     '#default_value' => isset($_GET['sort']) ? check_plain($_GET['sort']) : FALSE,
@@ -202,23 +197,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 */
 
   if ( $advanced_fields ) {
-
-/*
-    $form['main'] = array(
-      '#type' => 'fieldset',
-      '#title' => $advanced_fields['#main_search_name'],
-      '#title_display'  => 'invisible',
-      '#collapsible' => FALSE,
-      '#collapsed' => FALSE,
-      '#weight' => 101,
-      '#attached' => array(),
-    );
-
-    $form['main']['search_block_form'] = $form['search_block_form'];
-    $form['main']['actions'] = $form['actions'];
-    unset($form['search_block_form']);
-    unset($form['actions']);
-*/
 
     $form['expand'] = array(
       '#type' => 'fieldset',
@@ -671,23 +649,40 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
  *
  */
 function _bibdk_custom_search_get_pages_db() {
-  /* TO DO: caching */
-  $pages = array();
 
-  $query = db_select('bibdk_custom_search', 'p');
-  $query
-    ->fields('p')
-    ->orderBy('sort', 'ASC');
-  $result = $query->execute();
+  $pages = &drupal_static(__FUNCTION__);
 
-  foreach ($result as $page) {
-    $row = array(
-      'title' => check_plain($page->menu_title),
-      'href' => check_plain($page->page_path),
-    );
-    $pages[] = $row;
+  if (!isset($pages)) {
+
+    if ($cache = cache_get('bibdk_custom_search_pages_db')) {
+
+      $pages = $cache->data;
+
+    } else {
+
+      $pages = array();
+
+      $query = db_select('bibdk_custom_search', 'p');
+      $query
+        ->fields('p')
+        ->orderBy('sort', 'ASC');
+      $result = $query->execute();
+
+      foreach ($result as $page) {
+        $row = array(
+          'title' => check_plain($page->menu_title),
+          'href' => check_plain($page->page_path),
+        );
+        $pages[] = $row;
+      }
+
+      cache_set('bibdk_custom_search_pages_db', $pages, 'cache');
+
+    }
   }
+
   return $pages;
+
 }
 
 
@@ -695,27 +690,45 @@ function _bibdk_custom_search_get_pages_db() {
  *
  */
 function _bibdk_custom_search_get_options_db($value_id) {
-  /* TO DO: caching */
-  $options = array();
 
-  $query = db_select('bibdk_custom_search_options', 'o');
-  $query
-    ->fields('o', array('oid','label','value','expand','sort'))
-    ->condition('vid', $value_id,'=')
-    ->orderBy('sort', 'ASC');
-  $result = $query->execute();
+  $options = &drupal_static(__FUNCTION__);
 
-  foreach ($result as $option) {
-    $row = array(
-      'oid' => check_plain($option->oid),
-      'label' => check_plain($option->label),
-      'value' => check_plain($option->value),
-      'expand' => check_plain($option->expand),
-      'sort' => check_plain($option->sort),
-    );
-    $options[] = $row;
+  if (!isset($options)) {
+
+    if ($cache = cache_get('bibdk_custom_search_options_db')) {
+
+      $options = $cache->data;
+
+    } else {
+
+      $options = array();
+
+      $query = db_select('bibdk_custom_search_options', 'o');
+      $query
+        ->fields('o', array('oid','label','value','expand','sort'))
+        ->condition('vid', $value_id,'=')
+        ->orderBy('sort', 'ASC');
+      $result = $query->execute();
+
+      foreach ($result as $option) {
+        $row = array(
+          'oid' => check_plain($option->oid),
+          'label' => check_plain($option->label),
+          'value' => check_plain($option->value),
+          'expand' => check_plain($option->expand),
+          'sort' => check_plain($option->sort),
+        );
+        $options[] = $row;
+      }
+
+      cache_set('bibdk_custom_search_options_db', $options, 'cache');
+
+    }
   }
+
   return $options;
+
+
 }
 
 
