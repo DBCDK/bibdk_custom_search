@@ -124,13 +124,17 @@ function bibdk_custom_search_delete_page($form_id, $form_state, $page_id) {
  */
 function bibdk_custom_search_delete_page_submit($form, &$form_state) {
 
+  $pid = (int)$form_state['values']['page_id'];
+
   $result = db_delete('bibdk_custom_search_map_elements')
-    ->condition('pid', (int)$form_state['values']['page_id'])
+    ->condition('pid', $pid)
     ->execute();
 
   $result = db_delete('bibdk_custom_search')
-    ->condition('pid', (int)$form_state['values']['page_id'])
+    ->condition('pid', $pid)
     ->execute();
+
+  i18n_string_remove("bibdk_custom_search:page:$pid:menu_title");
 
   drupal_set_message(t("'@page' deleted.", array('@page' => $form_state['values']['page_title'])));
 
@@ -151,14 +155,7 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
     drupal_set_message( t("Element removed.") );
   }
 
-  // bibdk_custom_search
-  $page = db_select('bibdk_custom_search', 'p')
-    ->fields('p')
-    ->condition('pid', $page_id,'=')
-    ->execute()
-    ->fetchAssoc();
-
-  if ( !$page ) {
+  if ( !$page = bibdk_custom_search_page_load($page_id) ) {
     drupal_set_message(t("The search page does not exist."),'warning');
     return FALSE;
   }
@@ -204,12 +201,31 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
   return $form;
 }
 
+
+/**
+ * Load a bibdk_custom_search page.
+ *
+ * @param $pid
+ *   The page ID.
+ * @return
+ *   An array with the pages's data.
+ */
+function bibdk_custom_search_page_load($pid) {
+  return db_select('bibdk_custom_search', 'p')
+    ->addTag('translatable')
+    ->fields('p')
+    ->condition('pid', $pid,'=')
+    ->execute()
+    ->fetchAssoc();
+}
+
+
 /**
  *
  */
 function bibdk_custom_search_edit_page_submit($form, &$form_state) {
   $page = $form_state['values']['page'];
-  $page_id = (int)$form_state['values']['page']['pid'];
+  $pid = (int)$form_state['values']['page']['pid'];
 
   $result = db_update('bibdk_custom_search')
     ->fields(array(
@@ -220,35 +236,37 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
       'expand' => check_plain($page['expand']),
       'sort' => check_plain($page['sort']),
     ))
-    ->condition('pid', (int)$page['pid'])
+    ->condition('pid', $pid)
     ->execute();
 
   $page_elements = $form_state['values']['elements'];
   foreach ($page_elements as $key => $page_element) {
     if ( $page_element['mid']=='_new' && !empty($page_element['eid']) ) {
-      _bibdk_custom_search_page_element_insert($page_id,$page_element);
+      _bibdk_custom_search_page_element_insert($pid,$page_element);
     }
     if ( $page_element['mid']!=='_new' ) {
-      _bibdk_custom_search_page_element_update($page_id,$page_element);
+      _bibdk_custom_search_page_element_update($pid,$page_element);
     }
   }
+
+  i18n_string_update(array('bibdk_custom_search', 'page', $pid, 'menu_title'), check_plain($page['menu_title']));
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
   drupal_set_message(t('The page options have been saved.'));
 
-  $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/' . $page_id . '/edit';
+  $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/' . $pid . '/edit';
 }
 
 
 /**
  * Search page element insert.
  */
-function _bibdk_custom_search_page_element_insert($page_id,$page_element) {
+function _bibdk_custom_search_page_element_insert($pid,$page_element) {
   $result = FALSE;
   $result = db_insert('bibdk_custom_search_map_elements')
     ->fields(array(
-      'pid'  => (int)$page_id,
+      'pid'  => (int)$pid,
       'eid'  => (int)$page_element['eid'],
       'region' => check_plain($page_element['region']),
       'sort' => (int)$page_element['sort'],
@@ -260,7 +278,7 @@ function _bibdk_custom_search_page_element_insert($page_id,$page_element) {
 /**
  * Search page element update.
  */
-function _bibdk_custom_search_page_element_update($page_id,$page_element) {
+function _bibdk_custom_search_page_element_update($pid,$page_element) {
   $result = FALSE;
   $result = db_update('bibdk_custom_search_map_elements')
     ->fields(array(

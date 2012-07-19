@@ -25,15 +25,6 @@ function bibdk_custom_search_values_admin() {
 
   $values = array();
 
-  /* example
-    $values = array(
-      '0' => array('value_title' => t('Materialer, musik'), 'vid' => '0', 'sort' => -1),
-      '1' => array('value_title' => t('Inputboks, forfatter'), 'vid' => '1', 'delete' => '1', 'sort' => 1),
-      '2' => array('value_title' => t('&Aring;r, afgr&aelig;nsning'), 'vid' => '2', 'sort' => 2),
-      '3' => array('value_title' => t('&Aring;rstal'), 'vid' => '3', 'sort' => 3),
-    );
-  */
-
   foreach ($result as $record) {
     $row = array(
       'vid' => check_plain($record->vid),
@@ -125,28 +116,14 @@ function _bibdk_custom_search_values_admin_update($value) {
  * Edit search values settings.
  */
 function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $option_id = NULL) {
-  $value = array(
-    'vid'             => '2',
-    'value_title'     => 'Materialetyper, musik',
-    'type'            => 'checkbox',
-    'search_code'     => 'dc.title', // NULL if textfield
-    'default_value'   => '',  // NULL if not textfield
-    'default_text'    => '',  // NULL if not textfield
-    'maximum_length'  => '128',
-    'expand'          => '10',
-    'options' => array(
-      '0' => array('oid' => '1', 'label' => t('Alle typer artikler'), 'value' => 'kat=ana', 'sort' => 1),
-      '1' => array('oid' => '2', 'label' => t('Avisartikler'), 'value' => 'ma=ai', 'sort' => 2),
-      '2' => array('oid' => '3', 'label' => t('Tidsskriftartikel'), 'value' => 'ma=ap', 'sort' => 3),
-      '3' => array('oid' => '4', 'label' => t('Netdokumenter'), 'value' => 'ma=xe og (ma=ai eller ma=ap)', 'sort' => 4),
-    ),
-  );
 
   if ( $option_id ) {
     $result = db_delete('bibdk_custom_search_options')
       ->condition('vid', (int)$value_id)
       ->condition('oid', (int)$option_id)
       ->execute();
+      i18n_string_remove("bibdk_custom_search:option:$option_id:label");
+      i18n_string_remove("bibdk_custom_search:option:$option_id:value");
     drupal_set_message( t("Option deleted.") );
   }
 
@@ -208,6 +185,7 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
       _bibdk_custom_search_values_options_update($value_id,$value_option);
     }
   }
+
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
   drupal_set_message(t('The value options have been saved.'));
@@ -229,14 +207,21 @@ function _bibdk_custom_search_value_options_insert($value_id,$value_option) {
       'sort'    => (int)$value_option['sort'],
     ))
     ->execute();
+
+  if ( $result ) {
+    i18n_string_update(array('bibdk_custom_search', 'option', $result, 'label'), check_plain($value_option['label']));
+    i18n_string_update(array('bibdk_custom_search', 'option', $result, 'value'), check_plain($value_option['value']));
+  }
+
   return $result;
 }
 
 /**
  * Search values list option update.
  */
-function _bibdk_custom_search_values_options_update($value_id,$value_option) {
+function _bibdk_custom_search_values_options_update($vid,$value_option) {
   $result = FALSE;
+  $oid = (int)$value_option['oid'];
   $result = db_update('bibdk_custom_search_options')
     ->fields(array(
       'label' => check_plain($value_option['label']),
@@ -244,9 +229,15 @@ function _bibdk_custom_search_values_options_update($value_id,$value_option) {
       'expand' => check_plain($value_option['expand']),
       'sort' => (int)$value_option['sort'],
     ))
-    ->condition('oid', (int)$value_option['oid'])
-    ->condition('vid', $value_id)
+    ->condition('oid', $oid)
+    ->condition('vid', $vid)
     ->execute();
+
+  if ( $result ) {
+    i18n_string_update(array('bibdk_custom_search', 'option', $oid, 'label'), check_plain($value_option['label']));
+    i18n_string_update(array('bibdk_custom_search', 'option', $oid, 'value'), check_plain($value_option['value']));
+  }
+
   return $result;
 }
 
@@ -323,13 +314,27 @@ function _bibdk_custom_search_element_validate_element_pointers($vid, &$form) {
  * Submit handler for bibdk_custom_search_value_delete();
  */
 function _bibdk_custom_search_value_delete_submit($form, &$form_state) {
+
+  $vid = (int)$form_state['values']['vid'];
+
   $result = db_delete('bibdk_custom_search_options')
-    ->condition('vid', $form_state['values']['vid'])
+    ->condition('vid', $vid)
     ->execute();
+
+  $options = _bibdk_custom_search_get_options_db($vid);
+  foreach ($options as $option) {
+    $oid = $option['oid'];
+    i18n_string_remove("bibdk_custom_search:option:$oid:label");
+    i18n_string_remove("bibdk_custom_search:option:$oid:value");
+  }
+
   $result = db_delete('bibdk_custom_search_values')
     ->condition('vid', $form_state['values']['vid'])
     ->execute();
+
   drupal_set_message(t("'@value' deleted.", array('@value' => $form_state['values']['value_title'])));
+
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/values';
+
 }
 

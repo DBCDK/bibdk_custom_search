@@ -650,11 +650,13 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
  */
 function _bibdk_custom_search_get_pages_db() {
 
+  global $language;
+
   $pages = &drupal_static(__FUNCTION__);
 
   if (!isset($pages)) {
 
-    if ($cache = cache_get('bibdk_custom_search_pages_db')) {
+    if ($cache = cache_get('bibdk_custom_search_pages_db_' . $language->language)) {
 
       $pages = $cache->data;
 
@@ -669,14 +671,15 @@ function _bibdk_custom_search_get_pages_db() {
       $result = $query->execute();
 
       foreach ($result as $page) {
+        $pid = $page->pid;
         $row = array(
-          'title' => check_plain($page->menu_title),
-          'href' => check_plain($page->page_path),
+          'title' => i18n_string("bibdk_custom_search:page:$pid:menu_title", $page->menu_title),
+          'href' => $page->page_path,
         );
         $pages[] = $row;
       }
 
-      cache_set('bibdk_custom_search_pages_db', $pages, 'cache');
+      cache_set('bibdk_custom_search_pages_db_' . $language->language, $pages, 'cache');
 
     }
   }
@@ -712,11 +715,11 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
       foreach ($result as $option) {
         $row = array(
-          'oid' => check_plain($option->oid),
-          'label' => check_plain($option->label),
-          'value' => check_plain($option->value),
-          'expand' => check_plain($option->expand),
-          'sort' => check_plain($option->sort),
+          'oid' => $option->oid,
+          'label' => $option->label,
+          'value' => $option->value,
+          'expand' => $option->expand,
+          'sort' => $option->sort,
         );
         $options[] = $row;
       }

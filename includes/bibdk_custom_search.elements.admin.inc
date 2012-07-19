@@ -25,15 +25,6 @@ function bibdk_custom_search_elements_admin() {
 
   $elements = array();
 
-  /* example
-  $elements = array(
-    '0' => array('element_title' => t('Film materialetyper'), 'eid' => '0', 'sort' => -1),
-    '1' => array('element_title' => t('Forfatter, inputbox'), 'eid' => '1', 'delete' => '1', 'sort' => 1),
-    '2' => array('element_title' => t('Titel, inputbox'), 'eid' => '2', 'sort' => 2),
-    '3' => array('element_title' => t('Emne, inputbox'), 'eid' => '3', 'sort' => 3),
-  );
-  */
-
   foreach ($result as $record) {
     $row = array(
       'eid' => check_plain($record->eid),
@@ -105,16 +96,20 @@ function bibdk_custom_search_element_delete($form_id, $form_state, $element_id) 
     ->condition('eid', $element_id,'=')
     ->execute()
     ->fetchAssoc();
+
   $form['eid'] = array(
     '#type' => 'value',
     '#value' => $element_id,
   );
+
   $form['element_title'] = array(
     '#type' => 'hidden',
     '#value' => $result['element_title'],
   );
+
   $form['#validate'][] = 'bibdk_custom_search_element_delete_validate';
   $form['#submit'][] = 'bibdk_custom_search_element_delete_submit';
+
   return confirm_form($form, t("Are you sure you want to delete '@element'?", array('@element' => $result['element_title'])), 'admin/config/search/bibdk_custom_search/elements');
 }
 
@@ -167,12 +162,20 @@ function _bibdk_custom_search_element_validate_page_pointers($eid, &$form) {
  * Submit handler for bibdk_custom_search_element_delete();
  */
 function bibdk_custom_search_element_delete_submit($form, &$form_state) {
+
+  $eid = (int)$form_state['values']['eid'];
+
   $result = db_delete('bibdk_custom_search_map_values')
-    ->condition('eid', (int)$form_state['values']['eid'])
+    ->condition('eid', $eid)
     ->execute();
+
   $result = db_delete('bibdk_custom_search_elements')
-    ->condition('eid', (int)$form_state['values']['eid'])
+    ->condition('eid', $eid)
     ->execute();
+
+  i18n_string_remove("bibdk_custom_search:element:$eid:element_label");
+  i18n_string_remove("bibdk_custom_search:element:$eid:description");
+  i18n_string_remove("bibdk_custom_search:element:$eid:help_text");
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
@@ -240,30 +243,6 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
   }
   $element['values'] = $element_values;
 
-/*
-  $element = array(
-    'eid'           => '2',
-    'sort'          => '2',
-    'element_title' => 'Film materialetyper',
-    'element_label' => 'Materialetyper',
-    'description'   => 'F.eks.: varm luft',
-    'help_text'     => 'Skriv den eller de dele af navnet, du er sikker på.
-                        Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
-    'access_key'    => 'm',
-    'tab_index'     => '10',
-    'values' => array(
-      '0' => array('value_title' => t('Forfatter, inputbox'), 'mid' => '1', 'vid' => '0', 'sort' => -1),
-      '1' => array('value_title' => t('Titel, inputbox'), 'mid' => '1', 'vid' => '1', 'delete' => '1', 'sort' => 1),
-      '2' => array('value_title' => t('Emne, inputbox'), 'mid' => '1', 'vid' => '2', 'sort' => 2),
-      '3' => array('value_title' => t('Fritekst, inputbox'), 'mid' => '1', 'vid' => '3', 'sort' => 3),
-      '4' => array('value_title' => t('Materialetype - B&oslash;ger, checkboxes'), 'mid' => '1', 'vid' => '4', 'sort' => 4),
-      '5' => array('value_title' => t('Litter&aelig;r form, checkboxes'), 'mid' => '1', 'vid' => '5', 'sort' => 5),
-      '6' => array('value_title' => t('Sprog - kort, checkboxes'), 'mid' => '1', 'vid' => '6', 'sort' => 6),
-      '7' => array('value_title' => t('&Aring;r'), 'mid' => '1', 'vid' => '7', 'sort' => 7),
-    ),
-  );
-*/
-
   $form = _bibdk_custom_search_edit_element_form($element,$list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/elements/' . $element_id . '/edit');
   $form['#submit'][] = 'bibdk_custom_search_element_edit_submit';
@@ -276,7 +255,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
 function bibdk_custom_search_element_edit_submit($form, &$form_state) {
 
   $element = $form_state['values']['bibdk_custom_search_page_element'];
-  $element_id = (int)$form_state['values']['bibdk_custom_search_page_element']['eid'];
+  $eid = (int)$form_state['values']['bibdk_custom_search_page_element']['eid'];
 
   $result = db_update('bibdk_custom_search_elements')
     ->fields(array(
@@ -287,33 +266,37 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
       'tab_index' => check_plain($element['tab_index']),
       'access_key' => check_plain($element['access_key']),
     ))
-    ->condition('eid', (int)$element['eid'])
+    ->condition('eid', $eid)
     ->execute();
 
   $element_values = $form_state['values']['bibdk_custom_search_page_element_values'];
   foreach ($element_values as $key => $element_value) {
     if ( $element_value['mid']=='_new' && !empty($element_value['vid']) ) {
-      _bibdk_custom_search_element_value_insert($element_id,$element_value);
+      _bibdk_custom_search_element_value_insert($eid,$element_value);
     } else {
-      _bibdk_custom_search_element_values_update($element_id,$element_value);
+      _bibdk_custom_search_element_values_update($eid,$element_value);
     }
   }
+
+  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'element_label'), check_plain($element['element_label']));
+  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'description'), check_plain($element['description']));
+  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'help_text'), check_plain($element['help_text']));
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
   drupal_set_message(t('The element options have been saved.'));
 
-  $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/elements/' . $element_id . '/edit';
+  $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/elements/' . $eid . '/edit';
 }
 
 /**
  * Search element value insert.
  */
-function _bibdk_custom_search_element_value_insert($element_id,$element_value) {
+function _bibdk_custom_search_element_value_insert($eid,$element_value) {
   $result = FALSE;
   $result = db_insert('bibdk_custom_search_map_values')
     ->fields(array(
-      'eid'  => $element_id,
+      'eid'  => $eid,
       'vid'  => (int)$element_value['vid'],
       'sort' => (int)$element_value['sort'],
     ))
@@ -324,7 +307,7 @@ function _bibdk_custom_search_element_value_insert($element_id,$element_value) {
 /**
  * Search element value update.
  */
-function _bibdk_custom_search_element_values_update($element_id,$element_value) {
+function _bibdk_custom_search_element_values_update($eid,$element_value) {
   $result = FALSE;
   $result = db_update('bibdk_custom_search_map_values')
     ->fields(array(
