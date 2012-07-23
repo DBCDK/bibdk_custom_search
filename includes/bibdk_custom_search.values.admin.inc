@@ -123,6 +123,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
       ->condition('oid', (int)$option_id)
       ->execute();
       bibdk_custom_search_translate_remove('option', $option_id, 'label');
+    cache_clear_all('bibdk_custom_search', 'cache', TRUE);
     drupal_set_message( t("Option deleted.") );
   }
 
@@ -177,7 +178,7 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
 
   $element_value_options = $form_state['values']['element_value_options'];
   foreach ($element_value_options as $key => $value_option) {
-    if ( ( $value_option['oid']=='_new' && !empty($value_option['value']) ) ||
+    if ( ( $value_option['oid']=='_new' && !empty($value_option['label']) ) ||
          ( $value_option['oid']=='_submenu' && !empty($value_option['expand']) ) ) {
       _bibdk_custom_search_value_options_insert($value_id,$value_option);
     } else {
