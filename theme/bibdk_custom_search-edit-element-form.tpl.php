@@ -5,6 +5,18 @@
  * Default theme implementation to configure search page element.
  */
 
+$form['element_title']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['element_title']['#description'])) . '">?</span>';
+unset($form['element_title']['#description']);
+
+$form['element_label']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['element_label']['#description'])) . '">?</span>';
+unset($form['element_label']['#description']);
+
+$form['description']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['description']['#description'])) . '">?</span>';
+unset($form['description']['#description']);
+
+$form['help_text']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['help_text']['#description'])) . '">?</span>';
+unset($form['help_text']['#description']);
+
 ?>
 <?php print drupal_render($form['id']); ?>
 <?php print drupal_render($form['sort']); ?>

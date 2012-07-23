@@ -5,7 +5,7 @@
  */
 function _bibdk_custom_search_default_admin_form($elements) {
 
-  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/bibdk_custom_search.css');
+  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['bibdk_custom_search'] = array(
     '#type'         => 'fieldset',
@@ -99,7 +99,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
 
   // $page = variable_get('bibdk_custom_search_page', array());
 
-  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/bibdk_custom_search.css');
+  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['bibdk_custom_search']['page'] = array(
     '#type'         => 'fieldset',
@@ -127,6 +127,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['page_title'],
     '#title'          => t('Page title'),
+    '#description'    => t('Administrative title for this search form.'),
     '#size'           => 28,
   );
 
@@ -135,7 +136,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['page_path'],
     '#title'          => t('Page path'),
-    '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form]', array('%frontpage'=>$frontpage)),
+    '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form].', array('%frontpage'=>$frontpage)),
     '#size'           => 20,
   );
 
@@ -143,6 +144,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['menu_title'],
     '#title'          => t('Menu title'),
+    '#description'    => t('Title for this search form as displayed in the search menu.'),
     '#size'           => 28,
   );
 
@@ -150,6 +152,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#type'           => 'textfield',
     '#default_value'  => $page['delimiter'],
     '#title'          => t('Delimiter'),
+    '#description'    => t('Common search expression for all queries in this form, f.ex. dc.type=book.'),
     '#size'           => 12,
   );
 
@@ -158,6 +161,7 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#default_value'  => $page['expand'],
     '#title'          => t('Collapse options'),
     '#title_display' => 'before',
+    '#description'    => t('Toggle collapse on/off for expanded search options.'),
   );
 
   $form['bibdk_custom_search']['elements'] = array(

@@ -95,7 +95,7 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
  */
 function _bibdk_custom_search_edit_element_form($element=array(),$list_values=array()) {
   $form = array();
-  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/bibdk_custom_search.css');
+  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['bibdk_custom_search_page_element'] = array(
     '#type'         => 'fieldset',
@@ -116,6 +116,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#type'           => 'textfield',
     '#default_value'  => $element['element_title'],
     '#title'          => t('Title'),
+    '#description'  => t('Administrative title for this search element.'),
     '#size'           => 36,
   );
 
@@ -123,6 +124,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#type'           => 'textfield',
     '#default_value'  => $element['element_label'],
     '#title'          => t('Element label'),
+    '#description'  => t('Label for this search element as shown in the search form.'),
     '#size'           => 36,
   );
 
@@ -130,6 +132,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#type'           => 'textarea',
     '#default_value'  => $element['description'],
     '#title'          => t('Description'),
+    '#description'  => t('Description for this search element, or a short help text.'),
     '#size'           => 36,
   );
 
@@ -137,6 +140,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#type'           => 'textarea',
     '#default_value'  => $element['help_text'],
     '#title'          => t('Help text'),
+    '#description'  => t('Long help text for this search element.'),
     '#size'           => 36,
   );
 
