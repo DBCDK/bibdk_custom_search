@@ -466,6 +466,8 @@ function bibdk_custom_search_block_view($delta = '') {
  */
 function _bibdk_custom_search_get_fields() {
 
+  global $language;
+
   $path = drupal_get_destination();
 
   // bibdk_custom_search
@@ -479,7 +481,7 @@ function _bibdk_custom_search_get_fields() {
     return false;
   }
 
-  $cache_id = 'bibdk_custom_search_fields_' . str_replace('/','_',$path['destination']);
+  $cache_id = 'bibdk_custom_search_fields_' . str_replace('/','_',$path['destination']) . $language->language;
 
   if ($cache = cache_get($cache_id)) {
 
@@ -516,12 +518,12 @@ function _bibdk_custom_search_get_fields() {
 
       if ( $eid && !isset($elements[$eid]) ) {
         $elements[ $eid ] = array(
-          'element_label' => check_plain($record->element_label),
-          'description'   => check_plain($record->description),
-          'region'        => check_plain($record->region),
-          'help_text'     => check_plain($record->help_text),
-          'access_key'    => check_plain($record->access_key),
-          'tab_index'     => check_plain($record->tab_index),
+          'element_label' => bibdk_custom_search_translate('element', $eid, 'element_label', $record->element_label),
+          'description'   => bibdk_custom_search_translate('element', $eid, 'description', $record->description),
+          'help_text'     => bibdk_custom_search_translate('element', $eid, 'help_text', $record->help_text),
+          'region'        => $record->region,
+          'access_key'    => $record->access_key,
+          'tab_index'     => $record->tab_index,
         );
       }
 
@@ -535,7 +537,7 @@ function _bibdk_custom_search_get_fields() {
       }
 
       if ( $oid ) {
-        $elements[ $eid ]['values'][ $vid ]['options'][ check_plain($record->value) ] = check_plain($record->label);
+        $elements[ $eid ]['values'][ $vid ]['options'][ check_plain($record->value) ] = bibdk_custom_search_translate('option', $oid, 'label', $record->label);
       }
 
       if ( $oid && $record->expand ) {
@@ -673,7 +675,7 @@ function _bibdk_custom_search_get_pages_db() {
       foreach ($result as $page) {
         $pid = $page->pid;
         $row = array(
-          'title' => i18n_string("bibdk_custom_search:page:$pid:menu_title", $page->menu_title),
+          'title' => bibdk_custom_search_translate('page', $pid, 'menu_title', $page->menu_title),
           'href' => $page->page_path,
         );
         $pages[] = $row;
@@ -694,11 +696,13 @@ function _bibdk_custom_search_get_pages_db() {
  */
 function _bibdk_custom_search_get_options_db($value_id) {
 
+  global $language;
+
   $options = &drupal_static(__FUNCTION__);
 
   if (!isset($options)) {
 
-    if ($cache = cache_get('bibdk_custom_search_options_db_' . $value_id)) {
+    if ($cache = cache_get('bibdk_custom_search_options_db_' . $value_id . $language->language)) {
 
       $options = $cache->data;
 
@@ -715,16 +719,16 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
       foreach ($result as $option) {
         $row = array(
-          'oid' => $option->oid,
-          'label' => $option->label,
-          'value' => $option->value,
-          'expand' => $option->expand,
-          'sort' => $option->sort,
+          'oid'     => $option->oid,
+          'label'   => bibdk_custom_search_translate('option', $option->oid, 'label', $option->label),
+          'value'   => $option->value,
+          'expand'  => $option->expand,
+          'sort'    => $option->sort,
         );
         $options[] = $row;
       }
 
-      cache_set('bibdk_custom_search_options_db_' . $value_id, $options, 'cache');
+      cache_set('bibdk_custom_search_options_db_' . $value_id . $language->language, $options, 'cache');
 
     }
   }
@@ -767,4 +771,34 @@ function _bibdk_custom_search_get_field_searchcodes() {
   return $fields;
 
 }
+
+
+/**
+ * Wrapper function for i18n_string_remove()
+ */
+function bibdk_custom_search_translate_remove($type, $id, $key) {
+  return function_exists('i18n_string_remove')
+          ? i18n_string_remove("bibdk_custom_search:$type:$id:$key")
+          : TRUE;
+}
+
+/**
+ * Wrapper function for i18n_string_update()
+ */
+function bibdk_custom_search_translate_update($type, $id , $key, $string) {
+  return function_exists('i18n_string_update')
+          ? i18n_string_update(array('bibdk_custom_search', $type, $id, $key), check_plain($string))
+          : TRUE;
+}
+
+/**
+ * Wrapper function for i18n_string()
+ */
+function bibdk_custom_search_translate($type, $id, $key, $string) {
+  return function_exists('i18n_string')
+          ? i18n_string("bibdk_custom_search:$type:$id:$key", $string)
+          : $string;
+}
+
+
 

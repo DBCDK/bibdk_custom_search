@@ -66,9 +66,11 @@ function bibdk_custom_search_i18n_object_info() {
       'table' => 'bibdk_custom_search_options',
       'properties' => array(
         'label' => t('Option label'),
-        'value' => t('Option value'),
+        // 'value' => t('Option value'),
       ),
     )
   );
   return $info;
 }
+
+

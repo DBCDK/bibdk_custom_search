@@ -134,7 +134,7 @@ function bibdk_custom_search_delete_page_submit($form, &$form_state) {
     ->condition('pid', $pid)
     ->execute();
 
-  i18n_string_remove("bibdk_custom_search:page:$pid:menu_title");
+  bibdk_custom_search_translate_remove('page', $pid, 'menu_title');
 
   drupal_set_message(t("'@page' deleted.", array('@page' => $form_state['values']['page_title'])));
 
@@ -249,7 +249,7 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
     }
   }
 
-  i18n_string_update(array('bibdk_custom_search', 'page', $pid, 'menu_title'), check_plain($page['menu_title']));
+  bibdk_custom_search_translate_update('page', $pid , 'menu_title', $page['menu_title']);
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 

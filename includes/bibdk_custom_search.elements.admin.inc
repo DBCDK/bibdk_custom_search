@@ -173,9 +173,9 @@ function bibdk_custom_search_element_delete_submit($form, &$form_state) {
     ->condition('eid', $eid)
     ->execute();
 
-  i18n_string_remove("bibdk_custom_search:element:$eid:element_label");
-  i18n_string_remove("bibdk_custom_search:element:$eid:description");
-  i18n_string_remove("bibdk_custom_search:element:$eid:help_text");
+  bibdk_custom_search_translate_remove('element', $eid, 'element_label');
+  bibdk_custom_search_translate_remove('element', $eid, 'description');
+  bibdk_custom_search_translate_remove('element', $eid, 'help_text');
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
@@ -278,9 +278,9 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
     }
   }
 
-  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'element_label'), check_plain($element['element_label']));
-  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'description'), check_plain($element['description']));
-  i18n_string_update(array('bibdk_custom_search', 'element', $eid, 'help_text'), check_plain($element['help_text']));
+  bibdk_custom_search_translate_update('element', $eid , 'element_label', $element['element_label']);
+  bibdk_custom_search_translate_update('element', $eid , 'description', $element['description']);
+  bibdk_custom_search_translate_update('element', $eid , 'help_text', $element['help_text']);
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 

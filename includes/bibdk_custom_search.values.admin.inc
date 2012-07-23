@@ -122,8 +122,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
       ->condition('vid', (int)$value_id)
       ->condition('oid', (int)$option_id)
       ->execute();
-      i18n_string_remove("bibdk_custom_search:option:$option_id:label");
-      i18n_string_remove("bibdk_custom_search:option:$option_id:value");
+      bibdk_custom_search_translate_remove('option', $option_id, 'label');
     drupal_set_message( t("Option deleted.") );
   }
 
@@ -209,8 +208,7 @@ function _bibdk_custom_search_value_options_insert($value_id,$value_option) {
     ->execute();
 
   if ( $result ) {
-    i18n_string_update(array('bibdk_custom_search', 'option', $result, 'label'), check_plain($value_option['label']));
-    i18n_string_update(array('bibdk_custom_search', 'option', $result, 'value'), check_plain($value_option['value']));
+    bibdk_custom_search_translate_update('option', $result , 'label', $value_option['label']);
   }
 
   return $result;
@@ -234,8 +232,7 @@ function _bibdk_custom_search_values_options_update($vid,$value_option) {
     ->execute();
 
   if ( $result ) {
-    i18n_string_update(array('bibdk_custom_search', 'option', $oid, 'label'), check_plain($value_option['label']));
-    i18n_string_update(array('bibdk_custom_search', 'option', $oid, 'value'), check_plain($value_option['value']));
+    bibdk_custom_search_translate_update('option', $oid , 'label', $value_option['label']);
   }
 
   return $result;
@@ -265,12 +262,14 @@ function bibdk_custom_search_value_delete($form_id, $form_state, $value_id) {
   return confirm_form($form, t("Are you sure you want to delete '@value'?", array('@value' => $result['value_title'])), 'admin/config/search/bibdk_custom_search/values');
 }
 
+
 /**
  * Validation handler for bibdk_custom_search_value_delete();
  */
 function _bibdk_custom_search_value_delete_validate($form, &$form_state) {
   _bibdk_custom_search_element_validate_element_pointers($form_state['values']['vid'], $form);
 }
+
 
 /**
  * Validate element pointers to an value ID.
@@ -310,6 +309,7 @@ function _bibdk_custom_search_element_validate_element_pointers($vid, &$form) {
   }
 }
 
+
 /**
  * Submit handler for bibdk_custom_search_value_delete();
  */
@@ -324,8 +324,7 @@ function _bibdk_custom_search_value_delete_submit($form, &$form_state) {
   $options = _bibdk_custom_search_get_options_db($vid);
   foreach ($options as $option) {
     $oid = $option['oid'];
-    i18n_string_remove("bibdk_custom_search:option:$oid:label");
-    i18n_string_remove("bibdk_custom_search:option:$oid:value");
+    bibdk_custom_search_translate_remove('option', $oid, 'label');
   }
 
   $result = db_delete('bibdk_custom_search_values')
