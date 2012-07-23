@@ -198,13 +198,18 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   if ( $advanced_fields ) {
 
-    $form['expand'] = array(
-      '#type' => 'fieldset',
-      '#title' => t('Advanced search'),
-      '#collapsible' => TRUE,
-      '#collapsed' => ( $advanced_fields['#collapsed'] ) ? $advanced_fields['#collapsed'] : FALSE,
-      '#weight' => 102,
-    );
+    foreach ($advanced_fields as $name => $field) {
+      if ( is_array($field) && isset($field['#region']) && $field['#region'] != 'main' ) {
+        $form[ $field['#region'] ] = array(
+          '#type' => 'fieldset',
+          '#title' => t('Advanced search'),
+          '#collapsible' => TRUE,
+          '#collapsed' => ( $advanced_fields['#collapsed'] ) ? $advanced_fields['#collapsed'] : FALSE,
+          '#weight' => 102,
+        );
+        break;
+      }
+    }
 
     $form['#attached'] = array(
       'css' => array(
