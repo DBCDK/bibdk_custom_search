@@ -510,8 +510,10 @@ function _bibdk_custom_search_get_fields() {
     $query -> fields('o', array('oid','sort','label','value','expand'));
     $query -> condition('s.pid', $page['pid'],'=');
     $query -> orderBy('me.sort', 'ASC');
+    $query -> orderBy('e.element_label', 'ASC');
     $query -> orderBy('region', 'ASC');
     $query -> orderBy('mv.sort', 'ASC');
+    $query -> orderBy('v.value_title', 'ASC');
     $query -> orderBy('o.sort', 'ASC');
     $result = $query -> execute();
 

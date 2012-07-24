@@ -36,12 +36,13 @@ tr.region-title-expand, tr.region-title-add {
   padding: 0;
 }
 
-#bibdk-custom-search-value-edit label .helptext,
-#bibdk-custom-search-element-edit label .helptext,
-#bibdk-custom-search-page-edit label .helptext {
+#bibdk-custom-search-value-edit .helptext,
+#bibdk-custom-search-element-edit .helptext,
+#bibdk-custom-search-page-edit .helptext {
   border: 1px solid #aaa;
   background-color: #ddd;
   display: inline;
   margin: 0 0.5em;
   padding: 0 0.25em;
+  font-weight: bold;
 }

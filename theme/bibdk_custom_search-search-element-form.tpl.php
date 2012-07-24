@@ -4,7 +4,7 @@
  * @file
  * Theme implementation for bib.dk custom search elements.
  */
-// dpm($form);
+
 ?>
 
 <?php if ( $form['#help_text'] ) { print '<p class="helptext" title="' . $form['#help_text'] . '">?</p>'; } ?>
