@@ -98,7 +98,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
 function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   $form = array();
 
-  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/bibdk_custom_search.css');
+  drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['element_value'] = array(
     '#type'         => 'fieldset',
@@ -119,6 +119,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#type'           => 'textfield',
     '#default_value'  => $value['value_title'],
     '#title'          => t('Title'),
+    '#description'    => t('Administrative title for this search value'),
     '#size'           => 36,
   );
 
@@ -141,6 +142,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#type'           => 'textfield',
     '#default_value'  => $value['search_code'],
     '#title'          => t('Search code'),
+    '#description'    => t('Search code for this search query.') . "\n" . t('F.ex. dc.type.') . "\n" . t('Leave blank, if a value submenu.'),
     '#size'           => 36,
   );
 
@@ -148,6 +150,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#type'           => 'textfield',
     '#default_value'  => $value['default_value'],
     '#title'          => t('Default value'),
+    '#description'    => t('If a select, radio or checkbox group, the value is selected by default.'),
     '#size'           => 36,
   );
 

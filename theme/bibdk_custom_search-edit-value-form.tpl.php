@@ -7,6 +7,15 @@
 
 drupal_add_js(drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_value.js');
 
+$form['value_title']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['value_title']['#description'])) . '">?</span>';
+unset($form['value_title']['#description']);
+
+$form['search_code']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['search_code']['#description'])) . '">?</span>';
+unset($form['search_code']['#description']);
+
+$form['default_value']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['default_value']['#description'])) . '">?</span>';
+unset($form['default_value']['#description']);
+
 ?>
 <?php print drupal_render($form['vid']); ?>
 <?php print drupal_render($form['sort']); ?>

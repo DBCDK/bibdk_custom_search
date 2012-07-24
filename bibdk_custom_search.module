@@ -353,7 +353,9 @@ function bibdk_custom_search_submit($form, &$form_state) {
             $fields[] = '(' . implode(' OR ', $checkbox_fields) . ')';
           }
         }
-      } else {
+      } /* this bit of code is for compatibility with the old bibliotek.dk database material type selectors */
+        /* it may not be needed for version 2 of the data well, but let's leave it in for now. */
+        /* else {
         // search code and value are defined as [searchcode=value] in the form value.
         if ( !is_array($value) ) {
           if ( strpos($value, '=') ) {
@@ -373,7 +375,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
             $fields[] = '(' . implode(' OR ', $checkbox_fields) . ')';
           }
         }
-      }
+      } */
     }
   }
 
