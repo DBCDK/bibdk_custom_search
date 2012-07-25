@@ -514,9 +514,9 @@ function _bibdk_custom_search_get_fields() {
 
     foreach ($result as $record) {
 
-      $eid = check_plain($record->eid);
-      $vid = check_plain($record->vid);
-      $oid = check_plain($record->oid);
+      $eid = $record->eid;
+      $vid = $record->vid;
+      $oid = $record->oid;
 
       if ( $eid && !isset($elements[$eid]) ) {
         $elements[ $eid ] = array(
@@ -531,15 +531,15 @@ function _bibdk_custom_search_get_fields() {
 
       if ( $vid && !isset($elements[$eid]['values'][$vid]) ) {
         $elements[ $eid ]['values'][ $vid ] = array(
-          'value_title'   => check_plain($record->value_title),
-          'type'          => check_plain($record->type),
-          'search_code'   => check_plain($record->search_code),
-          'default_value' => check_plain($record->default_value),
+          'value_title'   => $record->value_title,
+          'type'          => $record->type,
+          'search_code'   => $record->search_code,
+          'default_value' => $record->default_value,
         );
       }
 
       if ( $oid ) {
-        $elements[ $eid ]['values'][ $vid ]['options'][ check_plain($record->value) ] = bibdk_custom_search_translate('option', $oid, 'label', $record->label);
+        $elements[ $eid ]['values'][ $vid ]['options'][ $record->value ] = bibdk_custom_search_translate('option', $oid, 'label', $record->label);
       }
 
       if ( $oid && $record->expand ) {
@@ -633,10 +633,10 @@ function _bibdk_custom_search_get_fields() {
  */
 function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subgroup) {
 
-  $subgroup[$vid]['parentElem'] = check_plain($value);
+  $subgroup[$vid]['parentElem'] = $value;
   $subgroup[$vid]['parentElemId'] = $vid;
 
-  $expand = _bibdk_custom_search_get_options_db( check_plain($vid) );
+  $expand = _bibdk_custom_search_get_options_db($vid);
 
   if ( $expand ) {
     foreach ($expand as $option) {
@@ -759,7 +759,7 @@ function _bibdk_custom_search_get_field_searchcodes() {
 
       $fields = array();
       foreach ($result as $record) {
-        $fields[ 'term' . check_plain($record->vid) ] = check_plain($record->search_code);
+        $fields[ 'term' . $record->vid ] = $record->search_code;
       }
 
       cache_set('bibdk_custom_search_field_searchcodes', $fields, 'cache');

@@ -196,9 +196,19 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
 
   $form = _bibdk_custom_search_edit_page_form($page,$list_elements);
 
+  $form['#validate'][] = 'bibdk_custom_search_edit_page_validate';
+
   $form['#submit'][] = 'bibdk_custom_search_edit_page_submit';
 
   return $form;
+}
+
+
+/**
+ * Validation handler for bibdk_custom_search_page_edit();
+ */
+function bibdk_custom_search_edit_page_validate($form, &$form_state) {
+  return true;
 }
 
 

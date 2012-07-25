@@ -245,9 +245,19 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
 
   $form = _bibdk_custom_search_edit_element_form($element,$list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/elements/' . $element_id . '/edit');
+  $form['#validate'][] = 'bibdk_custom_search_element_edit_validate';
   $form['#submit'][] = 'bibdk_custom_search_element_edit_submit';
   return $form;
 }
+
+
+/**
+ * Validation handler for bibdk_custom_search_element_edit();
+ */
+function bibdk_custom_search_element_edit_validate($form, &$form_state) {
+  return true;
+}
+
 
 /**
  *
@@ -288,6 +298,7 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
 
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/elements/' . $eid . '/edit';
 }
+
 
 /**
  * Search element value insert.
