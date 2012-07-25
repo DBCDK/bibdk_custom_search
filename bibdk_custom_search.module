@@ -10,13 +10,6 @@
  */
 
 /**
- * Includes
- */
-// module_load_include('inc', 'bibdk_custom_search', 'includes/forms');
-
-
-
-/**
  * Implements hook_menu().
  */
 function bibdk_custom_search_menu() {
@@ -557,8 +550,6 @@ function _bibdk_custom_search_get_fields() {
         _bibdk_custom_search_get_options( $oid, $record->value, $record->expand, $options, $subgroup );
         $elements[ $eid ]['values'][ $vid ]['options'] = array_merge( $elements[ $eid ]['values'][ $vid ]['options'], $options);
         $elements[ $eid ]['values'][ $vid ]['attached'] = array_merge( $elements[ $eid ]['values'][ $vid ]['attached'], $subgroup);
-// print '<pre>' . print_r($subgroup,1) . '</pre>';
-// print '<pre>' . print_r($options,1) . '</pre>';
       }
     }
 
@@ -647,9 +638,6 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
 
   $expand = _bibdk_custom_search_get_options_db( check_plain($vid) );
 
-// print '<pre>' . print_r($expand,1) . '</pre>';
-// die('hej');
-
   if ( $expand ) {
     foreach ($expand as $option) {
       if ( $option['expand'] ) {
@@ -660,8 +648,6 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
     }
   }
 
-// print '<pre>' . print_r($subgroup,1) . '</pre>';
-// print '<pre>' . print_r($options,1) . '</pre>';
 }
 
 
