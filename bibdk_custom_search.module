@@ -554,9 +554,11 @@ function _bibdk_custom_search_get_fields() {
         $subgroup = array();
         if ( !isset($elements[ $eid ]['values'][ $vid ]['options']) ) $elements[ $eid ]['values'][ $vid ]['options'] = array();
         if ( !isset($elements[ $eid ]['values'][ $vid ]['attached']) ) $elements[ $eid ]['values'][ $vid ]['attached'] = array();
-        _bibdk_custom_search_get_options( $oid, check_plain($record->value), check_plain($record->expand), $options, $subgroup );
+        _bibdk_custom_search_get_options( $oid, $record->value, $record->expand, $options, $subgroup );
         $elements[ $eid ]['values'][ $vid ]['options'] = array_merge( $elements[ $eid ]['values'][ $vid ]['options'], $options);
         $elements[ $eid ]['values'][ $vid ]['attached'] = array_merge( $elements[ $eid ]['values'][ $vid ]['attached'], $subgroup);
+// print '<pre>' . print_r($subgroup,1) . '</pre>';
+// print '<pre>' . print_r($options,1) . '</pre>';
       }
     }
 
@@ -645,14 +647,21 @@ function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subg
 
   $expand = _bibdk_custom_search_get_options_db( check_plain($vid) );
 
-  foreach ($expand as $option) {
-    if ( $option['expand'] ) {
-      _bibdk_custom_search_get_options( $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
+// print '<pre>' . print_r($expand,1) . '</pre>';
+// die('hej');
+
+  if ( $expand ) {
+    foreach ($expand as $option) {
+      if ( $option['expand'] ) {
+        _bibdk_custom_search_get_options( $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
+      }
+      $options[ $option['value'] ] = $option['label'];
+      $subgroup[$vid]['childElem'][ $option['oid'] ] = $option['value'];
     }
-    $options[ $option['value'] ] = $option['label'];
-    $subgroup[$vid]['childElem'][ $option['oid'] ] = $option['value'];
   }
 
+// print '<pre>' . print_r($subgroup,1) . '</pre>';
+// print '<pre>' . print_r($options,1) . '</pre>';
 }
 
 
@@ -707,43 +716,38 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
   global $language;
 
-  $options = &drupal_static(__FUNCTION__);
+  // note: drupal_static(__FUNCTION__) crashes Drupal if used here.
+  if ($cache = cache_get('bibdk_custom_search_options_db_' . $value_id . $language->language)) {
 
-  if (!isset($options)) {
+    $options = $cache->data;
 
-    if ($cache = cache_get('bibdk_custom_search_options_db_' . $value_id . $language->language)) {
+  } else {
 
-      $options = $cache->data;
+    $options = array();
 
-    } else {
+    $query = db_select('bibdk_custom_search_options', 'o');
+    $query
+      ->fields('o', array('oid','label','value','expand','sort'))
+      ->condition('vid', $value_id,'=')
+      ->orderBy('sort', 'ASC');
+    $result = $query->execute();
 
-      $options = array();
-
-      $query = db_select('bibdk_custom_search_options', 'o');
-      $query
-        ->fields('o', array('oid','label','value','expand','sort'))
-        ->condition('vid', $value_id,'=')
-        ->orderBy('sort', 'ASC');
-      $result = $query->execute();
-
-      foreach ($result as $option) {
-        $row = array(
-          'oid'     => $option->oid,
-          'label'   => bibdk_custom_search_translate('option', $option->oid, 'label', $option->label),
-          'value'   => $option->value,
-          'expand'  => $option->expand,
-          'sort'    => $option->sort,
-        );
-        $options[] = $row;
-      }
-
-      cache_set('bibdk_custom_search_options_db_' . $value_id . $language->language, $options, 'cache');
-
+    foreach ($result as $option) {
+      $row = array(
+        'oid'     => $option->oid,
+        'label'   => bibdk_custom_search_translate('option', $option->oid, 'label', $option->label),
+        'value'   => $option->value,
+        'expand'  => $option->expand,
+        'sort'    => $option->sort,
+      );
+      $options[] = $row;
     }
+
+    cache_set('bibdk_custom_search_options_db_' . $value_id . $language->language, $options, 'cache');
+
   }
 
   return $options;
-
 
 }
 
