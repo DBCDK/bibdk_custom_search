@@ -206,7 +206,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
     $form['#attached'] = array(
       'css' => array(
-        drupal_get_path('module', 'bibdk_custom_search') . '/bibdk_custom_search.css',
+        drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css',
       ),
       'js' => array(
         drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js',
