@@ -599,7 +599,6 @@ function _bibdk_custom_search_get_fields() {
             break;
         }
         if ( isset($value['attached']) ) {
-dpm(array($eid => $value['attached']));
           $form['bibdk_custom_search_element_' . $eid]['#attached']['js'][] = array(
             'data' => array('expanded' => array($eid => $value['attached'])),
             'type' => 'setting',
