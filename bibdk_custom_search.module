@@ -554,8 +554,8 @@ function _bibdk_custom_search_get_fields() {
     }
 
     $form = array();
-    foreach ($elements as $key => $element) {
-      $form['bibdk_custom_search_element_' . $key] = array(
+    foreach ($elements as $eid => $element) {
+      $form['bibdk_custom_search_element_' . $eid] = array(
         '#type'         => 'fieldset',
         '#collapsible'  => FALSE,
         '#collapsed'    => FALSE,
@@ -567,10 +567,10 @@ function _bibdk_custom_search_get_fields() {
         '#help_text'    => $element['help_text'],
       );
       if ( sizeof($element['values']) > 1 ) {
-        $form['#bibdk_pre_search_process'][$key] = array_keys($element['values']);
+        $form['#bibdk_pre_search_process'][$eid] = array_keys($element['values']);
       }
       foreach ($element['values'] as $vid => $value) {
-        $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ] = array(
+        $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ] = array(
           '#type'           => $value['type'],
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
@@ -581,26 +581,26 @@ function _bibdk_custom_search_get_fields() {
           CASE 'hidden':
           CASE 'textfield':
           CASE 'textarea':
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#size'] = 30;
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#maxlength'] = 64;
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#size'] = 30;
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#maxlength'] = 64;
             break;
           CASE 'select':
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
             break;
           CASE 'radios':
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
             break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
-            $form['bibdk_custom_search_element_' . $key][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
             break;
           DEFAULT:
             break;
         }
         if ( isset($value['attached']) ) {
-          $form['bibdk_custom_search_element_' . $key]['#attached']['js'][] = array(
-            'data' => array('expanded' => array($vid => $value['attached'])),
+          $form['bibdk_custom_search_element_' . $eid]['#attached']['js'][] = array(
+            'data' => array('expanded' => array($eid => $value['attached'])),
             'type' => 'setting',
           );
         }
