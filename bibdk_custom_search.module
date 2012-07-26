@@ -547,9 +547,9 @@ function _bibdk_custom_search_get_fields() {
         $subgroup = array();
         if ( !isset($elements[ $eid ]['values'][ $vid ]['options']) ) $elements[ $eid ]['values'][ $vid ]['options'] = array();
         if ( !isset($elements[ $eid ]['values'][ $vid ]['attached']) ) $elements[ $eid ]['values'][ $vid ]['attached'] = array();
-        _bibdk_custom_search_get_options( $oid, $record->value, $record->expand, $options, $subgroup );
-        $elements[ $eid ]['values'][ $vid ]['options'] = array_merge( $elements[ $eid ]['values'][ $vid ]['options'], $options);
-        $elements[ $eid ]['values'][ $vid ]['attached'] = array_merge( $elements[ $eid ]['values'][ $vid ]['attached'], $subgroup);
+        _bibdk_custom_search_get_options( $eid, $oid, $record->value, $record->expand, $options, $subgroup );
+        $elements[ $eid ]['values'][ $vid ]['options']  = $elements[ $eid ]['values'][ $vid ]['options'] + $options;
+        $elements[ $eid ]['values'][ $vid ]['attached'] = $elements[ $eid ]['values'][ $vid ]['attached'] + $subgroup;
       }
     }
 
@@ -599,6 +599,7 @@ function _bibdk_custom_search_get_fields() {
             break;
         }
         if ( isset($value['attached']) ) {
+dpm(array($eid => $value['attached']));
           $form['bibdk_custom_search_element_' . $eid]['#attached']['js'][] = array(
             'data' => array('expanded' => array($eid => $value['attached'])),
             'type' => 'setting',
@@ -631,17 +632,18 @@ function _bibdk_custom_search_get_fields() {
 /**
  *
  */
-function _bibdk_custom_search_get_options( $oid, $value, $vid, &$options, &$subgroup) {
+function _bibdk_custom_search_get_options( $eid, $oid, $value, $vid, &$options, &$subgroup) {
 
-  $subgroup[$vid]['parentElem'] = $value;
-  $subgroup[$vid]['parentElemId'] = $vid;
+  $subgroup[$vid]['parentValue'] = $value;
+  $subgroup[$vid]['parentValueId'] = $vid;
+  $subgroup[$vid]['elementId'] = $eid;
 
   $expand = _bibdk_custom_search_get_options_db($vid);
 
   if ( $expand ) {
     foreach ($expand as $option) {
       if ( $option['expand'] ) {
-        _bibdk_custom_search_get_options( $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
+        _bibdk_custom_search_get_options( $eid, $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
       }
       $options[ $option['value'] ] = $option['label'];
       $subgroup[$vid]['childElem'][ $option['oid'] ] = $option['value'];
