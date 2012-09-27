@@ -293,7 +293,7 @@ function bibdk_custom_search_theme() {
       'path'            => $path,
       'template'        => 'bibdk_custom_search-search-element-form',
     ),
-    'bibdk_custom_search-menu' => array(
+    'bibdk_custom_search_menu' => array(
       'path'            => $path,
       'variables'       => array('pages'=>array()),
       'template'        => 'bibdk-custom-search-menu',
@@ -454,7 +454,7 @@ function bibdk_custom_search_block_view($delta = '') {
   switch ($delta) {
     case 'bibdk-search-menu':
       $block['subject'] = t('Bibliotek.dk search menu');
-      $block['content'] = theme('bibdk_custom_search-menu', array('pages'=>_bibdk_custom_search_get_pages_db()));
+      $block['content'] = theme('bibdk_custom_search_menu', array('pages'=>_bibdk_custom_search_get_pages_db()));
       break;
   }
   return $block;
