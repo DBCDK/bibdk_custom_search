@@ -155,6 +155,7 @@ function bibdk_custom_search_permission() {
 function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
 
   $advanced_fields = _bibdk_custom_search_get_fields();
+  $pages = _bibdk_custom_search_get_pages_db();
 
 /* let's see if this part stay i ting_search
   // Parse extended search query parameters.
@@ -189,11 +190,19 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   );
 */
 
+  if ($pages)
+    $form['pages'] = array(
+      '#type' => 'markup',
+      '#markup' => theme('bibdk_custom_search_menu', array('pages'=> $pages))
+    );
   if ( $advanced_fields ) {
-
+    $form['advanced'] = array(
+      '#type' => 'form', 
+      '#theme' => 'bibdk_custom_advanced_search_menu'
+    );
     foreach ($advanced_fields as $name => $field) {
       if ( is_array($field) && isset($field['#region']) && $field['#region'] != 'main' ) {
-        $form[ $field['#region'] ] = array(
+        $form['advanced'][ $field['#region'] ] = array(
           '#type' => 'fieldset',
           '#title' => t('Advanced search'),
           '#collapsible' => TRUE,
@@ -222,9 +231,9 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     foreach ($advanced_fields as $name => $field) {
       if ( is_array($field) ) {
         if ( $field['#region'] == 'main' ) {
-          $form[$name] = $field;
+          $form['advanced'][$name] = $field;
         } else {
-          $form[ $field['#region'] ][$name] = $field;
+          $form['advanced'][ $field['#region'] ][$name] = $field;
         }
       }
     }
@@ -232,7 +241,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   }
 
   $form['#submit'] = array('bibdk_custom_search_submit');
-
   return $form;
 }
 
@@ -297,6 +305,11 @@ function bibdk_custom_search_theme() {
       'path'            => $path,
       'variables'       => array('pages'=>array()),
       'template'        => 'bibdk-custom-search-menu',
+    ),
+    'bibdk_custom_advanced_search_menu' => array(
+      'render element'  => 'form',
+      'path'            => $path,
+      'template'        => 'bibdk-custom-advanced-search-menu',
     ),
   );
 
