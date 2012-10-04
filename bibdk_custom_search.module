@@ -223,7 +223,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     );
 
     if ( isset($advanced_fields['#bibdk_pre_search_process']) )  {
-      dpm($advanced_fields['#bibdk_pre_search_process']);
       $form['#bibdk_pre_search_process'] = $advanced_fields['#bibdk_pre_search_process'];
       $form['#attached']['js'] = array_merge( $form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js',$advanced_fields['#bibdk_pre_search_process']));
       unset($advanced_fields['#bibdk_pre_search_process']);
