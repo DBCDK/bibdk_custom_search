@@ -19,6 +19,7 @@ function bibdk_custom_search_install() {
  * Implements hook_uninstall().
  */
 function bibdk_custom_search_uninstall() {
+  
 
 }
 
@@ -134,8 +135,10 @@ function bibdk_custom_search_schema() {
 
     ),
     'indexes' => array(
-      'bibdk_custom_search_map_elements_id' => array('mid'),
-      'bibdk_custom_search_map_elements_pid' => array('pid'),
+     // 'bibdk_custom_search_map_elements_id' => array('mid'),
+     // 'bibdk_custom_search_map_elements_pid' => array('pid'),
+     'bcs_map_elements_id' => array('mid'),
+     'bcs_map_elements_pid' => array('pid'),
     ),
     'primary key' => array('mid'),
     'foreign keys' => array(
