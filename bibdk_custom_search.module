@@ -197,7 +197,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     );
   if ( $advanced_fields ) {
     $form['advanced'] = array(
-      '#type' => 'form', 
+      '#type' => 'form',
       '#theme' => 'bibdk_custom_advanced_search_menu'
     );
     foreach ($advanced_fields as $name => $field) {
@@ -227,7 +227,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       $form['#attached']['js'] = array_merge( $form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js',$advanced_fields['#bibdk_pre_search_process']));
       unset($advanced_fields['#bibdk_pre_search_process']);
     }
-
     foreach ($advanced_fields as $name => $field) {
       if ( is_array($field) ) {
         if ( $field['#region'] == 'main' ) {
@@ -338,7 +337,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
 
-  $fields = module_invoke_all('bibdk_custom_search_field_preprocess',$form_state);
+  $fields = module_invoke_all('bibdk_custom_search_field_preprocess',$form,$form_state);
 
   foreach ( $extended_fields as $name => $index ) { // f.ex.: 'term3' => 'dc.title'
     if ( !empty($form_state['values'][$name]) ) {
