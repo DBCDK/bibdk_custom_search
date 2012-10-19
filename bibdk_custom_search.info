@@ -2,6 +2,7 @@
 name = Bibliotek.dk extended search
 description = Customize the default search, add custom search pages, and change input types, labels, values & ordering.
 core = 7.x
+version = 0.1
 package = "Bibliotek.dk"
 
 ; dependencies[] = ting_search
