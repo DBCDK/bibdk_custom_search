@@ -197,7 +197,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     );
   if ( $advanced_fields ) {
     $form['advanced'] = array(
-      '#type' => 'form',
+      '#type' => 'fieldset',
       '#theme' => 'bibdk_custom_advanced_search_menu'
     );
     foreach ($advanced_fields as $name => $field) {
