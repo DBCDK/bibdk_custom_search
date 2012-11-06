@@ -137,8 +137,8 @@ function bibdk_custom_search_schema() {
     'indexes' => array(
      // 'bibdk_custom_search_map_elements_id' => array('mid'),
      // 'bibdk_custom_search_map_elements_pid' => array('pid'),
-     'bcs_map_elements_id' => array('mid'),
-     'bcs_map_elements_pid' => array('pid'),
+     'bcs_me_id' => array('mid'),
+     'bcs_me_pid' => array('pid'),
     ),
     'primary key' => array('mid'),
     'foreign keys' => array(
@@ -251,8 +251,8 @@ function bibdk_custom_search_schema() {
 
     ),
     'indexes' => array(
-      'bibdk_custom_search_map_values_id' => array('mid'),
-      'bibdk_custom_search_map_values_eid' => array('eid'),
+      'bcs_map_values_id' => array('mid'),
+      'bcs_map_values_eid' => array('eid'),
     ),
     'primary key' => array('mid'),
     'foreign keys' => array(
@@ -370,8 +370,8 @@ function bibdk_custom_search_schema() {
       ),
     ),
     'indexes' => array(
-      'bibdk_custom_search_options_id' => array('oid'),
-      'bibdk_custom_search_options_vid' => array('vid'),
+      'bcs_options_id' => array('oid'),
+      'bcs_options_vid' => array('vid'),
     ),
     'primary key' => array('oid'),
     'foreign keys' => array(
