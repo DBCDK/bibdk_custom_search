@@ -160,7 +160,7 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     $this->assertFieldByName(
       'term1'
     );
-
+    $this->assertNoPattern('/<form .*<form .*<\/form/sm', t('No nested forms found.'));
   }
 
 }

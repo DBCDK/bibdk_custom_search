@@ -1,13 +1,8 @@
-
 name = Bibliotek.dk extended search
 description = Customize the default search, add custom search pages, and change input types, labels, values & ordering.
 core = 7.x
-version = 0.1
+version = 7.x-0.2
 package = "Bibliotek.dk"
-
-; dependencies[] = ting_search
-; dependencies[] = i18n_string
-; wrapper functions has been made for i18n functions
 
 files[] = bibdk_custom_search.test
 files[] = bibdk_custom_search.i18n.inc
