@@ -179,7 +179,7 @@ function bibdk_custom_search_element_delete_submit($form, &$form_state) {
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
-  drupal_set_message(t("'@element' deleted.", array('@element' => $form_state['values']['element_title'])));
+  drupal_set_message(t("'@element' deleted.", array('@element' => $form_state['values']['element_title']), array('context' => 'bibdk_custom_search')));
 
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/elements';
 }
@@ -195,7 +195,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
     $result = db_delete('bibdk_custom_search_map_values')
       ->condition('mid', (int)$value_pointer)
       ->execute();
-    drupal_set_message( t("Value removed.") );
+    drupal_set_message(t('Value removed.', array(), array('context' => 'bibdk_custom_search')));
   }
 
   // bibdk_custom_search_elements
@@ -206,7 +206,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
     ->fetchAssoc();
 
   if ( !$element ) {
-    drupal_set_message(t("The search element does not exist."),'warning');
+    drupal_set_message(t('The search element does not exist.', array(), array('context' => 'bibdk_custom_search')),'warning');
     return FALSE;
   }
 
@@ -294,7 +294,7 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
-  drupal_set_message(t('The element options have been saved.'));
+  drupal_set_message(t('The element options have been saved.', array(), array('context' => 'bibdk_custom_search')));
 
   $form_state['redirect'] = 'admin/config/search/bibdk_custom_search/elements/' . $eid . '/edit';
 }
