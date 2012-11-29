@@ -154,7 +154,7 @@ function _bibdk_custom_search_element_validate_page_pointers($eid, &$form) {
         array(
           '%element_title' => $element_title,
           '%page_titles' => $page_titles,
-        )));
+        ), array('context' => 'bibdk_custom_search:error')));
   }
 }
 

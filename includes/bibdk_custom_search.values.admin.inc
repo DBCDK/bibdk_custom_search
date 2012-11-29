@@ -306,7 +306,7 @@ function _bibdk_custom_search_element_validate_element_pointers($vid, &$form) {
         array(
           '%value_title' => $value_title,
           '%element_titles' => $element_titles,
-        )));
+        ), array('context' => 'bibdk_custom_search:error')));
   }
 }
 
