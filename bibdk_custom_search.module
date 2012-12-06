@@ -418,7 +418,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
   // "field is required" because the search keywords field has no title.
   // The error message would also complain about a missing #title field.)
   if ($q == '') {
-    form_set_error('keys', t('Please enter some keywords.'));
+    form_set_error('keys', t('Please enter some keywords.', array(), array('context' => 'bibdk_borchk:error')));
   }
   $search_info = array();
   $request_path = arg();
@@ -440,7 +440,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
     drupal_goto($url, array('query' => $controls));
   }
   else {
-    form_set_error(NULL, t('Search is currently disabled.'), 'error');
+    form_set_error(NULL, t('Search is currently disabled.', array(), array('context' => 'bibdk_borchk:error')), 'error');
   }
 }
 
