@@ -4,6 +4,7 @@ core = 7.x
 version = 7.x-0.3
 package = "Bibliotek.dk"
 
+dependencies[] = uuid
 files[] = bibdk_custom_search.test
 files[] = bibdk_custom_search.i18n.inc
 files[] = bibdk_custom_search.export.inc
