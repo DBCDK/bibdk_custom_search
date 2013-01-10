@@ -603,7 +603,6 @@ function bibdk_custom_search_update_7007(&$sandbox) {
   db_drop_field('bibdk_custom_search_map_values', 'eid');
   db_drop_field('bibdk_custom_search_map_values', 'vid');
   db_drop_field('bibdk_custom_search_options', 'vid');
-  die();
 }
 
 
