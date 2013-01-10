@@ -6,5 +6,5 @@ package = "Bibliotek.dk"
 
 files[] = bibdk_custom_search.test
 files[] = bibdk_custom_search.i18n.inc
-
+files[] = bibdk_custom_search.export.inc
 configure = admin/config/search/bibdk_custom_search

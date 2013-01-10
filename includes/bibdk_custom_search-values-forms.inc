@@ -22,11 +22,11 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
       '#title'          => $data['value_title'],
       '#weight'         => $data['sort'],
     );
-    $form['bibdk_custom_search'][$i]['vid'] = array(
+    $form['bibdk_custom_search'][$i]['v_uuid'] = array(
       '#type'           => 'hidden',
       '#title'          => t('Element ID'),
       '#title_display'  => 'invisible',
-      '#default_value'  => $data['vid'],
+      '#default_value'  => $data['v_uuid'],
     );
     $form['bibdk_custom_search'][$i]['value_title'] = array(
       '#type'           => 'hidden',
@@ -38,14 +38,14 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
       '#type'           => 'link',
       '#title'          => t('edit'),
       '#title_display'  => 'invisible',
-      '#href'           => 'admin/config/search/bibdk_custom_search/values/' . $data['vid'] . '/edit',
+      '#href'           => 'admin/config/search/bibdk_custom_search/values/' . $data['v_uuid'] . '/edit',
       '#options'        => array('attributes' => array('title' => t('Edit values.'))),
     );
     $form['bibdk_custom_search'][$i]['delete'] = array(
       '#type'           => 'link',
       '#title'          => t('delete'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/values/' . $data['vid'] . '/delete',
+      '#href'           =>  'admin/config/search/bibdk_custom_search/values/' . $data['v_uuid'] . '/delete',
       '#options'        => array('attributes' => array('title' => t('Delete values.'))),
     );
     $form['bibdk_custom_search'][$i]['sort'] = array(
@@ -63,7 +63,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
       '#title'        => 'Add search values',
       '#weight'       => '100',
   );
-  $form['bibdk_custom_search'][$i]['vid'] = array(
+  $form['bibdk_custom_search'][$i]['v_uuid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Element ID'),
     '#title_display'  => 'invisible',
@@ -97,7 +97,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
  */
 function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   $form = array();
-
+  dpm(func_get_args());
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['element_value'] = array(
@@ -108,9 +108,9 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#theme'        => 'bibdk_custom_search-edit-value-form',
   );
 
-  $form['element_value']['vid'] = array(
+  $form['element_value']['v_uuid'] = array(
     '#type'           => 'hidden',
-    '#default_value'  => $value['vid'],
+    '#default_value'  => $value['v_uuid'],
     '#title'          => t('Value ID'),
     '#title_display'  => 'invisible',
   );
@@ -167,11 +167,11 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     $form['element_value_options'][$i] = array(
       '#weight'         => $option['sort'],
     );
-    $form['element_value_options'][$i]['oid'] = array(
+    $form['element_value_options'][$i]['o_uuid'] = array(
       '#type'           => 'hidden',
       '#title'          => t('Option ID'),
       '#title_display'  => 'invisible',
-      '#default_value'  => $option['oid'],
+      '#default_value'  => $option['o_uuid'],
     );
     $form['element_value_options'][$i]['label'] = array(
       '#type'           => 'textfield',
@@ -214,7 +214,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#type'           => 'link',
       '#title'          => t('delete'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/values/' . $value['vid'] . '/delete_option/' . $option['oid'],
+      '#href'           =>  'admin/config/search/bibdk_custom_search/values/' . $value['v_uuid'] . '/delete_option/' . $option['o_uuid'],
       '#options'        => array('attributes' => array('title' => t('Delete option.'))),
     );
     $form['element_value_options'][$i]['sort'] = array(
@@ -232,7 +232,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#title'        => 'Add search element value',
       '#weight'       => '100',
   );
-  $form['element_value_options'][$i]['oid'] = array(
+  $form['element_value_options'][$i]['o_uuid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Option ID'),
     '#title_display'  => 'invisible',
@@ -281,7 +281,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#title'        => 'Add search element value',
       '#weight'       => '110',
   );
-  $form['add_options']['element_value_options'][$i]['oid'] = array(
+  $form['add_options']['element_value_options'][$i]['o_uuid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Option ID'),
     '#title_display'  => 'invisible',

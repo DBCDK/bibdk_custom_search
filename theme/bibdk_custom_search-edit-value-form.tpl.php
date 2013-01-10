@@ -17,7 +17,7 @@ $form['default_value']['#title'] .= ' <span class="helptext" title="' . htmlspec
 unset($form['default_value']['#description']);
 
 ?>
-<?php print drupal_render($form['vid']); ?>
+<?php print drupal_render($form['v_uuid']); ?>
 <?php print drupal_render($form['sort']); ?>
 <table id="edit-search-page-value">
   <tbody>

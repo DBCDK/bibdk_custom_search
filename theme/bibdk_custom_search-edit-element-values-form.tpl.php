@@ -23,7 +23,7 @@ drupal_add_tabledrag('values', 'order', 'sibling', 'element-weight');
       $data = $form[$element]; ?>
         <tr class="draggable <?php print $key % 2 == 0 ? 'odd' : 'even'; ?>">
           <td class="element"><?php print $data['#title']; ?></td>
-          <td><?php print drupal_render($data['mid']); print drupal_render($data['vid']); ?></td>
+          <td><?php print drupal_render($data['mid']); print drupal_render($data['v_uuid']); ?></td>
           <td><?php print drupal_render($data['edit']); ?></td>
           <td><?php print drupal_render($data['delete']); ?></td>
           <td><?php print drupal_render($data['sort']); ?></td>

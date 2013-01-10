@@ -59,7 +59,7 @@ function bibdk_custom_search_i18n_object_info() {
   );
   $info['bibdk_custom_search_option'] = array(
     'title' => t('bibdk_custom_search option'),
-    'key' => 'oid',
+    'key' => 'o_uuid',
     'string translation' => array(
       'textgroup' => 'bibdk_custom_search',
       'type' => 'option',
