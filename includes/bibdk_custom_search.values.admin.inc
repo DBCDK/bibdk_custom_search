@@ -170,7 +170,7 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
   $result = db_update('bibdk_custom_search_values')
     ->fields(array(
       'value_title' => check_plain($element_value['value_title']),
-      'type' => check_plain($element_value['value_type']),
+      'value_type' => check_plain($element_value['value_type']),
       'search_code' => check_plain($element_value['search_code']),
       'default_value' => check_plain($element_value['default_value']),
     ))

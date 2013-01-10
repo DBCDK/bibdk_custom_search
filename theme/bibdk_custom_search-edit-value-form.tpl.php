@@ -23,7 +23,7 @@ unset($form['default_value']['#description']);
   <tbody>
     <tr>
       <td><?php print drupal_render($form['value_title']); ?></td>
-      <td><?php print drupal_render($form['type']); ?></td>
+      <td><?php print drupal_render($form['value_type']); ?></td>
       <td><?php print drupal_render($form['search_code']); ?></td>
       <td><?php print drupal_render($form['default_value']); ?></td>
     </tr>
