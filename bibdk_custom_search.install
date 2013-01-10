@@ -393,7 +393,7 @@ function bibdk_custom_search_schema() {
         'default' => 0,
         'description' => t('Sort value'),
       ),
-      'type' => array(
+      'value_type' => array(
         'type' => 'varchar',
         'length' => 255,
         'not null' => TRUE,
@@ -508,29 +508,6 @@ function bibdk_custom_search_schema() {
   return $schema;
 }
 
-/*function bibdk_custom_search_schema_update_7002(&$schema){
-  $schema['bibdk_custom_search']['fields']['uuid'] = array(
-    'type' => 'varchar',
-    'length' => 64,
-    'not null' => TRUE,
-    'default' => '',
-    'description' => t('UUID'),
-  );
-  $schema['bibdk_custom_search']['export'] = array(
-    'key' => 'uuid',
-    'key name' => 'UUID',
-    'primary_key' => 'pid',
-    'identifier' => 'page',
-    'default hook' => 'default_bibdk_custom_search_page',
-    'api' => array(
-      'owner' => 'bibdk_custom_search',
-      'minimum_version' => '1',
-      'current_version' => '1',
-      'api' => 'default_bibdk_custom_search_pages',
-    ),
-  );
-}
-*/
 
 /**
  * Alter help text column to blob
@@ -550,7 +527,7 @@ function bibdk_custom_search_update_7001(&$sandbox) {
 /**
  * Add export functionality
  */
-function bibdk_custom_search_update_7007(&$sandbox) {
+function bibdk_custom_search_update_7006(&$sandbox) {
   // Add UUID fields
   $uuid_field = array(
     'type' => 'varchar',
@@ -605,6 +582,19 @@ function bibdk_custom_search_update_7007(&$sandbox) {
   db_drop_field('bibdk_custom_search_options', 'vid');
 }
 
+/**
+ * rename bibdk_custom_search_values table field type to value_type
+ * This is needed to support ctools export
+ */
+function bibdk_custom_search_update_7007(&$sandbox) {
+ db_change_field('bibdk_custom_search_values', 'type', 'value_type', array(
+   'type' => 'varchar',
+   'length' => 255,
+   'not null' => TRUE,
+   'default' => '',
+   'description' => t('Value type: "textfield", "textarea", "select", "select multiple", "radio", "checkbox", "checkboxes", "hidden"'),
+ ));
+}
 
 /**
  * Add uuid from pages and elements to the map elements table

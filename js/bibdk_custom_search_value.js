@@ -7,7 +7,7 @@
 
   Drupal.behaviors.bibdkSearchPagesToggleType = {
     attach: function(context, settings) {
-      $('#edit-element-value-type').change(function() {
+      $('#edit-element-value-value-type').change(function() {
         Drupal.bibdkSearchPagesToggle();
       });
     }
@@ -18,10 +18,10 @@
     $('#edit-element-value-options + fieldset').hide();
     // $('.form-item-element-value-search-code').hide();
     // $('.form-item-element-value-default-value').hide();
-    if ( !$('#edit-element-value-type').val() ) {
+    if ( !$('#edit-element-value-value-type').val() ) {
       return false;
     }
-    if ( $('#edit-element-value-type').val() == 'textfield' ) {
+    if ( $('#edit-element-value-value-type').val() == 'textfield' ) {
       $('#edit-element-value-options').hide();
       $('#edit-element-value-options + fieldset').hide();
       // $('.form-item-element-value-search-code').show();

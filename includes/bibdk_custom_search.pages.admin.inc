@@ -43,7 +43,6 @@ function bibdk_custom_search_admin() {
  */
 function bibdk_custom_search_admin_submit($form, &$form_state) {
   $pages = $form_state['values']['bibdk_custom_search'];
-  dpm($pages);
   $size = sizeof($pages);
   foreach ($pages as $key => $page) {
     if ( $page['p_uuid'] == '_new' && !empty($page['page_title']) ) {
@@ -76,22 +75,15 @@ function _bibdk_custom_search_page_insert($page) {
  * Search page list update.
  */
 function _bibdk_custom_search_page_update($page) {
-  ctools_include('export');
 
-  $object = ctools_export_load_object('bibdk_custom_search', 'names', array($page['p_uuid']));
-  $object = reset($object);
-  if (isset($object) && is_object($object)){
-    $object->sort = (int)$page['sort'];
-    ctools_export_crud_save('bibdk_custom_search', $object);
-  }
-/*  $result = db_update('bibdk_custom_search')
+  $result = db_update('bibdk_custom_search')
     ->fields(array(
       'sort' => (int)$page['sort'],
     ))
     ->condition('p_uuid', $page['p_uuid'])
     ->execute();
-  return $result;*/
-  drupal_set_message(t('The configuration options have been saved.'));
+  return $result;
+  //drupal_set_message(t('The configuration options have been saved.'));
 }
 
 
@@ -200,7 +192,7 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
     );
     $page_elements[] = $row;
   }
-  $page->elements = $page_elements;
+  $page['elements'] = $page_elements;
 
   $form = _bibdk_custom_search_edit_page_form($page,$list_elements);
 
@@ -290,9 +282,6 @@ function _bibdk_custom_search_page_element_update($p_uuid,$page_element) {
   return $result;
 }
 
-
-/* CRUD METHODS */
-
 /**
  * Load a bibdk_custom_search page.
  *
@@ -302,22 +291,10 @@ function _bibdk_custom_search_page_element_update($p_uuid,$page_element) {
  *   An array with the pages's data.
  */
 function bibdk_custom_search_page_load($p_uuid) {
-  dpm('do not use '.__FUNCTION__);
-  ctools_include('export');
-  $result = ctools_export_load_object('bibdk_custom_search', 'names', array($p_uuid));
-  if (isset($result[$p_uuid])) {
-    return $result[$p_uuid];
-  }
-/*  return db_select('bibdk_custom_search', 'p')
+  return db_select('bibdk_custom_search', 'p')
     ->addTag('translatable')
     ->fields('p')
     ->condition('p_uuid', $p_uuid,'=')
     ->execute()
-    ->fetchAssoc();*/
-}
-
-function bibdk_custom_search_page_load_condition(array $conditions){
-  ctools_include('export');
-  $results = ctools_export_load_object('bibdk_custom_search', 'conditions', $conditions);
-  return array_filter($results);
+    ->fetchAssoc();
 }

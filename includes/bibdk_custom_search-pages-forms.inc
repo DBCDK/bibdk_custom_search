@@ -111,7 +111,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
 
   $form['bibdk_custom_search']['page']['p_uuid'] = array(
     '#type'           => 'hidden',
-    '#default_value'  => $page->p_uuid,
+    '#default_value'  => $page['p_uuid'],
     '#title'          => t('Page ID'),
     '#title_display'  => 'invisible',
   );
@@ -119,13 +119,13 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
   $form['bibdk_custom_search']['page']['sort'] = array(
     '#type'           => 'hidden',
     '#delta'          => 50,
-    '#default_value'  => $page->sort,
+    '#default_value'  => $page['sort'],
     '#title'          => t('Weight'),
   );
 
   $form['bibdk_custom_search']['page']['page_title'] = array(
     '#type'           => 'textfield',
-    '#default_value'  => $page->page_title,
+    '#default_value'  => $page['page_title'],
     '#title'          => t('Page title'),
     '#description'    => t('Administrative title for this search form.'),
     '#size'           => 28,
@@ -134,7 +134,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
   $frontpage = variable_get('site_frontpage', 'node');
   $form['bibdk_custom_search']['page']['page_path'] = array(
     '#type'           => 'textfield',
-    '#default_value'  => $page->page_path,
+    '#default_value'  => $page['page_path'],
     '#title'          => t('Page path'),
     '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form].', array('%frontpage'=>$frontpage)),
     '#size'           => 20,
@@ -142,7 +142,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
 
   $form['bibdk_custom_search']['page']['menu_title'] = array(
     '#type'           => 'textfield',
-    '#default_value'  => $page->menu_title,
+    '#default_value'  => $page['menu_title'],
     '#title'          => t('Menu title'),
     '#description'    => t('Title for this search form as displayed in the search menu.'),
     '#size'           => 28,
@@ -150,7 +150,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
 
   $form['bibdk_custom_search']['page']['delimiter'] = array(
     '#type'           => 'textfield',
-    '#default_value'  => $page->delimiter,
+    '#default_value'  => $page['delimiter'],
     '#title'          => t('Delimiter'),
     '#description'    => t('Common search expression for all queries in this form, f.ex. dc.type=book.'),
     '#size'           => 12,
@@ -158,7 +158,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
 
   $form['bibdk_custom_search']['page']['expand'] = array(
     '#type'           => 'checkbox',
-    '#default_value'  => $page->expand,
+    '#default_value'  => $page['expand'],
     '#title'          => t('Collapse options'),
     '#title_display' => 'before',
     '#description'    => t('Toggle collapse on/off for expanded search options.'),
@@ -173,7 +173,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
   );
 
   $i = 0;
-  foreach ($page->elements as $key => $element) {
+  foreach ($page['elements'] as $key => $element) {
     $form['bibdk_custom_search']['elements'][$i] = array(
       '#title'          => $element['element_title'],
       '#weight'         => $element['sort'],
@@ -219,7 +219,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
       '#type'           => 'link',
       '#title'          => t('remove'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $page->p_uuid . '/remove_element/' . $element['me_uuid'],
+      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $page['p_uuid'] . '/remove_element/' . $element['me_uuid'],
       '#options'        => array('attributes' => array('title' => t('Delete element.'))),
     );
     $form['bibdk_custom_search']['elements'][$i]['sort'] = array(

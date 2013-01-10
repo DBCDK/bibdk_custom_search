@@ -97,7 +97,6 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
  */
 function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
   $form = array();
-  dpm(func_get_args());
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['element_value'] = array(
@@ -123,7 +122,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#size'           => 36,
   );
 
-  $form['element_value']['type'] = array(
+  $form['element_value']['value_type'] = array(
     '#type'           => 'select',
     '#options'        => array(
                           '' => t('Select value type'),
@@ -134,7 +133,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
                           'checkboxes' => t('Checkbox'),
                           'hidden' => t('Hidden'),
     ),
-    '#default_value'  => $value['type'],
+    '#default_value'  => $value['value_type'],
     '#title'          => t('Type'),
   );
 

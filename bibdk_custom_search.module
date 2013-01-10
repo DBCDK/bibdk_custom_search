@@ -497,7 +497,6 @@ function _bibdk_custom_search_get_fields() {
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/','_',$path['destination']) . $language->language;
 
   if ($cache = cache_get($cache_id)) {
-
     $form = $cache->data;
 
   } else {
@@ -512,7 +511,7 @@ function _bibdk_custom_search_get_fields() {
     $query -> fields('me', array('region','sort'));
     $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index'));
     $query -> fields('mv', array('sort'));
-    $query -> fields('v', array('v_uuid','value_title','type','search_code','default_value'));
+    $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
     $query -> fields('o', array('o_uuid','sort','label','value','expand'));
     $query -> condition('s.p_uuid', $page['p_uuid'],'=');
     $query -> orderBy('me.sort', 'ASC');
@@ -526,7 +525,6 @@ function _bibdk_custom_search_get_fields() {
     $elements = array();
 
     foreach ($result as $record) {
-
       $e_uuid = $record->e_uuid;
       $v_uuid = $record->v_uuid;
       $o_uuid = $record->o_uuid;
@@ -545,7 +543,7 @@ function _bibdk_custom_search_get_fields() {
       if ( $v_uuid && !isset($elements[$e_uuid]['values'][$v_uuid]) ) {
         $elements[ $e_uuid ]['values'][ $v_uuid ] = array(
           'value_title'   => $record->value_title,
-          'type'          => $record->type,
+          'value_type'          => $record->value_type,
           'search_code'   => $record->search_code,
           'default_value' => $record->default_value,
         );
@@ -584,13 +582,14 @@ function _bibdk_custom_search_get_fields() {
       }
       foreach ($element['values'] as $v_uuid => $value) {
         $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ] = array(
-          '#type'           => $value['type'],
+          '#type'           => $value['value_type'],
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
           '#default_value'  => $value['default_value'],
           '#attributes'     => array('tabindex' => array($element['tab_index']),'accesskey' => array($element['access_key'])),
         );
-        switch ( $value['type'] ) {
+
+        switch ( $value['value_type'] ) {
           CASE 'hidden':
           CASE 'textfield':
           CASE 'textarea':
@@ -767,7 +766,7 @@ function _bibdk_custom_search_get_field_searchcodes() {
     } else {
 
       $query = db_select('bibdk_custom_search_values', 'v');
-      $query -> fields('v', array('v_uuid','value_title','type','search_code','default_value'));
+      $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
       $result = $query -> execute();
 
       $fields = array();
