@@ -19,7 +19,7 @@ function bibdk_custom_search_install() {
  * Implements hook_uninstall().
  */
 function bibdk_custom_search_uninstall() {
-  
+
 
 }
 
@@ -116,7 +116,6 @@ function bibdk_custom_search_schema() {
     'primary key' => array('pid'),
   );
 
-
   $schema['bibdk_custom_search_map_elements'] = array(
     'description' => t('Maps elements bibdk search pages'),
     'export' => array(
@@ -144,21 +143,18 @@ function bibdk_custom_search_schema() {
       ),
       'p_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Page ID.'),
       ),
       'e_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Element ID.'),
       ),
       'me_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('UUID.'),
@@ -225,7 +221,6 @@ function bibdk_custom_search_schema() {
       ),
       'e_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Element UUID.'),
@@ -311,21 +306,18 @@ function bibdk_custom_search_schema() {
       ),
       'mv_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Value map UUID.'),
       ),
       'e_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Element UUID.'),
       ),
       'v_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Value UUID.'),
@@ -384,7 +376,6 @@ function bibdk_custom_search_schema() {
       ),
       'v_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Values UUID'),
@@ -464,15 +455,14 @@ function bibdk_custom_search_schema() {
       ),
       'o_uuid' => array(
         'type' => 'varchar',
-        'unsigned' => TRUE,
         'not null' => TRUE,
         'length' => 64,
         'description' => t('Option UUID'),
       ),
       'v_uuid' => array(
-        'type' => 'varcar',
+        'type' => 'varchar',
+        'not null' => FALSE,
         'length' => 64,
-        'default' => 0,
         'description' => t('Value UUID'),
       ),
       'sort' => array(
