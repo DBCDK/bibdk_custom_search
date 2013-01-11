@@ -646,7 +646,7 @@ function _bibdk_custom_search_get_fields() {
 function _bibdk_custom_search_get_options( $e_uuid, $o_uuid, $value, $v_uuid, &$options, &$subgroup) {
 
   $subgroup[$v_uuid]['parentValue'] = $value;
-  $subgroup[$v_uuid]['parentValue_uuid'] = $v_uuid;
+  $subgroup[$v_uuid]['parentValueId'] = $v_uuid;
   $subgroup[$v_uuid]['elementId'] = $e_uuid;
 
   $expand = _bibdk_custom_search_get_options_db($v_uuid);
@@ -711,7 +711,6 @@ function _bibdk_custom_search_get_pages_db() {
  *
  */
 function _bibdk_custom_search_get_options_db($value_id) {
-
   global $language;
 
   // note: drupal_static(__FUNCTION__) crashes Drupal if used here.

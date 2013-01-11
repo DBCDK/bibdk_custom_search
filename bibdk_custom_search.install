@@ -486,10 +486,11 @@ function bibdk_custom_search_schema() {
         'description' => t('Option value'),
       ),
       'expand' => array(
-        'type' => 'int',
+        'type' => 'varchar',
+        'length' => 64,
         'not null' => TRUE,
-        'default' => 0,
-        'description' => t('Expand values. References bibdk_custom_search_values.vid'),
+        'default' => '0',
+        'description' => t('Expand values. References bibdk_custom_search_values.v_uuid'),
       ),
     ),
     'indexes' => array(
@@ -552,6 +553,15 @@ function bibdk_custom_search_update_7006(&$sandbox) {
   db_add_field('bibdk_custom_search_map_values', 'v_uuid', $uuid_field);
   db_add_field('bibdk_custom_search_options', 'v_uuid', $uuid_field);
 
+  // change field
+  db_change_field('bibdk_custom_search_options', 'expand', 'expand', array(
+    'type' => 'varchar',
+    'length' => 64,
+    'not null' => TRUE,
+    'default' => '0',
+    'description' => t('Expand values. References bibdk_custom_search_values.v_uuid'),
+  ));
+
   // add indexes
   db_add_index('bibdk_custom_search', 'bibdk_custom_search_uuid', array('p_uuid'));
   db_add_index('bibdk_custom_search_map_elements', 'bcs_me_uuid', array('me_uuid'));
@@ -574,6 +584,7 @@ function bibdk_custom_search_update_7006(&$sandbox) {
   update_bibdk_custom_search_map_elements_with_uuid();
   update_bibdk_custom_search_map_values_with_uuid();
   update_bibdk_custom_search_options_with_uuid();
+  update_bibdk_custom_search_options_expand_with_v_uuid();
 
   db_drop_field('bibdk_custom_search_map_elements', 'pid');
   db_drop_field('bibdk_custom_search_map_elements', 'eid');
@@ -594,6 +605,19 @@ function bibdk_custom_search_update_7007(&$sandbox) {
    'default' => '',
    'description' => t('Value type: "textfield", "textarea", "select", "select multiple", "radio", "checkbox", "checkboxes", "hidden"'),
  ));
+}
+
+/**
+ * change expand column in bibdk_custom_search_options to varchar so it is compatible with uuids
+ */
+function bibdk_custom_search_update_7008(&$sandbox) {
+  db_change_field('bibdk_custom_search_options', 'expand', 'expand', array(
+    'type' => 'varchar',
+    'length' => 64,
+    'not null' => TRUE,
+    'default' => '0',
+    'description' => t('Expand values. References bibdk_custom_search_values.v_uuid'),
+  ));
 }
 
 /**
@@ -653,6 +677,25 @@ function update_bibdk_custom_search_options_with_uuid(){
     foreach ($result as $record) {
       db_update('bibdk_custom_search_options')->fields(array(
           'v_uuid' => $record->v_uuid,
+        )
+      )->condition('oid', $record->oid, '=')->execute();
+    }
+  }
+}
+
+/**
+ * Add uuid from values (vuuid) to the expand column in the options table
+ */
+function update_bibdk_custom_search_options_expand_with_v_uuid(){
+  $query = db_select('bibdk_custom_search_options', 'o');
+  $query->join('bibdk_custom_search_values', 'v', 'v.vid = o.expand');
+  $query->addField('v', 'v_uuid', 'v_uuid');
+  $query->addField('o', 'oid');
+  $result = $query->execute();
+  if($result){
+    foreach ($result as $record) {
+      db_update('bibdk_custom_search_options')->fields(array(
+          'expand' => $record->v_uuid,
         )
       )->condition('oid', $record->oid, '=')->execute();
     }
