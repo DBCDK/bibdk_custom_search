@@ -205,7 +205,7 @@ function _bibdk_custom_search_value_options_insert($value_id,$value_option) {
       'o_uuid' => uuid_generate(),
       'label'   => check_plain($value_option['label']),
       'value'   => check_plain($value_option['value']),
-      'expand'  => (int)$value_option['expand'],
+      'expand'  => $value_option['expand'],
       'sort'    => (int)$value_option['sort'],
     ))
     ->execute();
