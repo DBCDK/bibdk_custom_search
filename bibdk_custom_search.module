@@ -346,13 +346,17 @@ function bibdk_custom_search_submit($form, &$form_state) {
       if ( $index ) {
         // search code is defined in 'search page values'
         if ( !is_array($value) ) {
-          $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+          $fields[] = $index . '=' . $value;
+          // phrase search is not currently supported. TO DO: add toggle phrase/term search on values.
+          // $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
         } else {
           // handle checkboxes & select multiple
           $checkbox_fields = array();
           foreach ( $value as $n => $val ) {
             if ( isset($val) && $val ) {
-              $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
+              $checkbox_fields[] = $index . '=' . $val;
+s              // phrase search is not currently supported. See above.
+              // $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
             }
           }
           if (!empty($checkbox_fields)) {
