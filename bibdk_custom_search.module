@@ -355,7 +355,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
           foreach ( $value as $n => $val ) {
             if ( isset($val) && $val ) {
               $checkbox_fields[] = $index . '=' . $val;
-s              // phrase search is not currently supported. See above.
+              // phrase search is not currently supported. See above.
               // $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
             }
           }
