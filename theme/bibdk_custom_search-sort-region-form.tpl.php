@@ -46,7 +46,7 @@ foreach ($element_regions as $region => $title) {
         if ($data['region']['#value'] == $region): ?>
           <tr class="draggable <?php print $row % 2 == 0 ? 'odd' : 'even'; ?>">
             <td class="element"><?php print $data['#title']; ?></td>
-            <td><?php print drupal_render($data['eid']); print drupal_render($data['vid']); ?></td>
+            <td><?php print drupal_render($data['e_uuid']); print drupal_render($data['v_uuid']); ?></td>
             <td><?php print drupal_render($data['region']); ?></td>
             <td><?php print drupal_render($data['edit']); ?></td>
             <td><?php print drupal_render($data['delete']); ?></td>

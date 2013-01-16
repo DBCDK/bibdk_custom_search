@@ -13,9 +13,11 @@
         var ExpandTrigger = $('<div data="subgroup-' + val.elementId + '-' + val.parentValueId + '" class="toggle-subgroup"> + </div>');
         ExpandTrigger.toggle(function() {
           var subgroup = $(this).attr('data');
+          $(this).addClass('toggled');
           $('#' + subgroup).show('fast');
         }, function() {
           var subgroup = $(this).attr('data');
+          $(this).removeClass('toggled');
           $('#' + subgroup).hide('fast');
         });
         $('#edit-bibdk-custom-search-element-' + val.elementId + ' input[value=' + val.parentValue + ']').after(ExpandTrigger);

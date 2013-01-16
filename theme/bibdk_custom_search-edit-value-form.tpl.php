@@ -17,13 +17,13 @@ $form['default_value']['#title'] .= ' <span class="helptext" title="' . htmlspec
 unset($form['default_value']['#description']);
 
 ?>
-<?php print drupal_render($form['vid']); ?>
+<?php print drupal_render($form['v_uuid']); ?>
 <?php print drupal_render($form['sort']); ?>
 <table id="edit-search-page-value">
   <tbody>
     <tr>
       <td><?php print drupal_render($form['value_title']); ?></td>
-      <td><?php print drupal_render($form['type']); ?></td>
+      <td><?php print drupal_render($form['value_type']); ?></td>
       <td><?php print drupal_render($form['search_code']); ?></td>
       <td><?php print drupal_render($form['default_value']); ?></td>
     </tr>

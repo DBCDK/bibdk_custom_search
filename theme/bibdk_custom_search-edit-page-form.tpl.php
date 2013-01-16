@@ -22,7 +22,7 @@ unset($form['expand']['#description']);
 
 
 ?>
-<?php print drupal_render($form['pid']); ?>
+<?php print drupal_render($form['p_uuid']); ?>
 <?php print drupal_render($form['sort']); ?>
 <table id="edit-search-page">
   <tbody>

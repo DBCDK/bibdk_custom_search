@@ -21,11 +21,11 @@ function _bibdk_custom_search_default_admin_form($elements) {
       '#title'          => $data['page_title'],
       '#weight'         => $data['sort'],
     );
-    $form['bibdk_custom_search'][$i]['pid'] = array(
+    $form['bibdk_custom_search'][$i]['p_uuid'] = array(
       '#type'           => 'hidden',
       '#title'          => t('Page ID'),
       '#title_display'  => 'invisible',
-      '#default_value'  => $data['pid'],
+      '#default_value'  => $data['p_uuid'],
     );
     $form['bibdk_custom_search'][$i]['page_title'] = array(
       '#type'           => 'hidden',
@@ -37,14 +37,14 @@ function _bibdk_custom_search_default_admin_form($elements) {
       '#type'           => 'link',
       '#title'          => t('edit'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $data['pid'] . '/edit',
+      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $data['p_uuid'] . '/edit',
       '#options'        => array('attributes' => array('title' => t('Edit page.'))),
     );
     $form['bibdk_custom_search'][$i]['delete'] = array(
       '#type'           => 'link',
       '#title'          => t('delete'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $data['pid'] . '/delete',
+      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $data['p_uuid'] . '/delete',
       '#options'        => array('attributes' => array('title' => t('Delete page.'))),
     );
     $form['bibdk_custom_search'][$i]['sort'] = array(
@@ -61,7 +61,7 @@ function _bibdk_custom_search_default_admin_form($elements) {
       '#title'        => 'Add search page',
       '#weight'       => '100',
   );
-  $form['bibdk_custom_search'][$i]['pid'] = array(
+  $form['bibdk_custom_search'][$i]['p_uuid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Page ID'),
     '#title_display'  => 'invisible',
@@ -95,7 +95,7 @@ function _bibdk_custom_search_default_admin_form($elements) {
 /**
  * Edit page form
  */
-function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=array()) {
+function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=array()) {
 
   // $page = variable_get('bibdk_custom_search_page', array());
 
@@ -109,9 +109,9 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
     '#theme'        => 'bibdk_custom_search-edit-page-form',
   );
 
-  $form['bibdk_custom_search']['page']['pid'] = array(
+  $form['bibdk_custom_search']['page']['p_uuid'] = array(
     '#type'           => 'hidden',
-    '#default_value'  => $page['pid'],
+    '#default_value'  => $page['p_uuid'],
     '#title'          => t('Page ID'),
     '#title_display'  => 'invisible',
   );
@@ -178,17 +178,17 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
       '#title'          => $element['element_title'],
       '#weight'         => $element['sort'],
     );
-    $form['bibdk_custom_search']['elements'][$i]['mid'] = array(
+    $form['bibdk_custom_search']['elements'][$i]['me_uuid'] = array(
       '#type'           => 'hidden',
       '#title'          => t('Element ID'),
       '#title_display'  => 'invisible',
-      '#default_value'  => $element['mid'],
+      '#default_value'  => $element['me_uuid'],
     );
-    $form['bibdk_custom_search']['elements'][$i]['eid'] = array(
+    $form['bibdk_custom_search']['elements'][$i]['e_uuid'] = array(
       '#type'           => 'hidden',
       '#title'          => t('Element ID'),
       '#title_display'  => 'invisible',
-      '#default_value'  => $element['eid'],
+      '#default_value'  => $element['e_uuid'],
     );
     $form['bibdk_custom_search']['elements'][$i]['element_title'] = array(
       '#type'           => 'hidden',
@@ -212,14 +212,14 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
       '#type'           => 'link',
       '#title'          => t('edit'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/elements/' . $element['eid'] . '/edit',
+      '#href'           =>  'admin/config/search/bibdk_custom_search/elements/' . $element['e_uuid'] . '/edit',
       '#options'        => array('attributes' => array('title' => t('Edit element.'))),
     );
     $form['bibdk_custom_search']['elements'][$i]['delete'] = array(
       '#type'           => 'link',
       '#title'          => t('remove'),
       '#title_display'  => 'invisible',
-      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $page['pid'] . '/remove_element/' . $element['mid'],
+      '#href'           =>  'admin/config/search/bibdk_custom_search/' . $page['p_uuid'] . '/remove_element/' . $element['me_uuid'],
       '#options'        => array('attributes' => array('title' => t('Delete element.'))),
     );
     $form['bibdk_custom_search']['elements'][$i]['sort'] = array(
@@ -237,13 +237,13 @@ function _bibdk_custom_search_edit_page_form($page = array(),$list_elements=arra
       '#title'        => 'Add search element',
       '#weight'       => '100',
   );
-  $form['bibdk_custom_search']['elements'][$i]['mid'] = array(
+  $form['bibdk_custom_search']['elements'][$i]['me_uuid'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Element ID'),
     '#title_display'  => 'invisible',
     '#default_value'  => '_new',
   );
-  $form['bibdk_custom_search']['elements'][$i]['eid'] = array(
+  $form['bibdk_custom_search']['elements'][$i]['e_uuid'] = array(
     '#type'           => 'select',
     '#options'        => $list_elements,
     '#title'          => t('Name'),

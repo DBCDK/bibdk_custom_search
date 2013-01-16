@@ -8,6 +8,7 @@
 /*
  *  TO DO (optionally): wildcard matching on search page path?
  */
+module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.export');
 
 /**
  * Implements hook_menu().
@@ -345,13 +346,17 @@ function bibdk_custom_search_submit($form, &$form_state) {
       if ( $index ) {
         // search code is defined in 'search page values'
         if ( !is_array($value) ) {
-          $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
+          $fields[] = $index . '=' . $value;
+          // phrase search is not currently supported. TO DO: add toggle phrase/term search on values.
+          // $fields[] = $index . '=' . (strpos($value, ' ') ? '"' . $value . '"' : $value);
         } else {
           // handle checkboxes & select multiple
           $checkbox_fields = array();
           foreach ( $value as $n => $val ) {
             if ( isset($val) && $val ) {
-              $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
+              $checkbox_fields[] = $index . '=' . $val;
+              // phrase search is not currently supported. See above.
+              // $checkbox_fields[] = $index . '=' . (strpos($val, ' ') ? '"' . $val . '"' : $val);
             }
           }
           if (!empty($checkbox_fields)) {
@@ -496,24 +501,23 @@ function _bibdk_custom_search_get_fields() {
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/','_',$path['destination']) . $language->language;
 
   if ($cache = cache_get($cache_id)) {
-
     $form = $cache->data;
 
   } else {
 
     // bibdk_custom_search_elements
     $query = db_select('bibdk_custom_search', 's');
-    $query -> leftjoin('bibdk_custom_search_map_elements', 'me', 's.pid = me.pid');
-    $query -> join('bibdk_custom_search_elements', 'e', 'me.eid = e.eid');
-    $query -> leftjoin('bibdk_custom_search_map_values', 'mv', 'e.eid = mv.eid');
-    $query -> join('bibdk_custom_search_values', 'v', 'mv.vid = v.vid');
-    $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.vid = o.vid');
+    $query -> leftjoin('bibdk_custom_search_map_elements', 'me', 's.p_uuid = me.p_uuid');
+    $query -> join('bibdk_custom_search_elements', 'e', 'me.e_uuid = e.e_uuid');
+    $query -> leftjoin('bibdk_custom_search_map_values', 'mv', 'e.e_uuid = mv.e_uuid');
+    $query -> join('bibdk_custom_search_values', 'v', 'mv.v_uuid = v.v_uuid');
+    $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.v_uuid = o.v_uuid');
     $query -> fields('me', array('region','sort'));
-    $query -> fields('e', array('eid','element_label','description','help_text','access_key','tab_index'));
+    $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index'));
     $query -> fields('mv', array('sort'));
-    $query -> fields('v', array('vid','value_title','type','search_code','default_value'));
-    $query -> fields('o', array('oid','sort','label','value','expand'));
-    $query -> condition('s.pid', $page['pid'],'=');
+    $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
+    $query -> fields('o', array('o_uuid','sort','label','value','expand'));
+    $query -> condition('s.p_uuid', $page['p_uuid'],'=');
     $query -> orderBy('me.sort', 'ASC');
     $query -> orderBy('e.element_label', 'ASC');
     $query -> orderBy('region', 'ASC');
@@ -525,49 +529,48 @@ function _bibdk_custom_search_get_fields() {
     $elements = array();
 
     foreach ($result as $record) {
+      $e_uuid = $record->e_uuid;
+      $v_uuid = $record->v_uuid;
+      $o_uuid = $record->o_uuid;
 
-      $eid = $record->eid;
-      $vid = $record->vid;
-      $oid = $record->oid;
-
-      if ( $eid && !isset($elements[$eid]) ) {
-        $elements[ $eid ] = array(
-          'element_label' => bibdk_custom_search_translate('element', $eid, 'element_label', $record->element_label),
-          'description'   => bibdk_custom_search_translate('element', $eid, 'description', $record->description),
-          'help_text'     => bibdk_custom_search_translate('element', $eid, 'help_text', $record->help_text),
+      if ( $e_uuid && !isset($elements[$e_uuid]) ) {
+        $elements[ $e_uuid ] = array(
+          'element_label' => bibdk_custom_search_translate('element', $e_uuid, 'element_label', $record->element_label),
+          'description'   => bibdk_custom_search_translate('element', $e_uuid, 'description', $record->description),
+          'help_text'     => bibdk_custom_search_translate('element', $e_uuid, 'help_text', $record->help_text),
           'region'        => $record->region,
           'access_key'    => $record->access_key,
           'tab_index'     => $record->tab_index,
         );
       }
 
-      if ( $vid && !isset($elements[$eid]['values'][$vid]) ) {
-        $elements[ $eid ]['values'][ $vid ] = array(
+      if ( $v_uuid && !isset($elements[$e_uuid]['values'][$v_uuid]) ) {
+        $elements[ $e_uuid ]['values'][ $v_uuid ] = array(
           'value_title'   => $record->value_title,
-          'type'          => $record->type,
+          'value_type'          => $record->value_type,
           'search_code'   => $record->search_code,
           'default_value' => $record->default_value,
         );
       }
 
-      if ( $oid ) {
-        $elements[ $eid ]['values'][ $vid ]['options'][ $record->value ] = bibdk_custom_search_translate('option', $oid, 'label', $record->label);
+      if ( $o_uuid ) {
+        $elements[ $e_uuid ]['values'][ $v_uuid ]['options'][ $record->value ] = bibdk_custom_search_translate('option', $o_uuid, 'label', $record->label);
       }
 
-      if ( $oid && $record->expand ) {
+      if ( $o_uuid && $record->expand ) {
         $options = array();
         $subgroup = array();
-        if ( !isset($elements[ $eid ]['values'][ $vid ]['options']) ) $elements[ $eid ]['values'][ $vid ]['options'] = array();
-        if ( !isset($elements[ $eid ]['values'][ $vid ]['attached']) ) $elements[ $eid ]['values'][ $vid ]['attached'] = array();
-        _bibdk_custom_search_get_options( $eid, $oid, $record->value, $record->expand, $options, $subgroup );
-        $elements[ $eid ]['values'][ $vid ]['options']  = $elements[ $eid ]['values'][ $vid ]['options'] + $options;
-        $elements[ $eid ]['values'][ $vid ]['attached'] = $elements[ $eid ]['values'][ $vid ]['attached'] + $subgroup;
+        if ( !isset($elements[ $e_uuid ]['values'][ $v_uuid ]['options']) ) $elements[ $e_uuid ]['values'][ $v_uuid ]['options'] = array();
+        if ( !isset($elements[ $e_uuid ]['values'][ $v_uuid ]['attached']) ) $elements[ $e_uuid ]['values'][ $v_uuid ]['attached'] = array();
+        _bibdk_custom_search_get_options( $e_uuid, $o_uuid, $record->value, $record->expand, $options, $subgroup );
+        $elements[ $e_uuid ]['values'][ $v_uuid ]['options']  = $elements[ $e_uuid ]['values'][ $v_uuid ]['options'] + $options;
+        $elements[ $e_uuid ]['values'][ $v_uuid ]['attached'] = $elements[ $e_uuid ]['values'][ $v_uuid ]['attached'] + $subgroup;
       }
     }
 
     $form = array();
-    foreach ($elements as $eid => $element) {
-      $form['bibdk_custom_search_element_' . $eid] = array(
+    foreach ($elements as $e_uuid => $element) {
+      $form['bibdk_custom_search_element_' . $e_uuid] = array(
         '#type'         => 'fieldset',
         '#collapsible'  => FALSE,
         '#collapsed'    => FALSE,
@@ -579,40 +582,41 @@ function _bibdk_custom_search_get_fields() {
         '#help_text'    => $element['help_text'],
       );
       if ( sizeof($element['values']) > 1 ) {
-        $form['#bibdk_pre_search_process'][$eid] = array_keys($element['values']);
+        $form['#bibdk_pre_search_process'][$e_uuid] = array_keys($element['values']);
       }
-      foreach ($element['values'] as $vid => $value) {
-        $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ] = array(
-          '#type'           => $value['type'],
+      foreach ($element['values'] as $v_uuid => $value) {
+        $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ] = array(
+          '#type'           => $value['value_type'],
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
           '#default_value'  => $value['default_value'],
           '#attributes'     => array('tabindex' => array($element['tab_index']),'accesskey' => array($element['access_key'])),
         );
-        switch ( $value['type'] ) {
+
+        switch ( $value['value_type'] ) {
           CASE 'hidden':
           CASE 'textfield':
           CASE 'textarea':
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#size'] = 30;
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#maxlength'] = 64;
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#size'] = 30;
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#maxlength'] = 64;
             break;
           CASE 'select':
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#options'] = $value['options'];
             break;
           CASE 'radios':
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#options'] = $value['options'];
             break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#default_value'] = array($value['default_value']);
-            $form['bibdk_custom_search_element_' . $eid][ 'term' . $vid ]['#options'] = $value['options'];
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#default_value'] = array($value['default_value']);
+            $form['bibdk_custom_search_element_' . $e_uuid][ 'term' . $v_uuid ]['#options'] = $value['options'];
             break;
           DEFAULT:
             break;
         }
         if ( isset($value['attached']) ) {
-          $form['bibdk_custom_search_element_' . $eid]['#attached']['js'][] = array(
-            'data' => array('expanded' => array($eid => $value['attached'])),
+          $form['bibdk_custom_search_element_' . $e_uuid]['#attached']['js'][] = array(
+            'data' => array('expanded' => array($e_uuid => $value['attached'])),
             'type' => 'setting',
           );
         }
@@ -643,21 +647,21 @@ function _bibdk_custom_search_get_fields() {
 /**
  *
  */
-function _bibdk_custom_search_get_options( $eid, $oid, $value, $vid, &$options, &$subgroup) {
+function _bibdk_custom_search_get_options( $e_uuid, $o_uuid, $value, $v_uuid, &$options, &$subgroup) {
 
-  $subgroup[$vid]['parentValue'] = $value;
-  $subgroup[$vid]['parentValueId'] = $vid;
-  $subgroup[$vid]['elementId'] = $eid;
+  $subgroup[$v_uuid]['parentValue'] = $value;
+  $subgroup[$v_uuid]['parentValueId'] = $v_uuid;
+  $subgroup[$v_uuid]['elementId'] = $e_uuid;
 
-  $expand = _bibdk_custom_search_get_options_db($vid);
+  $expand = _bibdk_custom_search_get_options_db($v_uuid);
 
   if ( $expand ) {
     foreach ($expand as $option) {
       if ( $option['expand'] ) {
-        _bibdk_custom_search_get_options( $eid, $option['oid'], $option['value'],  $option['expand'], $options, $subgroup);
+        _bibdk_custom_search_get_options( $e_uuid, $option['o_uuid'], $option['value'],  $option['expand'], $options, $subgroup);
       }
       $options[ $option['value'] ] = $option['label'];
-      $subgroup[$vid]['childElem'][ $option['oid'] ] = $option['value'];
+      $subgroup[$v_uuid]['childElem'][ $option['o_uuid'] ] = $option['value'];
     }
   }
 
@@ -668,7 +672,6 @@ function _bibdk_custom_search_get_options( $eid, $oid, $value, $vid, &$options, 
  *
  */
 function _bibdk_custom_search_get_pages_db() {
-
   global $language;
 
   $pages = &drupal_static(__FUNCTION__);
@@ -690,9 +693,9 @@ function _bibdk_custom_search_get_pages_db() {
       $result = $query->execute();
 
       foreach ($result as $page) {
-        $pid = $page->pid;
+        $p_uuid = $page->p_uuid;
         $row = array(
-          'title' => bibdk_custom_search_translate('page', $pid, 'menu_title', $page->menu_title),
+          'title' => bibdk_custom_search_translate('page', $p_uuid, 'menu_title', $page->menu_title),
           'href' => $page->page_path,
         );
         $pages[] = $row;
@@ -712,7 +715,6 @@ function _bibdk_custom_search_get_pages_db() {
  *
  */
 function _bibdk_custom_search_get_options_db($value_id) {
-
   global $language;
 
   // note: drupal_static(__FUNCTION__) crashes Drupal if used here.
@@ -726,15 +728,15 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $query = db_select('bibdk_custom_search_options', 'o');
     $query
-      ->fields('o', array('oid','label','value','expand','sort'))
-      ->condition('vid', $value_id,'=')
+      ->fields('o', array('o_uuid','label','value','expand','sort'))
+      ->condition('v_uuid', $value_id,'=')
       ->orderBy('sort', 'ASC');
     $result = $query->execute();
 
     foreach ($result as $option) {
       $row = array(
-        'oid'     => $option->oid,
-        'label'   => bibdk_custom_search_translate('option', $option->oid, 'label', $option->label),
+        'o_uuid'     => $option->o_uuid,
+        'label'   => bibdk_custom_search_translate('option', $option->o_uuid, 'label', $option->label),
         'value'   => $option->value,
         'expand'  => $option->expand,
         'sort'    => $option->sort,
@@ -767,12 +769,12 @@ function _bibdk_custom_search_get_field_searchcodes() {
     } else {
 
       $query = db_select('bibdk_custom_search_values', 'v');
-      $query -> fields('v', array('vid','value_title','type','search_code','default_value'));
+      $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
       $result = $query -> execute();
 
       $fields = array();
       foreach ($result as $record) {
-        $fields[ 'term' . $record->vid ] = $record->search_code;
+        $fields[ 'term' . $record->v_uuid ] = $record->search_code;
       }
 
       cache_set('bibdk_custom_search_field_searchcodes', $fields, 'cache');
@@ -811,6 +813,4 @@ function bibdk_custom_search_translate($type, $id, $key, $string) {
           ? i18n_string("bibdk_custom_search:$type:$id:$key", $string)
           : $string;
 }
-
-
 

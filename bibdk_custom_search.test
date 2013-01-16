@@ -16,7 +16,7 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
   public function setUp() {
 
     // Enable any modules required for the test
-    parent::setUp('bibdk_custom_search', 'search');
+    parent::setUp('bibdk_custom_search', 'search', 'uuid');
 
     menu_rebuild();
 
@@ -59,14 +59,16 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     );
 
     // Test editing a custom search value.
+    //$this->drupalPost('admin/config/search/bibdk_custom_search/values', null, t('edit'));
+    $this->clickLink('edit');
     $edit = array();
-    $edit['element_value[type]'] = 'textfield';
+    $edit['element_value[value_type]'] = 'textfield';
     $edit['element_value[search_code]'] = $this->randomName(8);
-    $this->drupalPost('admin/config/search/bibdk_custom_search/values/1/edit', $edit, t('Save'));
+    $this->drupalPost(NULL, $edit, t('Save'));
     $this->assertFieldByName(
-      'element_value[type]',
-      $edit['element_value[type]'],
-      t('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_title, '@type'=>$edit['element_value[type]']))
+      'element_value[value_type]',
+      $edit['element_value[value_type]'],
+      t('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_title, '@type'=>$edit['element_value[value_type]']))
     );
     $this->assertFieldByName(
       'element_value[search_code]',
@@ -75,13 +77,19 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     );
 
     // Test editing a custom search element.
+    $value = db_select('bibdk_custom_search_elements', 't')->fields('t', array('e_uuid'))->condition('eid', 1, '=')->execute()->fetchAssoc();
+    $e_uuid = $value['e_uuid'];
+
+    $this->drupalGet('admin/config/search/bibdk_custom_search/elements');
+
+    $this->clickLink('edit');
     $edit = array();
     $element_label = $edit['bibdk_custom_search_page_element[element_label]'] = $this->randomName(8);
     $edit['bibdk_custom_search_page_element[access_key]'] = $this->randomName(1);
     $edit['bibdk_custom_search_page_element[tab_index]'] = rand(0, 100);
     $element_description = $edit['bibdk_custom_search_page_element[description]'] = $this->randomName(40);
-    $edit['bibdk_custom_search_page_element[help_text]'] = $this->randomName(1000);
-    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/1/edit', $edit, t('Save'));
+    $edit['bibdk_custom_search_page_element[help_text]'] = $this->randomName(10);
+    $this->drupalPost(null, $edit, t('Save'));
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[element_label]',
       $edit['bibdk_custom_search_page_element[element_label]'],
@@ -109,23 +117,32 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     );
 
     // Test adding a value to a custom search element.
+    $value = db_select('bibdk_custom_search_values', 'v')->fields('v', array('v_uuid'))->condition('vid', 1, '=')->execute()->fetchAssoc();
+    $v_uuid = $value['v_uuid'];
     $edit = array();
-    $edit['bibdk_custom_search_page_element_values[0][vid]'] = '1';
-    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/1/edit', $edit, t('Save'));
+    $edit['bibdk_custom_search_page_element_values[0][v_uuid]'] = $v_uuid;
+    //$this->drupalPost(null, $edit, t('Save'));
+    $this->drupalPost('admin/config/search/bibdk_custom_search/elements/' . $e_uuid . '/edit', $edit, t('Save'));
     $this->assertText($value_title);
     $this->assertLinkByHref(
-      'admin/config/search/bibdk_custom_search/values/1/edit'
+      'admin/config/search/bibdk_custom_search/values/' . $v_uuid . '/edit'
     );
+    $value = db_select('bibdk_custom_search_map_values', 'v')->fields('v', array('mv_uuid'))->condition('mid', 1, '=')->execute()->fetchAssoc();
+    $mv_uuid = $value['mv_uuid'];
+
     $this->assertLinkByHref(
-      'admin/config/search/bibdk_custom_search/elements/1/remove_value/1'
+      'admin/config/search/bibdk_custom_search/elements/' . $e_uuid . '/remove_value/' . $mv_uuid
     );
 
     // Test editing a custom search page.
+    $value = db_select('bibdk_custom_search', 't')->fields('t', array('p_uuid'))->condition('pid', 1, '=')->execute()->fetchAssoc();
+    $p_uuid = $value['p_uuid'];
+
     $edit = array();
     $frontpage = variable_get('site_frontpage', 'node');
     $edit['page[menu_title]'] = $this->randomName(8);
     $page_path = $edit['page[page_path]'] = $frontpage;
-    $this->drupalPost('admin/config/search/bibdk_custom_search/1/edit', $edit, t('Save'));
+    $this->drupalPost('admin/config/search/bibdk_custom_search/' . $p_uuid . '/edit', $edit, t('Save'));
     $this->assertFieldByName(
       'page[menu_title]',
       $edit['page[menu_title]'],
@@ -138,16 +155,18 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     );
 
     // Test adding an element to a custom search page.
+    $value = db_select('bibdk_custom_search_map_elements', 't')->fields('t', array('me_uuid'))->condition('mid', 1, '=')->execute()->fetchAssoc();
+    $me_uuid = $value['me_uuid'];
     $edit = array();
-    $edit['elements[0][eid]'] = '1';
+    $edit['elements[0][e_uuid]'] = $e_uuid;
     $edit['elements[0][region]'] = 'main';
-    $this->drupalPost('admin/config/search/bibdk_custom_search/1/edit', $edit, t('Save'));
+    $this->drupalPost('admin/config/search/bibdk_custom_search/' . $p_uuid . '/edit', $edit, t('Save'));
     $this->assertText($element_title);
     $this->assertLinkByHref(
-      'admin/config/search/bibdk_custom_search/elements/1/edit'
+      'admin/config/search/bibdk_custom_search/elements/' . $e_uuid . '/edit'
     );
     $this->assertLinkByHref(
-      'admin/config/search/bibdk_custom_search/1/remove_element/1'
+      'admin/config/search/bibdk_custom_search/' . $p_uuid . '/remove_element/' . $me_uuid
     );
 
     // Test a custom search page form.
@@ -158,7 +177,7 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     $this->assertText($element_label,t('The element label "@element_label" was found',array('@element_label'=>$element_label)));
     $this->assertText($element_description,t('The element description "@element_description" was found',array('@element_description'=>substr($element_description,0,40) . '[...]')));
     $this->assertFieldByName(
-      'term1'
+      'term'.$v_uuid
     );
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', t('No nested forms found.'));
   }
