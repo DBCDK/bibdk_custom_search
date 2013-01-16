@@ -581,10 +581,10 @@ function bibdk_custom_search_update_7006(&$sandbox) {
   bibdk_custom_search_uuid_sync_table('bibdk_custom_search_map_values', 'mid', 'mv_uuid');
   bibdk_custom_search_uuid_sync_table('bibdk_custom_search_options', 'oid', 'o_uuid');
   bibdk_custom_search_uuid_sync_table('bibdk_custom_search_values', 'vid', 'v_uuid');
-  update_bibdk_custom_search_map_elements_with_uuid();
-  update_bibdk_custom_search_map_values_with_uuid();
-  update_bibdk_custom_search_options_with_uuid();
-  update_bibdk_custom_search_options_expand_with_v_uuid();
+  //update_bibdk_custom_search_map_elements_with_uuid();
+  //update_bibdk_custom_search_map_values_with_uuid();
+  //update_bibdk_custom_search_options_with_uuid();
+  //update_bibdk_custom_search_options_expand_with_v_uuid();
 
   db_drop_field('bibdk_custom_search_map_elements', 'pid');
   db_drop_field('bibdk_custom_search_map_elements', 'eid');
