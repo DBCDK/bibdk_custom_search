@@ -304,7 +304,13 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $fields = array();
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
+
   $fields = module_invoke_all('bibdk_custom_search_field_preprocess', $form, $form_state);
+
+  // preprocess quickfix
+  $form_state['values']['da48923f-e5ba-5ef4-ad4f-c8aab6767a83']="";
+  $form_state['values']['3021bc15-1305-10f4-2112-d08af39718bf']="";
+
   $groups = array();
   foreach ( $form_state['values'] as $key => $values){
     if (isset($extended_fields[$key])){
