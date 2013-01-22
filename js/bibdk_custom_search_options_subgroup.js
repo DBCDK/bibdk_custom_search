@@ -25,6 +25,24 @@
           var childKey = $(this).attr('child');
           $('fieldset[child=' + childKey + ']').toggle();
       });
+
+      // Autoselect the 'all' values under checkboxes
+      $('input[type=checkbox].master').attr('checked', true);
+      $('input[type=checkbox]').change(function (e){
+          var group = $(this).attr('group');
+          if($(this).attr('checked')){
+              if ($(this).hasClass('master')){
+                  $('[group=' + group + ']').attr('checked', false);
+                  $(this).attr('checked', true);
+              }
+              else{
+                  $('[group=' + group + '].master').attr('checked', false)
+              }
+          }
+          else if ($('[group=' + group + ']:checked').length == 0) {
+              $('[group=' + group + '].master').attr('checked', true);
+          }
+      });
   };
 
   Drupal.behaviors.bibdkCustomSearchCheckboxes = {

@@ -637,9 +637,17 @@ function _create_checkboxes_for_search_element($values, $parent){
       '#type' => 'checkbox',
       '#title' => $value['label'],
       '#return_value' => $key,
+      '#attributes' => array(
+        'group' => $parent,
+      ),
     );
+    if($key == null){
+      $form[$key][$value['label']]['#attributes'] += array(
+        'class' => array('master'),
+      );
+    }
     if (isset($value['childElem'])){
-      $form[$key][$value['label']]['#attributes'] = array(
+      $form[$key][$value['label']]['#attributes'] += array(
         'parent' => $key,
       );
       $form[$key][$value['label']]['#title'] = '<span child="' .$key. '" class="toggle-subgroup"> + </span>' . $form[$key][$value['label']]['#title'];
