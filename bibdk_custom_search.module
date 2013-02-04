@@ -345,15 +345,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
   }
   $q = join(' AND ', $q);
 
-  $s = ( isset($form_state['values']['sort']) ) ? $form_state['values']['sort'] : '';
-  if ( $s != "" ) {
-    $controls['sort'] = $s;
-  }
-
-  $s = ( isset($form_state['values']['size']) ) ? $form_state['values']['size'] : '';
-  if ( $s != "" ) {
-    $controls['size'] = $s;
-  }
+  $controls =  module_invoke_all('bibdk_custom_search_get_controls', $form, $form_state);
 
   // Check to see if the form was submitted empty.
   // If it is empty, display an error message.
