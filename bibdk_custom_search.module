@@ -345,15 +345,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
   }
   $q = join(' AND ', $q);
 
-  $s = ( isset($form_state['values']['sort']) ) ? $form_state['values']['sort'] : '';
-  if ( $s != "" ) {
-    $controls['sort'] = $s;
-  }
-
-  $s = ( isset($form_state['values']['size']) ) ? $form_state['values']['size'] : '';
-  if ( $s != "" ) {
-    $controls['size'] = $s;
-  }
+  $controls =  module_invoke_all('ting_search_get_controls', $form, $form_state);
 
   // Check to see if the form was submitted empty.
   // If it is empty, display an error message.
@@ -430,15 +422,14 @@ function _bibdk_custom_search_get_advanced_fields_form() {
     $form = $cache->data;
     return $form;
   }
-
   // get search page
   $page = _bibdk_custom_search_get_page_db($path['destination']);
-  if (!isset($page))
+  if (empty($page)){
     return null;
-
+  }
   // Get results form db
   $result = _bibdk_custom_search_get_advanced_fields_db($page);
-  if (!isset($result)){
+  if (empty($result)){
     return null;
   }
 
