@@ -274,9 +274,7 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
     );
     $this->assertText($element_label,t('The element label "@element_label" was found',array('@element_label'=>$element_label)));
     $this->assertText($element_description,t('The element description "@element_description" was found',array('@element_description'=>substr($element_description,0,40) . '[...]')));
-    $this->assertFieldByName(
-      'term'.$v_uuid
-    );
+    $this->assertFieldByName($v_uuid);
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', t('No nested forms found.'));
   }
 
