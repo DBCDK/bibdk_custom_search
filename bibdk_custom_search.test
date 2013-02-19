@@ -33,11 +33,11 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
 
 
   public function testRunner(){
-    //$this->testBibdkCustomSearchCreatePage();
-    $this->testParseFormFunction();
+    $this->_testParseFormFunction();
+    $this->_testBibdkCustomSearchCreatePage();
   }
 
-  private function testParseFormFunction(){
+  private function _testParseFormFunction(){
     $elements = array(
       '81335603-ae1d-5de4-25c7-a1538e7ad8f5' => array(
         'element_label' => 'Forfatter',
@@ -130,7 +130,7 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
     $this->assertEqual($result, $expected_result, 'Render array correctly parsed');
   }
 
-  private function testBibdkCustomSearchCreatePage() {
+  private function _testBibdkCustomSearchCreatePage() {
 
     // Test creation of a custom search page.
     $edit = array();
