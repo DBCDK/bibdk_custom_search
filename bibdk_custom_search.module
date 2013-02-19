@@ -543,10 +543,10 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         '#collapsible'  => FALSE,
         '#collapsed'    => FALSE,
         '#tree'         => true,
-        '#title'        => $element['element_label'],
-        '#description'  => $element['description'],
         '#region'       => $element['region'],
         '#theme'        => 'bibdk_search_element',
+        '#title_text'        => $element['element_label'],
+        '#description_text'  => $element['description'],
         '#help_text'    => $element['help_text'],
         '#attributes'   => array(
           'class'       => array($machine_readable, 'element-wrapper'),
@@ -615,6 +615,16 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
     //$form['#structure'] = $structure;
   return $form;
 
+}
+
+/**
+ * Extract title, description and helptext from render-array, and set them as individual variables to be set in the template
+ * @param $vars
+ */
+function bibdk_custom_search_preprocess_bibdk_search_element(&$vars){
+  $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
+  $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
+  $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
 }
 
 function _create_checkboxes_for_search_element($values, $parent){
