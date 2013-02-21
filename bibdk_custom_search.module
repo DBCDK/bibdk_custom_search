@@ -588,7 +588,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $value['options'];
             break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid);
+            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#tree'] = true;
             break;
           DEFAULT:
@@ -627,7 +627,7 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars){
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
 }
 
-function _create_checkboxes_for_search_element($values, $parent){
+function _create_checkboxes_for_search_element($values, $parent, $default_value=''){
   $form = array();
   foreach ($values as $key => $value){
     $form[$key] = array(
@@ -636,10 +636,12 @@ function _create_checkboxes_for_search_element($values, $parent){
     );
     $form[$key][$value['label']] = array (
       '#type' => 'checkbox',
+      '#default_value' => $default_value,
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
         'group' => $parent,
+        'class' => array( ($default_value == $key) ? 'default-value' : '' ),
       ),
     );
     if($key == null){
@@ -660,7 +662,7 @@ function _create_checkboxes_for_search_element($values, $parent){
         ),
         '#parents' => array($parent),
       );
-      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent);
+      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value);
     }
 
   }
