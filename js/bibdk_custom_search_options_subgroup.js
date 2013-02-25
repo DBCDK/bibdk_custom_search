@@ -45,10 +45,49 @@
       });
   };
 
+
+  Drupal.behaviors.bibdkCustomSearchCheckboxes = {
+    attach: function(context, settings) {
+      $('.form-type-checkbox input').change(function() {
+        // clear other checkboxes if top-level default is selected.
+        if ( $(this).hasClass('default-value') && $(this).is(':checked') ) {
+          $(this).closest(".bibdk-custom-search-element").find("input").each(function (i) {
+            if ( !$(this).hasClass('default-value') ) {
+              $(this).attr('checked', false);
+            }
+          })
+        }
+        // clear top-level default if other checkboxes is selected.
+        if ( !$(this).hasClass('default-value') && $(this).is(':checked') ) {
+          $(this).closest(".bibdk-custom-search-element").find("input").each(function (i) {
+            if ( $(this).hasClass('default-value') ) {
+              $(this).attr('checked', false);
+            }
+          })
+        }
+        // set top-level default as selected, if all other checkboxes are unchecked.
+        if ( !$(this).is(':checked') ) {
+          var counter = 0;
+          $(this).closest(".bibdk-custom-search-element").find("input").each(function (i) {
+            if ( $(this).is(':checked') ) {
+              counter++;
+            }
+          })
+          if ( !counter ) {
+            $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
+          }
+        }
+      });
+    }
+  };
+
+
+/*
   Drupal.behaviors.bibdkCustomSearchCheckboxes = {
     attach: function(context, settings) {
       $('.form-type-checkboxes input').change(function() {
         if ( $(this).val() && $(this).is(':checked') ) {
+          alert('foo');
           $(this).closest("div.form-checkboxes").find("input").each(function (i) {
             if ( !$(this).val() ) {
               $(this).attr('checked', false);
@@ -56,6 +95,7 @@
           })
         }
         if ( !$(this).val() && $(this).is(':checked') ) {
+          alert('bar');
           $(this).closest("div.form-checkboxes").find("input").each(function (i) {
             if ( $(this).val() ) {
               $(this).attr('checked', false);
@@ -65,7 +105,7 @@
       });
     }
   };
-
+*/
 
 } (jQuery));
 

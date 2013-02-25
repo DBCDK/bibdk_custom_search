@@ -543,10 +543,10 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         '#collapsible'  => FALSE,
         '#collapsed'    => FALSE,
         '#tree'         => true,
-        '#title'        => $element['element_label'],
-        '#description'  => $element['description'],
         '#region'       => $element['region'],
         '#theme'        => 'bibdk_search_element',
+        '#title_text'        => $element['element_label'],
+        '#description_text'  => $element['description'],
         '#help_text'    => $element['help_text'],
         '#attributes'   => array(
           'class'       => array($machine_readable, 'element-wrapper'),
@@ -588,7 +588,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $value['options'];
             break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid);
+            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#tree'] = true;
             break;
           DEFAULT:
@@ -617,7 +617,17 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
 
 }
 
-function _create_checkboxes_for_search_element($values, $parent){
+/**
+ * Extract title, description and helptext from render-array, and set them as individual variables to be set in the template
+ * @param $vars
+ */
+function bibdk_custom_search_preprocess_bibdk_search_element(&$vars){
+  $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
+  $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
+  $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
+}
+
+function _create_checkboxes_for_search_element($values, $parent, $default_value=''){
   $form = array();
   foreach ($values as $key => $value){
     $form[$key] = array(
@@ -626,10 +636,12 @@ function _create_checkboxes_for_search_element($values, $parent){
     );
     $form[$key][$value['label']] = array (
       '#type' => 'checkbox',
+      '#default_value' => $default_value,
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
         'group' => $parent,
+        'class' => array( ($default_value == $key) ? 'default-value' : '' ),
       ),
     );
     if($key == null){
@@ -650,7 +662,7 @@ function _create_checkboxes_for_search_element($values, $parent){
         ),
         '#parents' => array($parent),
       );
-      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent);
+      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value);
     }
 
   }
