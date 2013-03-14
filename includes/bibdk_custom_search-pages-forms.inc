@@ -54,6 +54,14 @@ function _bibdk_custom_search_default_admin_form($elements) {
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
+    $form['bibdk_custom_search'][$i]['disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($data['disabled']) ) ? TRUE : FALSE,
+      '#attributes'     => array('class' => array('element-weight')),
+    );
     $i++;
   }
 
@@ -164,6 +172,14 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
     '#description'    => t('Toggle collapse on/off for expanded search options.'),
   );
 
+  $form['bibdk_custom_search']['page']['disabled'] = array(
+    '#type'           => 'checkbox',
+    '#default_value'  => ( !empty($page['disabled']) ) ? TRUE : FALSE,
+    '#title'          => t('Disabled'),
+    '#title_display' => 'before',
+    '#description'    => t('Toggle "disabled" status on/off.'),
+  );
+
   $form['bibdk_custom_search']['elements'] = array(
     '#type'         => 'fieldset',
     '#title'        => t('Elements ordering'),
@@ -229,6 +245,13 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
       '#title_display' => 'invisible',
       '#default_value'  => $element['sort'],
       '#attributes'     => array('class' => array('sort-select', 'sort-select-' . $element['region'])),
+    );
+    $form['bibdk_custom_search']['elements'][$i]['disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($element['disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }

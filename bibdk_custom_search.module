@@ -751,7 +751,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $query = db_select('bibdk_custom_search_options', 'o');
     $query
-      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort'))
+      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort','disabled'))
       ->condition('v_uuid', $value_id,'=')
       ->orderBy('sort', 'ASC');
     $result = $query->execute();
@@ -764,6 +764,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
         'value'   => $option->value,
         'expand'  => $option->expand,
         'sort'    => $option->sort,
+        'disabled' => $option->disabled,
       );
       $options[] = $row;
     }

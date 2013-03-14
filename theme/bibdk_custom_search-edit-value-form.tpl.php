@@ -16,6 +16,9 @@ unset($form['search_code']['#description']);
 $form['default_value']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['default_value']['#description'])) . '">?</span>';
 unset($form['default_value']['#description']);
 
+$form['disabled']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['disabled']['#description'])) . '">?</span>';
+unset($form['disabled']['#description']);
+
 ?>
 <?php print drupal_render($form['v_uuid']); ?>
 <?php print drupal_render($form['sort']); ?>
@@ -26,6 +29,7 @@ unset($form['default_value']['#description']);
       <td><?php print drupal_render($form['value_type']); ?></td>
       <td><?php print drupal_render($form['search_code']); ?></td>
       <td><?php print drupal_render($form['default_value']); ?></td>
+      <td><?php print drupal_render($form['disabled']); ?></td>
     </tr>
   </tbody>
 </table>

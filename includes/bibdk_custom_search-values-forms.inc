@@ -56,6 +56,14 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
+    $form['bibdk_custom_search'][$i]['disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($data['disabled']) ) ? TRUE : FALSE,
+      '#attributes'     => array('class' => array('element-weight')),
+    );
     $i++;
   }
 
@@ -153,6 +161,15 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#size'           => 36,
   );
 
+  $form['element_value']['disabled'] = array(
+    '#type'           => 'checkbox',
+    '#default_value'  => ( !empty($value['disabled']) ) ? TRUE : FALSE,
+    '#title'          => t('Disabled'),
+    '#title_display' => 'before',
+    '#description'    => t('Toggle "disabled" status on/off.'),
+  );
+
+
   $form['element_value_options'] = array(
     '#type'         => 'fieldset',
     '#title'        => t('Options'),
@@ -223,6 +240,13 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#title_display' => 'invisible',
       '#default_value'  => $option['sort'],
       '#attributes'     => array('class' => array('element-weight')),
+    );
+    $form['element_value_options'][$i]['disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($option['disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }

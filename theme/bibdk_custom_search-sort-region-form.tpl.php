@@ -30,16 +30,17 @@ foreach ($element_regions as $region => $title) {
       <th><?php print t('Edit'); ?></th>
       <th><?php print t('Remove'); ?></th>
       <th><?php print t('Weight'); ?></th>
+      <th><?php print t('Disabled'); ?></th>
     </tr>
   </thead>
   <tbody>
     <?php foreach ($element_regions as $region => $region_data): ?>
     <?php $row = 1; ?>
       <tr class="region-title region-title-<?php print $region?>">
-        <td colspan="6"><?php print $region_data['title']; ?></td>
+        <td colspan="7"><?php print $region_data['title']; ?></td>
       </tr>
       <tr class="region-message region-<?php print $region?>-message <?php print((!$region_data['count']) ? 'region-empty' : 'region-populated'); ?>">
-        <td colspan="6"><em><?php print t('No elements in this region'); ?></em></td>
+        <td colspan="7"><em><?php print t('No elements in this region'); ?></em></td>
       </tr>
       <?php foreach (element_children($form) as $key => $element):
         $data = $form[$element];
@@ -51,6 +52,7 @@ foreach ($element_regions as $region => $title) {
             <td><?php print drupal_render($data['edit']); ?></td>
             <td><?php print drupal_render($data['delete']); ?></td>
             <td><?php print drupal_render($data['sort']); ?></td>
+            <td><?php print drupal_render($data['disabled']); ?></td>
           </tr>
           <?php $row++;
         endif;
