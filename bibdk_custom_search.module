@@ -450,7 +450,7 @@ function _bibdk_custom_search_get_page_db($page_path){
   return db_select('bibdk_custom_search', 'p')
     ->fields('p')
     ->condition('page_path', $page_path,'=')
-    ->condition('disabled', FALSE,'=')
+    ->condition('is_disabled', FALSE,'=')
     ->execute()
     ->fetchAssoc();
 }
@@ -469,14 +469,14 @@ function _bibdk_custom_search_get_advanced_fields_db($page){
     $query -> join('bibdk_custom_search_values', 'v', 'mv.v_uuid = v.v_uuid');
     $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.v_uuid = o.v_uuid');
     $query -> fields('me', array('region','sort'));
-    $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index','disabled'));
+    $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index','is_disabled'));
     $query -> fields('mv', array('sort'));
     $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
-    $query -> addField('v', 'disabled', 'value_disabled');
-    $query -> fields('o', array('o_uuid','sort','label','value','expand','disabled'));
-    $query -> addField('o', 'disabled', 'option_disabled');
+    $query -> addField('v', 'is_disabled', 'value_disabled');
+    $query -> fields('o', array('o_uuid','sort','label','value','expand','is_disabled'));
+    $query -> addField('o', 'is_disabled', 'option_disabled');
     $query -> condition('s.p_uuid', $page['p_uuid'],'=');
-    $query -> condition('e.disabled', FALSE,'=');
+    $query -> condition('e.is_disabled', FALSE,'=');
     $query -> orderBy('me.sort', 'ASC');
     $query -> orderBy('e.element_label', 'ASC');
     $query -> orderBy('region', 'ASC');
@@ -505,7 +505,7 @@ function _bibdk_custom_search_structure_elements_array($result){
         'region'        => $record->region,
         'access_key'    => $record->access_key,
         'tab_index'     => $record->tab_index,
-        'disabled'      => $record->disabled,
+        'disabled'      => $record->is_disabled,
       );
     }
 
@@ -721,12 +721,13 @@ function _bibdk_custom_search_get_pages_db() {
       $query = db_select('bibdk_custom_search', 'p');
       $query
         ->fields('p')
+        ->condition('is_disabled', FALSE)
         ->orderBy('sort', 'ASC');
       $result = $query->execute();
 
       foreach ($result as $page) {
         $p_uuid = $page->p_uuid;
-        $attributes = ( $page->disabled ) ? array('disabled'=>'disabled') : array();
+        $attributes = ( $page->is_disabled ) ? array('disabled'=>'disabled') : array();
         $row = array(
           'title' => bibdk_custom_search_translate('page', $p_uuid, 'menu_title', $page->menu_title),
           'href' => $page->page_path,
@@ -762,7 +763,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $query = db_select('bibdk_custom_search_options', 'o');
     $query
-      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort','disabled'))
+      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort','is_disabled'))
       ->condition('v_uuid', $value_id,'=')
       ->orderBy('sort', 'ASC');
     $result = $query->execute();
@@ -775,7 +776,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
         'value'   => $option->value,
         'expand'  => $option->expand,
         'sort'    => $option->sort,
-        'disabled' => $option->disabled,
+        'is_disabled' => $option->is_disabled,
       );
       $options[] = $row;
     }

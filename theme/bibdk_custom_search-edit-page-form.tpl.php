@@ -20,8 +20,8 @@ unset($form['delimiter']['#description']);
 $form['expand']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['expand']['#description'])) . '">?</span>';
 unset($form['expand']['#description']);
 
-$form['disabled']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['disabled']['#description'])) . '">?</span>';
-unset($form['disabled']['#description']);
+$form['is_disabled']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['is_disabled']['#description'])) . '">?</span>';
+unset($form['is_disabled']['#description']);
 
 
 ?>
@@ -33,5 +33,5 @@ unset($form['disabled']['#description']);
       <?php print drupal_render($form['page_path']); ?>
       <?php print drupal_render($form['delimiter']); ?>
       <?php print drupal_render($form['expand']); ?>
-      <?php print drupal_render($form['disabled']); ?>
+      <?php print drupal_render($form['is_disabled']); ?>
 </div>

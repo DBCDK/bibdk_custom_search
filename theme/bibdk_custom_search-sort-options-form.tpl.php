@@ -28,7 +28,7 @@ drupal_add_tabledrag('options', 'order', 'sibling', 'element-weight');
           <td><?php print drupal_render($data['expand']); ?></td>
           <td><?php print drupal_render($data['delete']); ?></td>
           <td><?php print drupal_render($data['sort']); ?></td>
-          <td><?php print drupal_render($data['disabled']); ?></td>
+          <td><?php print drupal_render($data['is_disabled']); ?></td>
         </tr>
     <?php endforeach; ?>
   </tbody>

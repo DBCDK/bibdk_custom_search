@@ -17,8 +17,8 @@ unset($form['description']['#description']);
 $form['help_text']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['help_text']['#description'])) . '">?</span>';
 unset($form['help_text']['#description']);
 
-$form['disabled']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['disabled']['#description'])) . '">?</span>';
-unset($form['disabled']['#description']);
+$form['is_disabled']['#title'] .= ' <span class="helptext" title="' . htmlspecialchars(strip_tags($form['is_disabled']['#description'])) . '">?</span>';
+unset($form['is_disabled']['#description']);
 
 ?>
 <?php print drupal_render($form['id']); ?>
@@ -30,7 +30,7 @@ unset($form['disabled']['#description']);
       <td><?php print drupal_render($form['element_label']); ?></td>
       <td><?php print drupal_render($form['access_key']); ?></td>
       <td><?php print drupal_render($form['tab_index']); ?></td>
-      <td><?php print drupal_render($form['disabled']); ?></td>
+      <td><?php print drupal_render($form['is_disabled']); ?></td>
     </tr>
     <tr>
       <td><?php print drupal_render($form['description']); ?></td>

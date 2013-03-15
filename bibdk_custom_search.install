@@ -107,7 +107,13 @@ function bibdk_custom_search_schema() {
         'default' => 0,
         'description' => t('Page sort value'),
       ),
-
+      'is_disabled' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'initial' => 0,
+        'description' => t('Toggle disabled status'),
+      )
     ),
     'indexes' => array(
       'bibdk_custom_search_uuid' => array('p_uuid'),
@@ -271,6 +277,13 @@ function bibdk_custom_search_schema() {
         'default' => '',
         'description' => t('Access key'),
       ),
+      'is_disabled' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'initial' => 0,
+        'description' => t('Toggle disabled status'),
+      )
     ),
     'indexes' => array(
       'bibdk_custom_search_elements_uuid' => array('e_uuid'),
@@ -420,6 +433,13 @@ function bibdk_custom_search_schema() {
         'default' => 0,
         'description' => t('Expand values. References bibdk_custom_search_values.vid'),
       ),
+      'is_disabled' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'initial' => 0,
+        'description' => t('Toggle disabled status'),
+      )
     ),
     'indexes' => array(
       'bcs_values_uuid' => array('v_uuid'),
@@ -492,6 +512,13 @@ function bibdk_custom_search_schema() {
         'default' => '0',
         'description' => t('Expand values. References bibdk_custom_search_values.v_uuid'),
       ),
+      'is_disabled' => array(
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'initial' => 0,
+        'description' => t('Toggle disabled status'),
+      )
     ),
     'indexes' => array(
       'bcs_options_uuid' => array('o_uuid'),

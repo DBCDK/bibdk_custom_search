@@ -52,7 +52,7 @@ foreach ($element_regions as $region => $title) {
             <td><?php print drupal_render($data['edit']); ?></td>
             <td><?php print drupal_render($data['delete']); ?></td>
             <td><?php print drupal_render($data['sort']); ?></td>
-            <td><?php print drupal_render($data['disabled']); ?></td>
+            <td><?php print drupal_render($data['is_disabled']); ?></td>
           </tr>
           <?php $row++;
         endif;

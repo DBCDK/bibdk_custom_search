@@ -54,12 +54,12 @@ function _bibdk_custom_search_default_admin_form($elements) {
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
-    $form['bibdk_custom_search'][$i]['disabled'] = array(
+    $form['bibdk_custom_search'][$i]['is_disabled'] = array(
       '#type'           => 'checkbox',
       '#title'          => t('Disabled'),
       '#title_display'  => 'invisible',
       '#return_value'   => TRUE,
-      '#default_value'  => ( !empty($data['disabled']) ) ? TRUE : FALSE,
+      '#default_value'  => ( !empty($data['is_disabled']) ) ? TRUE : FALSE,
       '#attributes'     => array('class' => array('element-weight')),
     );
     $i++;
@@ -170,12 +170,14 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
     '#description'    => t('Toggle collapse on/off for expanded search options.'),
   );
 
-  $form['bibdk_custom_search']['page']['disabled'] = array(
+  $form['bibdk_custom_search']['page']['is_disabled'] = array(
     '#type'           => 'checkbox',
-    '#default_value'  => ( !empty($page['disabled']) ) ? TRUE : FALSE,
+    '#default_value'  => ( !empty($page['is_disabled']) ) ? TRUE : FALSE,
     '#title'          => t('Disabled'),
     '#title_display' => 'before',
-    '#description'    => t('Toggle "disabled" status on/off. If disabled, no custom search elements are shown.'),
+    '#description'    => t('Toggle "disabled" status on/off.
+If disabled, the search page is removed from the menu,
+and no custom search elements are shown.'),
   );
 
   $form['bibdk_custom_search']['elements'] = array(
@@ -244,12 +246,12 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
       '#default_value'  => $element['sort'],
       '#attributes'     => array('class' => array('sort-select', 'sort-select-' . $element['region'])),
     );
-    $form['bibdk_custom_search']['elements'][$i]['disabled'] = array(
+    $form['bibdk_custom_search']['elements'][$i]['is_disabled'] = array(
       '#type'           => 'checkbox',
       '#title'          => t('Disabled'),
       '#title_display'  => 'invisible',
       '#return_value'   => TRUE,
-      '#default_value'  => ( !empty($element['disabled']) ) ? TRUE : FALSE,
+      '#default_value'  => ( !empty($element['is_disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }
