@@ -142,6 +142,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#title'          => t('Description'),
     '#description'  => t('Description for this search element, or a short help text.'),
     '#size'           => 36,
+    '#rows'           => 3,
   );
 
   $form['bibdk_custom_search_page_element']['help_text'] = array(
@@ -150,6 +151,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#title'          => t('Help text'),
     '#description'  => t('Long help text for this search element.'),
     '#size'           => 36,
+    '#rows'           => 3,
   );
 
   $form['bibdk_custom_search_page_element']['access_key'] = array(
@@ -171,7 +173,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#default_value'  => ( !empty($element['disabled']) ) ? TRUE : FALSE,
     '#title'          => t('Disabled'),
     '#title_display' => 'before',
-    '#description'    => t('Toggle "disabled" status on/off.'),
+    '#description'    => t('Toggle "disabled" status on/off. If disabled, the element is not shown.'),
   );
 
   $form['bibdk_custom_search_page_element_values'] = array(

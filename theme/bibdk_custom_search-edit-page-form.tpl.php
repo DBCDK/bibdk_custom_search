@@ -27,15 +27,11 @@ unset($form['disabled']['#description']);
 ?>
 <?php print drupal_render($form['p_uuid']); ?>
 <?php print drupal_render($form['sort']); ?>
-<table id="edit-search-page">
-  <tbody>
-    <tr>
-      <td><?php print drupal_render($form['page_title']); ?></td>
-      <td><?php print drupal_render($form['menu_title']); ?></td>
-      <td><?php print drupal_render($form['page_path']); ?></td>
-      <td><?php print drupal_render($form['delimiter']); ?></td>
-      <td><?php print drupal_render($form['expand']); ?></td>
-      <td><?php print drupal_render($form['disabled']); ?></td>
-    </tr>
-  </tbody>
-</table>
+<div id="edit-search-page">
+      <?php print drupal_render($form['page_title']); ?>
+      <?php print drupal_render($form['menu_title']); ?>
+      <?php print drupal_render($form['page_path']); ?>
+      <?php print drupal_render($form['delimiter']); ?>
+      <?php print drupal_render($form['expand']); ?>
+      <?php print drupal_render($form['disabled']); ?>
+</div>

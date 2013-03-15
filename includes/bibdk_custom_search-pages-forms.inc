@@ -105,8 +105,6 @@ function _bibdk_custom_search_default_admin_form($elements) {
  */
 function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=array()) {
 
-  // $page = variable_get('bibdk_custom_search_page', array());
-
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
   $form['bibdk_custom_search']['page'] = array(
@@ -177,7 +175,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
     '#default_value'  => ( !empty($page['disabled']) ) ? TRUE : FALSE,
     '#title'          => t('Disabled'),
     '#title_display' => 'before',
-    '#description'    => t('Toggle "disabled" status on/off.'),
+    '#description'    => t('Toggle "disabled" status on/off. If disabled, no custom search elements are shown.'),
   );
 
   $form['bibdk_custom_search']['elements'] = array(
