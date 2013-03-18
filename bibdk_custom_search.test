@@ -2,8 +2,20 @@
 /**
 * Tests the functionality of bibdk custom search.
 */
+
 class BibdkCustomSearchTestCase extends DrupalWebTestCase {
   protected $privileged_user;
+
+  private function append_file($content) {
+    $name = '/data/www/jgn.ding/sites/default/files/jgn.log';
+    $fp = fopen($name, 'a');
+    if ( $fp ) {
+      if ( fwrite($fp, print_r($content,1) . "\n\n") ) {
+        fclose($fp);
+      } else return false;
+    } else return false;
+    return true;
+  }
 
   public static function getInfo() {
     return array(
@@ -14,12 +26,13 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
   }
 
   public function setUp() {
-
-    // Enable any modules required for the test
+    $this->profile = 'minimal';
     parent::setUp('bibdk_custom_search', 'search', 'uuid');
-
     menu_rebuild();
+  }
 
+
+  public function testRunner(){
     // Create and log in our privileged user.
     $this->privileged_user = $this->drupalCreateUser(array(
       'administer bibdk custom search pages',
@@ -28,22 +41,20 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
       'search content',
       ));
     $this->drupalLogin($this->privileged_user);
-
-  }
-
-
-  public function testRunner(){
     $this->_testParseFormFunction();
     $this->_testBibdkCustomSearchCreatePage();
+
+    return true;
+
   }
 
   private function _testParseFormFunction(){
     $elements = array(
       '81335603-ae1d-5de4-25c7-a1538e7ad8f5' => array(
         'element_label' => 'Forfatter',
-        'description' => 'fx nesbø',
-        'help_text' => 'Søg forfatter:
-Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
+        'description' => 'fx nesbo',
+        'help_text' => 'Sog forfatter:
+Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
         'region' => 'main',
         'access_key' => 'f',
         'tab_index' => '0',
@@ -85,9 +96,9 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
         '#region' => 'main',
         '#theme' => 'bibdk_search_element',
         '#title_text' => 'Forfatter',
-        '#description_text' => 'fx nesbø',
-        '#help_text' => 'Søg forfatter:
-Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
+        '#description_text' => 'fx nesbo',
+        '#help_text' => 'Sog forfatter:
+Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
         '#attributes' =>
         array (
           'class' =>
@@ -102,6 +113,7 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
           '#title' => 'ophav',
           '#title_display' => 'invisible',
           '#default_value' => '',
+          '#disabled'      => 0,
           '#attributes' =>
           array (
             'tabindex' =>
@@ -127,6 +139,11 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
     );
 
     $result = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
+
+    // log
+    // $this->append_file($result);
+    // $this->append_file($expected_result);
+
     $this->assertEqual($result, $expected_result, 'Render array correctly parsed');
   }
 
@@ -221,7 +238,7 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
     $edit['bibdk_custom_search_page_element_values[0][v_uuid]'] = $v_uuid;
     //$this->drupalPost(null, $edit, t('Save'));
     $this->drupalPost('admin/config/search/bibdk_custom_search/elements/' . $e_uuid . '/edit', $edit, t('Save'));
-    $this->assertText($value_title);
+    $this->assertText($value_title, t('The value "@value_title" was found.', array('@value_title' => $value_title)));
     $this->assertLinkByHref(
       'admin/config/search/bibdk_custom_search/values/' . $v_uuid . '/edit'
     );
@@ -238,7 +255,7 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
 
     $edit = array();
     $frontpage = variable_get('site_frontpage', 'node');
-    $edit['page[menu_title]'] = $this->randomName(8);
+    $page_menu_title = $edit['page[menu_title]'] = $this->randomName(8);
     $page_path = $edit['page[page_path]'] = $frontpage;
     $this->drupalPost('admin/config/search/bibdk_custom_search/' . $p_uuid . '/edit', $edit, t('Save'));
     $this->assertFieldByName(
@@ -276,6 +293,62 @@ Skriv den eller de dele af navnet, du er sikker på. Kombiner evt. med et ord fr
     $this->assertText($element_description,t('The element description "@element_description" was found',array('@element_description'=>substr($element_description,0,40) . '[...]')));
     $this->assertFieldByName($v_uuid);
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', t('No nested forms found.'));
+
+
+
+    // Test setting a custom search value to 'disabled'.
+    $this->drupalGet('admin/config/search/bibdk_custom_search/values');
+    $this->clickLink('edit'); // there's only one value made
+    $edit = array();
+    $edit['element_value[is_disabled]'] = 1;
+
+    $this->drupalPost(NULL, $edit, t('Save'));
+
+    $this->assertFieldChecked('edit-element-value-is-disabled', t('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title) ));
+
+    $this->drupalGet($page_path);
+    $this->assertFieldByName(
+      'search_block_form'
+    );
+    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . $v_uuid));
+    $this->assertTrue($disabled_field, t('The value "@value_title" was set to "disabled"',array('@value_title'=>$value_title)));
+
+
+    // Test setting a custom search element to 'disabled'.
+    $this->drupalGet('admin/config/search/bibdk_custom_search/elements');
+    $this->clickLink('edit'); // there's only one element made
+    $edit = array();
+    $edit['bibdk_custom_search_page_element[is_disabled]'] = 1;
+
+    $this->drupalPost(null, $edit, t('Save'));
+
+    $this->assertFieldChecked('edit-bibdk-custom-search-page-element-is-disabled', t('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title) ));
+
+    $this->drupalGet($page_path);
+    $this->assertFieldByName(
+      'search_block_form'
+    );
+    $this->assertNoField($v_uuid, t('The disabled element "@element_label" was removed from the form',array('@element_label'=>$element_label)));
+
+
+    // Test setting a custom search page to 'disabled'.
+    $this->drupalGet('');
+    $this->assertFieldByName('search_block_form');
+    $this->assertLink($page_menu_title, 0, t('The page "@page_menu_title" is present in the menu.',array('@page_menu_title'=>$page_menu_title)));
+
+    $this->drupalGet('admin/config/search/bibdk_custom_search');
+    $this->clickLink('edit'); // there's only one page made
+    $edit = array();
+    $edit['page[is_disabled]'] = 1;
+
+    $this->drupalPost(null, $edit, t('Save'));
+
+    $this->assertFieldChecked('edit-page-is-disabled', t('The page "@page_title" have been set to "disabled".', array('@page_title' => $page_title) ));
+
+    $this->drupalGet('');
+    $this->assertFieldByName('search_block_form');
+    $this->assertNoLink($page_menu_title, t('The disabled page "@page_menu_title" was removed from the menu.',array('@page_menu_title'=>$page_menu_title)));
+
   }
 
 }

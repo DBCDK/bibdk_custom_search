@@ -567,7 +567,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
           '#default_value'  => $value['default_value'],
-          '#disabled'       => $value['disabled'],
+          '#disabled'       => ( isset($value['disabled']) ) ? $value['disabled'] : 0,
           '#attributes'     => array(
             'tabindex' => array($element['tab_index']),
             'accesskey' => array($element['access_key']),

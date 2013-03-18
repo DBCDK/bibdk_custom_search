@@ -648,29 +648,9 @@ function bibdk_custom_search_update_7008(&$sandbox) {
 }
 
 /**
- * Update tables: Add 'disabled' column to pages, elements, values and options
- */
-/*
-function bibdk_custom_search_update_7009(&$sandbox) {
-  $disabled_field = array(
-    'type' => 'int',
-    'size' => 'tiny',
-    'default' => 0,
-    'initial' => 0,
-    'description' => t('Toggle disabled status'),
-  );
-  db_add_field('bibdk_custom_search', 'disabled', $disabled_field);
-  db_add_field('bibdk_custom_search_elements', 'disabled', $disabled_field);
-  db_add_field('bibdk_custom_search_options', 'disabled', $disabled_field);
-  db_add_field('bibdk_custom_search_values', 'disabled', $disabled_field);
-}
-*/
-
-
-/**
  * Update tables: Add 'is_disabled' column to pages, elements, values and options
  */
-function bibdk_custom_search_update_7010(&$sandbox) {
+function bibdk_custom_search_update_7009(&$sandbox) {
   $disabled_field = array(
     'type' => 'int',
     'size' => 'tiny',
