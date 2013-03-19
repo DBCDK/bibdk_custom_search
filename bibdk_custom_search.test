@@ -6,17 +6,6 @@
 class BibdkCustomSearchTestCase extends DrupalWebTestCase {
   protected $privileged_user;
 
-  private function append_file($content) {
-    $name = '/data/www/jgn.ding/sites/default/files/jgn.log';
-    $fp = fopen($name, 'a');
-    if ( $fp ) {
-      if ( fwrite($fp, print_r($content,1) . "\n\n") ) {
-        fclose($fp);
-      } else return false;
-    } else return false;
-    return true;
-  }
-
   public static function getInfo() {
     return array(
       'name' => 'Bibdk Custom Search',
@@ -139,10 +128,6 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     );
 
     $result = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
-
-    // log
-    // $this->append_file($result);
-    // $this->append_file($expected_result);
 
     $this->assertEqual($result, $expected_result, 'Render array correctly parsed');
   }
