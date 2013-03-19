@@ -593,7 +593,6 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
               }
             }
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $options;
-            dpm($form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]);
             break;
           CASE 'checkboxes':
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
