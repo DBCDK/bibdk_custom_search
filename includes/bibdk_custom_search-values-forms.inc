@@ -166,7 +166,10 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#default_value'  => ( !empty($value['is_disabled']) ) ? TRUE : FALSE,
     '#title'          => t('Disabled'),
     '#title_display' => 'before',
-    '#description'    => t('Toggle "disabled" status on/off. If disabled, the value is shown greyed out, and can\'t be selectd.'),
+    '#description'    => t('Toggle "disabled" status on/off.
+If disabled, the value is shown greyed out, and can\'t be selectd.
+Checkbox options that are disabled are greyed out.
+Select and radio options are removed'),
   );
 
 
