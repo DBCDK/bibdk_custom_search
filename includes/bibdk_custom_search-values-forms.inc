@@ -246,7 +246,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#title'          => t('Disabled'),
       '#title_display'  => 'invisible',
       '#return_value'   => TRUE,
-      '#default_value'  => ( !empty($option['is_disabled']) ) ? TRUE : FALSE,
+      '#default_value'  => ( !empty($option['disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }

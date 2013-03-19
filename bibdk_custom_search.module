@@ -583,6 +583,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
             break;
           CASE 'select':
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#default_value'] = array($value['default_value']);
+          CASE 'radios':
             $options = array();
             if ($value['options']){
               foreach($value['options'] as $key => $option){
@@ -592,9 +593,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
               }
             }
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $options;
-            break;
-          CASE 'radios':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $value['options'];
+            dpm($form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]);
             break;
           CASE 'checkboxes':
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
@@ -646,6 +645,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value=
     $form[$key][$value['label']] = array (
       '#type' => 'checkbox',
       '#default_value' => $default_value,
+      '#disabled' => ( isset($value['disabled']) ) ? $value['disabled'] : FALSE,
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
@@ -776,7 +776,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
         'value'   => $option->value,
         'expand'  => $option->expand,
         'sort'    => $option->sort,
-        'is_disabled' => $option->is_disabled,
+        'disabled' => $option->is_disabled,
       );
       $options[] = $row;
     }
