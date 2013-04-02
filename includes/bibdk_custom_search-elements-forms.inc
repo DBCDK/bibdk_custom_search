@@ -173,7 +173,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#default_value'  => ( !empty($element['is_disabled']) ) ? TRUE : FALSE,
     '#title'          => t('Disabled'),
     '#title_display' => 'before',
-    '#description'    => t('Toggle "disabled" status on/off. If disabled, the element is not shown.'),
+    '#description'    => t('Toggle "disabled" status on/off. If disabled, all values in the element is disabled.'),
   );
 
   $form['bibdk_custom_search_page_element_values'] = array(

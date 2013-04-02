@@ -476,7 +476,7 @@ function _bibdk_custom_search_get_advanced_fields_db($page){
     $query -> fields('o', array('o_uuid','sort','label','value','expand','is_disabled'));
     $query -> addField('o', 'is_disabled', 'option_disabled');
     $query -> condition('s.p_uuid', $page['p_uuid'],'=');
-    $query -> condition('e.is_disabled', FALSE,'=');
+    // $query -> condition('e.is_disabled', FALSE,'=');
     $query -> orderBy('me.sort', 'ASC');
     $query -> orderBy('e.element_label', 'ASC');
     $query -> orderBy('region', 'ASC');
@@ -544,6 +544,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
     foreach ($elements as $e_uuid => $element) {
       $machine_readable = strtolower($element['element_label']);
       $machine_readable = preg_replace(array('@[æøå]+@', '@[^a-z0-9_]+@'),array('a', '_'),$machine_readable);
+      $is_disabled = $element['disabled'];
       $form['bibdk_custom_search_element_' . $e_uuid] = array(
         '#type'         => 'fieldset',
         '#collapsible'  => FALSE,
@@ -562,12 +563,13 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         $form['#bibdk_pre_search_process'][$e_uuid] = array_keys($element['values']);
       }
       foreach ($element['values'] as $v_uuid => $value) {
+        $value_is_disabled = ( ( isset($value['disabled']) && $value['disabled'] ) || $is_disabled ) ? TRUE : FALSE;
         $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = array(
           '#type'           => $value['value_type'],
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
           '#default_value'  => $value['default_value'],
-          '#disabled'       => ( isset($value['disabled']) ) ? $value['disabled'] : 0,
+          '#disabled'       => $value_is_disabled,
           '#attributes'     => array(
             'tabindex' => array($element['tab_index']),
             'accesskey' => array($element['access_key']),
@@ -595,7 +597,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $options;
             break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
+            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value'], $value_is_disabled);
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#tree'] = true;
             break;
           DEFAULT:
@@ -634,7 +636,7 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars){
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
 }
 
-function _create_checkboxes_for_search_element($values, $parent, $default_value=''){
+function _create_checkboxes_for_search_element($values, $parent, $default_value='', $is_disabled = FALSE){
   $form = array();
   foreach ($values as $key => $value){
     $form[$key] = array(
@@ -644,7 +646,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value=
     $form[$key][$value['label']] = array (
       '#type' => 'checkbox',
       '#default_value' => $default_value,
-      '#disabled' => ( isset($value['disabled']) ) ? $value['disabled'] : FALSE,
+      '#disabled' => ( $is_disabled || ( isset($value['disabled']) && $value['disabled'] ) ) ? TRUE : FALSE,
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
@@ -670,7 +672,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value=
         ),
         '#parents' => array($parent),
       );
-      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value);
+      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value, $is_disabled);
     }
 
   }
