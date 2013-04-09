@@ -54,6 +54,14 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
+    $form['bibdk_custom_search_page_elements'][$i]['is_disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($data['is_disabled']) ) ? TRUE : FALSE,
+      '#attributes'     => array('class' => array('element-weight')),
+    );
     $i++;
   }
 
@@ -134,6 +142,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#title'          => t('Description'),
     '#description'  => t('Description for this search element, or a short help text.'),
     '#size'           => 36,
+    '#rows'           => 3,
   );
 
   $form['bibdk_custom_search_page_element']['help_text'] = array(
@@ -142,6 +151,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#title'          => t('Help text'),
     '#description'  => t('Long help text for this search element.'),
     '#size'           => 36,
+    '#rows'           => 3,
   );
 
   $form['bibdk_custom_search_page_element']['access_key'] = array(
@@ -156,6 +166,14 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
     '#default_value'  => $element['tab_index'],
     '#title'          => t('TabIndex'),
     '#size'           => 2,
+  );
+
+  $form['bibdk_custom_search_page_element']['is_disabled'] = array(
+    '#type'           => 'checkbox',
+    '#default_value'  => ( !empty($element['is_disabled']) ) ? TRUE : FALSE,
+    '#title'          => t('Disabled'),
+    '#title_display' => 'before',
+    '#description'    => t('Toggle "disabled" status on/off. If disabled, all values in the element is disabled.'),
   );
 
   $form['bibdk_custom_search_page_element_values'] = array(
@@ -216,6 +234,13 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
       '#title_display' => 'invisible',
       '#default_value'  => $value['sort'],
       '#attributes'     => array('class' => array('element-weight')),
+    );
+    $form['bibdk_custom_search_page_element_values'][$i]['is_disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($value['is_disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }

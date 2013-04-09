@@ -135,7 +135,7 @@ function bibdk_custom_search_uuid_sync_table($table, $id_field, $uuid_field) {
  */
 function bibdk_custom_search_bibdk_custom_search_list() {
   return array(
-    'all_elements' => 'Eksportér alle værdier',
+    'all_elements' => t('Export all values'),
   );
 }
 function bibdk_custom_search_bibdk_custom_search_elements_list() {
@@ -209,7 +209,7 @@ function bibdk_custom_search_features_export_helper($data, &$export, $table, $uu
 
 
 /**
- * Helper funcyion for list callback
+ * Helper function for list callback
  * @param $uuid
  * @param $table
  * @return array
@@ -221,7 +221,7 @@ function bibdk_custom_search_list_helper($uuid, $table) {
   $result = $query -> execute();
 
   foreach ($result as $record) {
-    $list[ $record->$uuid ] = $record->$uuid;
+    $list[ $record->$uuid] = $record->$uuid;
   }
 
   return $list;
