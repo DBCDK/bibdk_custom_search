@@ -16,6 +16,7 @@ drupal_add_tabledrag('values', 'order', 'sibling', 'element-weight');
       <th><?php print t('Edit'); ?></th>
       <th><?php print t('Remove'); ?></th>
       <th><?php print t('Weight'); ?></th>
+      <th><?php print t('Disabled'); ?></th>
     </tr>
   </thead>
   <tbody>
@@ -27,6 +28,7 @@ drupal_add_tabledrag('values', 'order', 'sibling', 'element-weight');
           <td><?php print drupal_render($data['edit']); ?></td>
           <td><?php print drupal_render($data['delete']); ?></td>
           <td><?php print drupal_render($data['sort']); ?></td>
+          <td><?php print drupal_render($data['is_disabled']); ?></td>
         </tr>
     <?php endforeach; ?>
   </tbody>

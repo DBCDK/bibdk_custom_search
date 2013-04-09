@@ -16,6 +16,7 @@ drupal_add_tabledrag('options', 'order', 'sibling', 'element-weight');
       <th><?php print t('Submenu'); ?></th>
       <th><?php print t('Delete'); ?></th>
       <th><?php print t('Weight'); ?></th>
+      <th><?php print t('Disabled'); ?></th>
     </tr>
   </thead>
   <tbody>
@@ -27,6 +28,7 @@ drupal_add_tabledrag('options', 'order', 'sibling', 'element-weight');
           <td><?php print drupal_render($data['expand']); ?></td>
           <td><?php print drupal_render($data['delete']); ?></td>
           <td><?php print drupal_render($data['sort']); ?></td>
+          <td><?php print drupal_render($data['is_disabled']); ?></td>
         </tr>
     <?php endforeach; ?>
   </tbody>

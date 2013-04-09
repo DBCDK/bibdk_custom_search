@@ -11,6 +11,19 @@ tr.region-title-expand, tr.region-title-add {
   width: auto;
 }
 
+#edit-search-page .form-item {
+  float: left;
+  width: 33%;
+}
+
+#edit-search-page > .form-item {
+  padding: 9px 0 0 0;
+}
+
+#edit-search-page .form-item label {
+    display: inline;
+}
+
 form#search-block-form fieldset {
   margin-bottom: 0.5em;
   clear: both;
@@ -74,3 +87,9 @@ div.fieldset-wrapper p.helptext {
   padding: 0 0.25em;
   font-weight: bold;
 }
+
+#edit-bibdk-custom-search-page-element .form-item {
+  margin: 0;
+  padding: 0;
+}
+

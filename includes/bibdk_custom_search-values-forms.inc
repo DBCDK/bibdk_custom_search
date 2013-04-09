@@ -56,6 +56,14 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
       '#default_value'  => $data['sort'],
       '#attributes'     => array('class' => array('element-weight')),
     );
+    $form['bibdk_custom_search'][$i]['is_disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($data['is_disabled']) ) ? TRUE : FALSE,
+      '#attributes'     => array('class' => array('element-weight')),
+    );
     $i++;
   }
 
@@ -119,7 +127,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#default_value'  => $value['value_title'],
     '#title'          => t('Title'),
     '#description'    => t('Administrative title for this search value'),
-    '#size'           => 36,
+    '#size'           => 30,
   );
 
   $form['element_value']['value_type'] = array(
@@ -128,7 +136,7 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
                           '' => t('Select value type'),
                           'textfield' => t('Text'),
                           'select' => t('Select'),
-                          'select-multi' => t('Select multiple'),
+                          // 'select-multi' => t('Select multiple'),
                           'radios' => t('Radio'),
                           'checkboxes' => t('Checkbox'),
                           'hidden' => t('Hidden'),
@@ -141,8 +149,8 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#type'           => 'textfield',
     '#default_value'  => $value['search_code'],
     '#title'          => t('Search code'),
-    '#description'    => t('Search code for this search query.') . "\n" . t('F.ex. dc.type.') . "\n" . t('Leave blank, if a value submenu.'),
-    '#size'           => 36,
+    '#description'    => t('Search code for this search query.') . "\n" . t('F.ex. dc.type.') . "\n" . t('Leave blank, if it is a value submenu.'),
+    '#size'           => 30,
   );
 
   $form['element_value']['default_value'] = array(
@@ -150,8 +158,20 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
     '#default_value'  => $value['default_value'],
     '#title'          => t('Default value'),
     '#description'    => t('If a select, radio or checkbox group, the value is selected by default.'),
-    '#size'           => 36,
+    '#size'           => 30,
   );
+
+  $form['element_value']['is_disabled'] = array(
+    '#type'           => 'checkbox',
+    '#default_value'  => ( !empty($value['is_disabled']) ) ? TRUE : FALSE,
+    '#title'          => t('Disabled'),
+    '#title_display' => 'before',
+    '#description'    => t('Toggle "disabled" status on/off.
+If disabled, the value is shown greyed out, and can\'t be selectd.
+Checkbox options that are disabled are greyed out.
+Select and radio options are removed'),
+  );
+
 
   $form['element_value_options'] = array(
     '#type'         => 'fieldset',
@@ -223,6 +243,13 @@ function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
       '#title_display' => 'invisible',
       '#default_value'  => $option['sort'],
       '#attributes'     => array('class' => array('element-weight')),
+    );
+    $form['element_value_options'][$i]['is_disabled'] = array(
+      '#type'           => 'checkbox',
+      '#title'          => t('Disabled'),
+      '#title_display'  => 'invisible',
+      '#return_value'   => TRUE,
+      '#default_value'  => ( !empty($option['disabled']) ) ? TRUE : FALSE,
     );
     $i++;
   }

@@ -450,6 +450,7 @@ function _bibdk_custom_search_get_page_db($page_path){
   return db_select('bibdk_custom_search', 'p')
     ->fields('p')
     ->condition('page_path', $page_path,'=')
+    ->condition('is_disabled', FALSE,'=')
     ->execute()
     ->fetchAssoc();
 }
@@ -468,11 +469,14 @@ function _bibdk_custom_search_get_advanced_fields_db($page){
     $query -> join('bibdk_custom_search_values', 'v', 'mv.v_uuid = v.v_uuid');
     $query -> leftjoin('bibdk_custom_search_options', 'o', 'v.v_uuid = o.v_uuid');
     $query -> fields('me', array('region','sort'));
-    $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index'));
+    $query -> fields('e', array('e_uuid','element_label','description','help_text','access_key','tab_index','is_disabled'));
     $query -> fields('mv', array('sort'));
     $query -> fields('v', array('v_uuid','value_title','value_type','search_code','default_value'));
-    $query -> fields('o', array('o_uuid','sort','label','value','expand'));
+    $query -> addField('v', 'is_disabled', 'value_disabled');
+    $query -> fields('o', array('o_uuid','sort','label','value','expand','is_disabled'));
+    $query -> addField('o', 'is_disabled', 'option_disabled');
     $query -> condition('s.p_uuid', $page['p_uuid'],'=');
+    // $query -> condition('e.is_disabled', FALSE,'=');
     $query -> orderBy('me.sort', 'ASC');
     $query -> orderBy('e.element_label', 'ASC');
     $query -> orderBy('region', 'ASC');
@@ -501,6 +505,7 @@ function _bibdk_custom_search_structure_elements_array($result){
         'region'        => $record->region,
         'access_key'    => $record->access_key,
         'tab_index'     => $record->tab_index,
+        'disabled'      => $record->is_disabled,
       );
     }
 
@@ -511,6 +516,7 @@ function _bibdk_custom_search_structure_elements_array($result){
         'value_type'    => $record->value_type,
         'search_code'   => $record->search_code,
         'default_value' => $record->default_value,
+        'disabled'      => $record->value_disabled,
       );
     }
 
@@ -518,13 +524,13 @@ function _bibdk_custom_search_structure_elements_array($result){
     if ( $o_uuid ) {
       $elements[ $e_uuid ]['values'][ $v_uuid ]['options'][ $record->value ]['label'] = bibdk_custom_search_translate('option', $o_uuid, 'label', $record->label);
       $elements[ $e_uuid ]['values'][ $v_uuid ]['options'][ $record->value ]['v_uuid'] = $v_uuid;
+      $elements[ $e_uuid ]['values'][ $v_uuid ]['options'][ $record->value ]['disabled'] = $record->option_disabled;
     }
     if ( $o_uuid && $record->expand ) {
       //
       $elements[ $e_uuid ]['values'][ $v_uuid ]['options'][$record->value]['childElem'] = _bibdk_custom_search_get_options( $e_uuid, $o_uuid, $record->value, $record->expand, array(), array() );
     }
   }
-
   return $elements;
 }
 
@@ -538,6 +544,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
     foreach ($elements as $e_uuid => $element) {
       $machine_readable = strtolower($element['element_label']);
       $machine_readable = preg_replace(array('@[æøå]+@', '@[^a-z0-9_]+@'),array('a', '_'),$machine_readable);
+      $is_disabled = $element['disabled'];
       $form['bibdk_custom_search_element_' . $e_uuid] = array(
         '#type'         => 'fieldset',
         '#collapsible'  => FALSE,
@@ -556,11 +563,13 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         $form['#bibdk_pre_search_process'][$e_uuid] = array_keys($element['values']);
       }
       foreach ($element['values'] as $v_uuid => $value) {
+        $value_is_disabled = ( ( isset($value['disabled']) && $value['disabled'] ) || $is_disabled ) ? TRUE : FALSE;
         $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = array(
           '#type'           => $value['value_type'],
           '#title'          => $value['value_title'],
           '#title_display'  => 'invisible',
           '#default_value'  => $value['default_value'],
+          '#disabled'       => $value_is_disabled,
           '#attributes'     => array(
             'tabindex' => array($element['tab_index']),
             'accesskey' => array($element['access_key']),
@@ -576,19 +585,19 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
             break;
           CASE 'select':
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#default_value'] = array($value['default_value']);
+          CASE 'radios':
             $options = array();
             if ($value['options']){
-            foreach($value['options'] as $key => $option){
-              $options[$key] = $option['label'];
-            }
+              foreach($value['options'] as $key => $option){
+                if ( !$option['disabled'] ) {
+                  $options[$key] = $option['label'];
+                }
+              }
             }
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $options;
             break;
-          CASE 'radios':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#options'] = $value['options'];
-            break;
           CASE 'checkboxes':
-            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value']);
+            $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value'], $value_is_disabled);
             $form['bibdk_custom_search_element_' . $e_uuid][ $v_uuid ]['#tree'] = true;
             break;
           DEFAULT:
@@ -627,7 +636,7 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars){
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
 }
 
-function _create_checkboxes_for_search_element($values, $parent, $default_value=''){
+function _create_checkboxes_for_search_element($values, $parent, $default_value='', $is_disabled = FALSE){
   $form = array();
   foreach ($values as $key => $value){
     $form[$key] = array(
@@ -637,6 +646,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value=
     $form[$key][$value['label']] = array (
       '#type' => 'checkbox',
       '#default_value' => $default_value,
+      '#disabled' => ( $is_disabled || ( isset($value['disabled']) && $value['disabled'] ) ) ? TRUE : FALSE,
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
@@ -662,7 +672,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value=
         ),
         '#parents' => array($parent),
       );
-      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value);
+      $form[$key.'-fieldset'] += _create_checkboxes_for_search_element($value['childElem'], $parent, $default_value, $is_disabled);
     }
 
   }
@@ -712,14 +722,17 @@ function _bibdk_custom_search_get_pages_db() {
       $query = db_select('bibdk_custom_search', 'p');
       $query
         ->fields('p')
+        ->condition('is_disabled', FALSE)
         ->orderBy('sort', 'ASC');
       $result = $query->execute();
 
       foreach ($result as $page) {
         $p_uuid = $page->p_uuid;
+        $attributes = ( $page->is_disabled ) ? array('disabled'=>'disabled') : array();
         $row = array(
           'title' => bibdk_custom_search_translate('page', $p_uuid, 'menu_title', $page->menu_title),
           'href' => $page->page_path,
+          'attributes' => $attributes,
         );
         $pages[] = $row;
       }
@@ -751,7 +764,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $query = db_select('bibdk_custom_search_options', 'o');
     $query
-      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort'))
+      ->fields('o', array('o_uuid','v_uuid','label','value','expand','sort','is_disabled'))
       ->condition('v_uuid', $value_id,'=')
       ->orderBy('sort', 'ASC');
     $result = $query->execute();
@@ -764,6 +777,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
         'value'   => $option->value,
         'expand'  => $option->expand,
         'sort'    => $option->sort,
+        'disabled' => $option->is_disabled,
       );
       $options[] = $row;
     }
