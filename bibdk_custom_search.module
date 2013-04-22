@@ -324,8 +324,9 @@ function bibdk_custom_search_submit($form, &$form_state) {
       }
     }
   }
+  $op = variable_get('cglLang', 'cqleng') ? ' OR ' : ' ELLER ';
   foreach($groups as $group){
-    $fields[] = '(' . implode(' OR ', $group) . ')';
+    $fields[] = '(' . implode($op, $group) . ')';
   }
 
   if ( isset($form_state['values']['delimiter']) && $delimiter = $form_state['values']['delimiter'] ) {
@@ -339,11 +340,12 @@ function bibdk_custom_search_submit($form, &$form_state) {
   if (!empty($keys)) {
     $q[] = $keys;
   }
-
+  $op = (variable_get('cglLang', 'cqleng') == 'cqleng') ? ' AND ' : ' OG ';
   if (!empty($fields)) {
-    $q[] = '(' . implode(' AND ', $fields) . ')';
+
+    $q[] = '(' . implode($op, $fields) . ')';
   }
-  $q = join(' AND ', $q);
+  $q = join($op, $q);
 
   $controls =  module_invoke_all('ting_search_get_controls', $form, $form_state);
 
