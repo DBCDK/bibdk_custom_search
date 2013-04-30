@@ -5,7 +5,12 @@ version = 7.x-0.8
 package = Bibliotek.dk
 
 dependencies[] = uuid
+
 files[] = bibdk_custom_search.test
 files[] = bibdk_custom_search.i18n.inc
 files[] = bibdk_custom_search.export.inc
+
+files[] = js/bibdk_custom_search_options_subgroup.js
+files[] = js/bibdk_custom_search_ajax.js
+
 configure = admin/config/search/bibdk_custom_search

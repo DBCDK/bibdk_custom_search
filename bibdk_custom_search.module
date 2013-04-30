@@ -14,6 +14,12 @@ module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.export');
  * Implements hook_menu().
  */
 function bibdk_custom_search_menu() {
+  $items['frontpage/searchpage_callback'] = array(
+    'title' => 'Custom searchpage AJAX callback',
+    'page callback' => 'bibdk_custom_searchpage_ajax_callback',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
   $items['admin/config/search/bibdk_custom_search'] = array(
     'title' => 'bibdk search pages',
     'description' => 'Customize the default search, add custom search pages, and change labels, values & ordering.',
@@ -159,6 +165,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       '#type' => 'fieldset',
       '#theme' => 'bibdk_custom_advanced_search_menu',
       '#custom_submit' => _bibdk_custom_search_get_additional_submit(),
+      '#visuallyhidden' => ($get['q'] !== 'bibdk_frontpage') ? '' : 'visuallyhidden',
       '#attributes' => array(
         'class' => array(
           _bibdk_custom_search_trim_string($advanced_fields['#main_search_name']),
@@ -185,6 +192,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       ),
       'js' => array(
         drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js',
+        drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_ajax.js',
       )
     );
 
@@ -254,14 +262,37 @@ function _bibdk_custom_search_get_searchpage_buttons(&$form, $pages, $req) {
     $form['searchpages'][$page['title']] = array(
       '#type' => 'button',
       '#value' => $page['title'],
-      '#submit' => array('bibdk_custom_search_new_searchpage_picked'),
       '#executes_submit_callback' => TRUE,
-      '#attributes' => array('class' => array($class)),
+      '#attributes' => array(
+        'class' => array(
+          $class
+        ),
+        'data-type' => array(
+          $page['href'],
+        ),
+      ),
       '#dest' => $page['href'],
       '#prefix' => '<li>',
       '#suffix' => '</li>',
     );
   }
+}
+
+function bibdk_custom_searchpage_ajax_callback() {
+  fb($_GET ,'get');
+  $type = $_GET['type'];
+  $req = $_GET['req'];
+  $_GET['q'] = $type;
+
+  $bodyClass = 'page-' . strtr($type, array(
+    '/' => '-',
+    '_' => '-',
+  ));
+
+  $form = drupal_render(drupal_get_form('search_block_form'));
+  $request = $type . '?req=' . $req;
+
+  drupal_json_output(array('bodyclass' => $bodyClass, 'form' => $form, 'request' => $request));
 }
 
 /**
@@ -490,6 +521,7 @@ function _bibdk_custom_search_get_advanced_fields_form() {
 
   // If cache exists return cache;
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/', '_', $path['destination']) . $language->language;
+  $cache_id = NULL; //XXX re-enable cache
   if ($cache = cache_get($cache_id)) {
     $form = $cache->data;
     return $form;
@@ -510,7 +542,7 @@ function _bibdk_custom_search_get_advanced_fields_form() {
 
   // create form from search elements
   $form = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
-  cache_set($cache_id, $form, 'cache');
+  //cache_set($cache_id, $form, 'cache'); //XXX re-enable cache
   return $form;
 }
 
