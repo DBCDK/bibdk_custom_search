@@ -652,7 +652,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
   foreach ($elements as $e_uuid => $element) {
     $machine_readable = strtolower($element['element_label']);
     $machine_readable = preg_replace(array('@[æøå]+@', '@[^a-z0-9_]+@'), array('a', '_'), $machine_readable);
-    $is_disabled = $element['disabled'];
+    $is_disabled = isset($element['disabled']) ? $element['disabled'] : 0;
     $form['bibdk_custom_search_element_' . $e_uuid] = array(
       '#type' => 'fieldset',
       '#collapsible' => FALSE,

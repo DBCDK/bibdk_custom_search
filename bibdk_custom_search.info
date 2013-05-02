@@ -6,9 +6,10 @@ package = Bibliotek.dk
 
 dependencies[] = uuid
 
-files[] = bibdk_custom_search.test
+
 files[] = bibdk_custom_search.i18n.inc
 files[] = bibdk_custom_search.export.inc
+files[] = test/bibdk_custom_search.test
 
 files[] = js/bibdk_custom_search_options_subgroup.js
 
