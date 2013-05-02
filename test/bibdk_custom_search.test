@@ -1,16 +1,17 @@
 <?php
 /**
-* Tests the functionality of bibdk custom search.
-*/
+ * Tests the functionality of bibdk custom search.
+ */
 
 class BibdkCustomSearchTestCase extends DrupalWebTestCase {
+
   protected $privileged_user;
 
   public static function getInfo() {
     return array(
-      'name' => 'Bibdk Custom Search',
+      'name' => 'Custom Search Web Test',
       'description' => 'Bibdk Custom Search test.',
-      'group' => 'bibliotek.dk',
+      'group' => 'Bibliotek.dk  - Custom Search',
     );
   }
 
@@ -21,14 +22,14 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
   }
 
 
-  public function testRunner(){
+  public function testRunner() {
     // Create and log in our privileged user.
     $this->privileged_user = $this->drupalCreateUser(array(
       'administer bibdk custom search pages',
       'administer search',
       'administer blocks',
       'search content',
-      ));
+    ));
     $this->drupalLogin($this->privileged_user);
     $this->_testParseFormFunction();
     $this->_testBibdkCustomSearchCreatePage();
@@ -37,7 +38,7 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
 
   }
 
-  private function _testParseFormFunction(){
+  private function _testParseFormFunction() {
     $elements = array(
       '81335603-ae1d-5de4-25c7-a1538e7ad8f5' => array(
         'element_label' => 'Forfatter',
@@ -75,9 +76,9 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
       'sort' => '-10',
     );
 
-    $expected_result = array (
+    $expected_result = array(
       'bibdk_custom_search_element_81335603-ae1d-5de4-25c7-a1538e7ad8f5' =>
-      array (
+      array(
         '#type' => 'fieldset',
         '#collapsible' => false,
         '#collapsed' => false,
@@ -89,32 +90,32 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
         '#help_text' => 'Sog forfatter:
 Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
         '#attributes' =>
-        array (
+        array(
           'class' =>
-          array (
+          array(
             0 => 'forfatter',
             1 => 'element-wrapper',
           ),
         ),
         '1150ebb6-8e38-27d4-b929-840f71d17137' =>
-        array (
+        array(
           '#type' => 'textfield',
           '#title' => 'ophav',
           '#title_display' => 'invisible',
           '#default_value' => '',
-          '#disabled'      => 0,
+          '#disabled' => 0,
           '#attributes' =>
-          array (
+          array(
             'tabindex' =>
-            array (
+            array(
               0 => '0',
             ),
             'accesskey' =>
-            array (
+            array(
               0 => 'f',
             ),
             'term' =>
-            array (
+            array(
               0 => '1150ebb6-8e38-27d4-b929-840f71d17137',
             ),
           ),
@@ -168,12 +169,12 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'element_value[value_type]',
       $edit['element_value[value_type]'],
-      format_string('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_title, '@type'=>$edit['element_value[value_type]']))
+      format_string('The value "@value_title" have been set to a type "@type".', array('@value_title' => $value_title, '@type' => $edit['element_value[value_type]']))
     );
     $this->assertFieldByName(
       'element_value[search_code]',
       $edit['element_value[search_code]'],
-      format_string('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_title, '@code'=>$edit['element_value[search_code]']))
+      format_string('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $value_title, '@code' => $edit['element_value[search_code]']))
     );
 
     // Test editing a custom search element.
@@ -193,27 +194,27 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[element_label]',
       $edit['bibdk_custom_search_page_element[element_label]'],
-      format_string('The element "@element_title" have been assigned a label "@val".', array('@element_title' => $element_title, '@val'=>$edit['bibdk_custom_search_page_element[element_label]']))
+      format_string('The element "@element_title" have been assigned a label "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[element_label]']))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[access_key]',
       $edit['bibdk_custom_search_page_element[access_key]'],
-      format_string('The element "@element_title" have been assigned an accesskey "@val".', array('@element_title' => $element_title, '@val'=>$edit['bibdk_custom_search_page_element[access_key]']))
+      format_string('The element "@element_title" have been assigned an accesskey "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[access_key]']))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[tab_index]',
       $edit['bibdk_custom_search_page_element[tab_index]'],
-      format_string('The element "@element_title" have been assigned a tabindex "@val".', array('@element_title' => $element_title, '@val'=>$edit['bibdk_custom_search_page_element[tab_index]']))
+      format_string('The element "@element_title" have been assigned a tabindex "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[tab_index]']))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[description]',
       $edit['bibdk_custom_search_page_element[description]'],
-      format_string('The element "@element_title" have been assigned a description "@val".', array('@element_title' => $element_title, '@val'=>substr($edit['bibdk_custom_search_page_element[description]'],0,40) . '[...]'))
+      format_string('The element "@element_title" have been assigned a description "@val".', array('@element_title' => $element_title, '@val' => substr($edit['bibdk_custom_search_page_element[description]'], 0, 40) . '[...]'))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[help_text]',
       $edit['bibdk_custom_search_page_element[help_text]'],
-      format_string('The element "@element_title" have been assigned a helptext "@val".', array('@element_title' => $element_title, '@val'=>substr($edit['bibdk_custom_search_page_element[help_text]'],0,40) . '[...]'))
+      format_string('The element "@element_title" have been assigned a helptext "@val".', array('@element_title' => $element_title, '@val' => substr($edit['bibdk_custom_search_page_element[help_text]'], 0, 40) . '[...]'))
     );
 
     // Test adding a value to a custom search element.
@@ -246,12 +247,12 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'page[menu_title]',
       $edit['page[menu_title]'],
-      format_string('The page "@page_title" have been assigned a menu title "@val".', array('@page_title' => $page_title, '@val'=>$edit['page[menu_title]']))
+      format_string('The page "@page_title" have been assigned a menu title "@val".', array('@page_title' => $page_title, '@val' => $edit['page[menu_title]']))
     );
     $this->assertFieldByName(
       'page[page_path]',
       $edit['page[page_path]'],
-      format_string('The page "@page_title" have been assigned a path "@val".', array('@page_title' => $page_title, '@val'=>$edit['page[page_path]']))
+      format_string('The page "@page_title" have been assigned a path "@val".', array('@page_title' => $page_title, '@val' => $edit['page[page_path]']))
     );
 
     // Test adding an element to a custom search page.
@@ -274,11 +275,10 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'search_block_form'
     );
-    $this->assertText($element_label, format_string('The element label "@element_label" was found',array('@element_label'=>$element_label)));
-    $this->assertText($element_description, format_string('The element description "@element_description" was found',array('@element_description'=>substr($element_description,0,40) . '[...]')));
+    $this->assertText($element_label, format_string('The element label "@element_label" was found', array('@element_label' => $element_label)));
+    $this->assertText($element_description, format_string('The element description "@element_description" was found', array('@element_description' => substr($element_description, 0, 40) . '[...]')));
     $this->assertFieldByName($v_uuid);
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', format_string('No nested forms found.'));
-
 
 
     // Test setting a custom search value to 'disabled'.
@@ -289,14 +289,14 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
 
     $this->drupalPost(NULL, $edit, 'Save');
 
-    $this->assertFieldChecked('edit-element-value-is-disabled', format_string('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title) ));
+    $this->assertFieldChecked('edit-element-value-is-disabled', format_string('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title)));
 
     $this->drupalGet($page_path);
     $this->assertFieldByName(
       'search_block_form'
     );
     $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . $v_uuid));
-    $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"',array('@value_title'=>$value_title)));
+    $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $value_title)));
 
 
     // Test setting a custom search element to 'disabled'.
@@ -305,34 +305,34 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $edit = array();
     $edit['bibdk_custom_search_page_element[is_disabled]'] = 1;
 
-    $this->drupalPost(null, $edit, 'Save');
+    $this->drupalPost(NULL, $edit, 'Save'); //verbose
 
-    $this->assertFieldChecked('edit-bibdk-custom-search-page-element-is-disabled', format_string('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title) ));
+    $this->assertFieldChecked('edit-bibdk-custom-search-page-element-is-disabled', format_string('The value "@value_title" have been set to "disabled".', array('@value_title' => $value_title)));
 
-    $this->drupalGet($page_path);
+    $this->drupalGet($page_path); //verbose
     $this->assertFieldByName(
       'search_block_form'
     );
-    $this->assertNoField($v_uuid, format_string('The disabled element "@element_label" was removed from the form',array('@element_label'=>$element_label)));
+    $this->assertNoField($v_uuid, format_string('The disabled element "@element_label" was removed from the form', array('@element_label' => $element_label)));
 
 
     // Test setting a custom search page to 'disabled'.
-    $this->drupalGet('');
+    $this->drupalGet(''); //verbose
     $this->assertFieldByName('search_block_form');
-    $this->assertLink($page_menu_title, 0, format_string('The page "@page_menu_title" is present in the menu.',array('@page_menu_title'=>$page_menu_title)));
+    $this->assertNoLink($page_menu_title, 0, format_string('The page "@page_menu_title" is present in the menu.', array('@page_menu_title' => $page_menu_title)));
 
     $this->drupalGet('admin/config/search/bibdk_custom_search');
     $this->clickLink('edit'); // there's only one page made
     $edit = array();
-    $edit['page[is_disabled]'] = 1;
+    $edit['page[is_disabled]'] = 0;
 
-    $this->drupalPost(null, $edit, 'Save');
+    $this->drupalPost(NULL, $edit, 'Save');
 
-    $this->assertFieldChecked('edit-page-is-disabled', format_string('The page "@page_title" have been set to "disabled".', array('@page_title' => $page_title) ));
+    $this->assertFieldChecked('edit-page-is-disabled', format_string('The page "@page_title" have been set to "disabled".', array('@page_title' => $page_title)));
 
     $this->drupalGet('');
     $this->assertFieldByName('search_block_form');
-    $this->assertNoLink($page_menu_title, format_string('The disabled page "@page_menu_title" was removed from the menu.',array('@page_menu_title'=>$page_menu_title)));
+    $this->assertNoLink($page_menu_title, format_string('The disabled page "@page_menu_title" was removed from the menu.', array('@page_menu_title' => $page_menu_title)));
 
   }
 
