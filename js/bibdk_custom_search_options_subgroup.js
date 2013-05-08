@@ -68,7 +68,7 @@
         Drupal.toggleSearchPage();
 
         if(typeof(window.history.pushState) == 'function') {
-            window.history.pushState({}, '', Drupal.settings.basePath + response.request); //TODO IE Fix
+            window.history.pushState({}, '', Drupal.settings.basePath + Drupal.settings.pathPrefix + response.request); //TODO IE Fix
         }
     };
 
@@ -94,7 +94,7 @@
         element.append('<span class="throbber">&nbsp;</span>');
 
         $.ajax({
-            url: Drupal.settings.basePath + 'frontpage/searchpage_callback',
+            url: Drupal.settings.basePath + Drupal.settings.pathPrefix + 'frontpage/searchpage_callback',
             type: 'GET',
             data: {
                 type: type,
