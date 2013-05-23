@@ -109,24 +109,24 @@
     Drupal.behaviors.bibdkCustomSearchCheckboxes = {
         attach: function(context, settings) {
             $('.form-type-checkbox input').change(function() {
-                // clear other checkboxes if top-level default is selected.
-                if($(this).hasClass('default-value') && $(this).is(':checked')) {
+                // clear other checkboxes if top-level default is selected, and default value is null.
+                if ( $(this).hasClass('default-value') && $(this).is(':checked') && !$(this).val() ) {
                     $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-                        if(!$(this).hasClass('default-value')) {
+                        if ( !$(this).hasClass('default-value') ) {
                             $(this).attr('checked', false);
                         }
                     })
                 }
-                // clear top-level default if other checkboxes is selected.
-                if(!$(this).hasClass('default-value') && $(this).is(':checked')) {
+                // clear top-level default if other checkboxes is selected, and default value is null.
+                if ( !$(this).hasClass('default-value') && $(this).is(':checked') ) {
                     $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-                        if($(this).hasClass('default-value')) {
+                        if ( $(this).hasClass('default-value') && !$(this).val() ) {
                             $(this).attr('checked', false);
                         }
                     })
                 }
                 // set top-level default as selected, if all other checkboxes are unchecked.
-                if(!$(this).is(':checked')) {
+                if (!$(this).is(':checked')) {
                     var counter = 0;
                     $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
                         if($(this).is(':checked')) {
