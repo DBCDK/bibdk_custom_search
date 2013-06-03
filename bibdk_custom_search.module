@@ -429,7 +429,8 @@ function bibdk_custom_search_submit($form, &$form_state) {
     }
   }
 
-  $op = variable_get('cglLang', 'cqleng') ? ' OR ' : ' ELLER ';
+  $op = _bibdk_custom_search_get_cql('OR');
+
   foreach($groups as $group){
     $fields[] = '(' . implode($op, $group) . ')';
   }
@@ -445,7 +446,8 @@ function bibdk_custom_search_submit($form, &$form_state) {
   if (!empty($keys)) {
     $q[] = $keys;
   }
-  $op = (variable_get('cglLang', 'cqleng') == 'cqleng') ? ' AND ' : ' OG ';
+  $op = _bibdk_custom_search_get_cql('AND');
+
   if (!empty($fields)) {
 
     $q[] = '(' . implode($op, $fields) . ')';
@@ -487,6 +489,16 @@ function bibdk_custom_search_submit($form, &$form_state) {
   }
 }
 
+
+/** Wrapper for ting_openformat_get_cql_commando
+ * see ting_openformat.module
+ * @param $cql
+ * @return string
+ */
+
+function _bibdk_custom_search_get_cql($cql){
+  return function_exists('ting_openformat_get_cql_commando') ? ting_openformat_get_cql_commando($cql) : ' ' . $cql . ' ';
+}
 
 /**
  * Implements hook_block_info().
@@ -748,8 +760,12 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars) {
 }
 
 function _create_checkboxes_for_search_element($values, $parent, $default_value = '', $is_disabled = FALSE) {
+
   $form = array();
   foreach ($values as $key => $value) {
+    $and = _bibdk_custom_search_get_cql('AND');
+    $or = _bibdk_custom_search_get_cql('OR');
+    $key = preg_replace(array('/ OR /', '/ AND /'), array($or, $and), $key);
     $form[$key] = array(
       '#type' => 'container',
       '#parents' => array($parent),
