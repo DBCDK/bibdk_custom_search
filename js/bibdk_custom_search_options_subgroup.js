@@ -62,6 +62,7 @@
     Drupal.response = function(response) {
         $('#search-form').html(response.form);
 
+        $(document).attr('title', response.label_type);
         Drupal.setBodyClass(response.bodyclass);
         Drupal.bibdkCustomSearchOptionsSubgroup();
         Drupal.attachBehaviors('.container', Drupal.settings);

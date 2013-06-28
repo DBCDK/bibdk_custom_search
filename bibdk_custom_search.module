@@ -291,7 +291,9 @@ function bibdk_custom_searchpage_ajax_callback() {
   $form = drupal_render(drupal_get_form('search_block_form'));
   $request = $type . '?req=' . $req;
 
-  drupal_json_output(array('bodyclass' => $bodyClass, 'form' => $form, 'request' => $request));
+  $label_type = t('label_' . str_replace('/','_',$type), array(), array('context' => 'bibdk_custom_search'));
+
+  drupal_json_output(array('bodyclass' => $bodyClass, 'form' => $form, 'request' => $request, 'label_type' => $label_type));
   exit();
 }
 
