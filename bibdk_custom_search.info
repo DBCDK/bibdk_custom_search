@@ -5,7 +5,7 @@ version = 7.x-0.12
 package = Bibliotek.dk
 
 dependencies[] = uuid
-
+dependencies[] = ting_openformat
 
 files[] = bibdk_custom_search.i18n.inc
 files[] = bibdk_custom_search.export.inc
@@ -14,3 +14,4 @@ files[] = test/bibdk_custom_search.test
 files[] = js/bibdk_custom_search_options_subgroup.js
 
 configure = admin/config/search/bibdk_custom_search
+
