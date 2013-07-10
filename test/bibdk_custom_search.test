@@ -488,15 +488,6 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
       )
     );
 
-/*
-    $selected_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(':value' => $option_value, ':value' => $option_value));
-    $this->assertTrue(
-      $selected_field,
-      format_string(
-        'The option "@option_label" have been checked.',
-        array('@option_label' => $option_label))
-    );
-*/
   }
 
 }
