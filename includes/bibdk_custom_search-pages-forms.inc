@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * List search pages form
  */
 function _bibdk_custom_search_default_admin_form($elements) {
@@ -18,7 +19,7 @@ function _bibdk_custom_search_default_admin_form($elements) {
   $i = 0;
   foreach ($elements as $element => $data) {
     $form['bibdk_custom_search'][$i] = array(
-      '#title'          => $data['page_title'],
+      '#title'          => check_plain($data['page_title']),
       '#weight'         => $data['sort'],
     );
     $form['bibdk_custom_search'][$i]['p_uuid'] = array(
@@ -103,7 +104,7 @@ function _bibdk_custom_search_default_admin_form($elements) {
 /**
  * Edit page form
  */
-function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=array()) {
+function _bibdk_custom_search_edit_page_form($page = stdClass, $list_elements=array()) {
 
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
@@ -142,7 +143,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass,$list_elements=arr
     '#type'           => 'textfield',
     '#default_value'  => $page['page_path'],
     '#title'          => t('Page path'),
-    '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form].', array('%frontpage'=>$frontpage)),
+    '#description'    => t('path to site homepage ("%frontpage") [+ "/" + path to search form].', array('%frontpage' => $frontpage)),
     '#size'           => 20,
   );
 
@@ -191,7 +192,7 @@ and no custom search elements are shown.'),
   $i = 0;
   foreach ($page['elements'] as $key => $element) {
     $form['bibdk_custom_search']['elements'][$i] = array(
-      '#title'          => $element['element_title'],
+      '#title'          => check_plain($element['element_title']),
       '#weight'         => $element['sort'],
     );
     $form['bibdk_custom_search']['elements'][$i]['me_uuid'] = array(

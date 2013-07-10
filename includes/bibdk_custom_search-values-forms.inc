@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * List values form
  */
 
@@ -19,7 +20,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
   $i = 0;
   foreach ($elements as $element => $data) {
     $form['bibdk_custom_search'][$i] = array(
-      '#title'          => $data['value_title'],
+      '#title'          => check_plain($data['value_title']),
       '#weight'         => $data['sort'],
     );
     $form['bibdk_custom_search'][$i]['v_uuid'] = array(
@@ -103,7 +104,7 @@ function _bibdk_custom_search_values_admin_form($elements = array()) {
 /**
  * Edit values form
  */
-function _bibdk_custom_search_edit_value_form($value = array(),$list_values) {
+function _bibdk_custom_search_edit_value_form($value = array(), $list_values) {
   $form = array();
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
@@ -214,7 +215,8 @@ Select and radio options are removed'),
         '#title'          => t('Option submenu'),
         '#title_display'  => 'invisible',
       );
-    } else {
+    }
+    else {
       $form['element_value_options'][$i]['value'] = array(
         '#type'           => 'textfield',
         '#title'          => t('Option value'),

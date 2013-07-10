@@ -321,7 +321,7 @@ function bibdk_custom_searchpage_ajax_callback() {
   $form = drupal_render(drupal_get_form('search_block_form'));
   $request = $type . '?req=' . $req;
 
-  $label_type = t('label_' . str_replace('/','_',$type), array(), array('context' => 'bibdk_custom_search'));
+  $label_type = t('label_' . str_replace('/', '_', $type), array(), array('context' => 'bibdk_custom_search'));
 
   drupal_json_output(array('bodyclass' => $bodyClass, 'form' => $form, 'request' => $request, 'label_type' => $label_type));
   exit();
@@ -468,11 +468,11 @@ function bibdk_custom_search_submit($form, &$form_state) {
   if ( sizeof($q) == 0 && sizeof($extended) == 0 ) {
     form_set_error('keys', t('Please enter some keywords.', array(), array('context' => 'bibdk_custom_search:error')));
     $fragment = 'messages';
-    return false;
+    return FALSE;
   }
 
   if (isset($form_state['values']['delimiter']) && $delimiter = $form_state['values']['delimiter']) {
-    $d = explode('=',$delimiter);
+    $d = explode('=', $delimiter);
     $extended['qe'][ $d[0] ][] = $d[1];
   }
 
@@ -518,7 +518,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
  * @param $cql
  * @return string
  */
-function _bibdk_custom_search_get_cql($cql){
+function _bibdk_custom_search_get_cql($cql) {
   return function_exists('ting_openformat_get_cql_commando') ? ting_openformat_get_cql_commando($cql) : ' ' . $cql . ' ';
 }
 
@@ -568,13 +568,13 @@ function _bibdk_custom_search_get_advanced_fields_form($destination=FALSE) {
   // get search page
   $page = _bibdk_custom_search_get_page_db($path['destination']);
   if (empty($page)) {
-    return null;
+    return NULL;
   }
 
   // Get results form db
   $result = _bibdk_custom_search_get_advanced_fields_db($page);
   if (empty($result)) {
-    return null;
+    return NULL;
   }
 
   //Parse result into search elements
@@ -617,7 +617,7 @@ function _bibdk_custom_search_default_values(&$form) {
  */
 function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
-  $controls = array('checkbox','radio','select','textarea','textfield');
+  $controls = array('checkbox', 'radio', 'select', 'textarea', 'textfield');
 
   if ( isset($form['#type']) && in_array($form['#type'], $controls) ) {
 
@@ -631,7 +631,8 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
               $form['#default_value'] = $val;
             }
           }
-        } else {
+        }
+        else {
           $form['#default_value'] = '';
         }
         break;
@@ -639,7 +640,8 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
         $value_id = $form['#attributes']['term'][0];
         if ( array_key_exists($value_id, $extended_fields) ) {
           $form['#default_value'] = $extended_fields[$value_id]['values'];
-        } else {
+        }
+        else {
           $form['#default_value'] = '';
         }
         break;
@@ -800,7 +802,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      '#tree' => true,
+      '#tree' => TRUE,
       '#region' => $element['region'],
       '#theme' => 'bibdk_search_element',
       '#title_text' => $element['element_label'],
@@ -816,16 +818,16 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
     foreach ($element['values'] as $v_uuid => $value) {
       $value_is_disabled = ((isset($value['disabled']) && $value['disabled']) || $is_disabled) ? TRUE : FALSE;
       $form['bibdk_custom_search_element_' . $e_uuid][$v_uuid] = array(
-        '#type' => $value['value_type'],
-        '#title' => $value['value_title'],
+        '#type' => check_plain($value['value_type']),
+        '#title' => check_plain($value['value_title']),
         '#title_display' => 'invisible',
-        '#default_value' => $value['default_value'],
+        '#default_value' => check_plain($value['default_value']),
         '#disabled' => $value_is_disabled,
         '#attributes' => array(
           'tabindex' => array($element['tab_index']),
           'accesskey' => array($element['access_key']),
           'term' => array($v_uuid)),
-        '#tree' => false,
+        '#tree' => FALSE,
       );
       switch ($value['value_type']) {
         CASE 'hidden':
@@ -849,7 +851,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
           break;
         CASE 'checkboxes':
           $form['bibdk_custom_search_element_' . $e_uuid][$v_uuid] = _create_checkboxes_for_search_element($value['options'], $v_uuid, $value['default_value'], $value_is_disabled);
-          $form['bibdk_custom_search_element_' . $e_uuid][$v_uuid]['#tree'] = true;
+          $form['bibdk_custom_search_element_' . $e_uuid][$v_uuid]['#tree'] = TRUE;
           break;
         DEFAULT:
           break;
@@ -911,7 +913,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value 
         'class' => array(($default_value == $key) ? 'default-value' : ''),
       ),
     );
-    if ($key == null) {
+    if ($key == NULL) {
       $form[$key][$value['label']]['#attributes'] += array(
         'class' => array('master'),
       );
@@ -944,7 +946,7 @@ function _bibdk_custom_search_get_options($e_uuid, $o_uuid, $value, $v_uuid, $op
 
   $expand = _bibdk_custom_search_get_options_db($v_uuid);
   if (!$expand) {
-    return null;
+    return NULL;
   }
 
   foreach ($expand as $option) {
