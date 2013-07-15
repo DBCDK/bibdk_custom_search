@@ -1,5 +1,6 @@
 <?php
 /**
+ * @file
  * Includes all methods for Features and export functionality
  */
 
@@ -7,7 +8,7 @@
  * Implements hook_features_api
  * @return array
  */
-function bibdk_custom_search_features_api(){
+function bibdk_custom_search_features_api() {
   return array(
     'bibdk_custom_search' => array(
       'name' => 'bibdk_custom_search',
@@ -47,22 +48,22 @@ function bibdk_custom_search_features_api(){
  *
  * @param $module Name of module that has been enabled.
  */
-function bibdk_custom_search_features_enable_feature($module){
+function bibdk_custom_search_features_enable_feature($module) {
   bibdk_custom_search_features_revert($module);
 }
-function bibdk_custom_search_elements_features_enable_feature($module){
+function bibdk_custom_search_elements_features_enable_feature($module) {
   bibdk_custom_search_elements_features_revert($module);
 }
-function bibdk_custom_search_map_elements_features_enable_feature($module){
+function bibdk_custom_search_map_elements_features_enable_feature($module) {
   bibdk_custom_search_map_elements_features_revert($module);
 }
-function bibdk_custom_search_map_values_features_enable_feature($module){
+function bibdk_custom_search_map_values_features_enable_feature($module) {
   bibdk_custom_search_map_values_features_revert($module);
 }
-function bibdk_custom_search_options_features_enable_feature($module){
+function bibdk_custom_search_options_features_enable_feature($module) {
   bibdk_custom_search_options_features_revert($module);
 }
-function bibdk_custom_search_values_features_enable_feature($module){
+function bibdk_custom_search_values_features_enable_feature($module) {
   bibdk_custom_search_values_features_revert($module);
 }
 
@@ -72,22 +73,22 @@ function bibdk_custom_search_values_features_enable_feature($module){
  * @param $module
  *   Name of module that has been enabled.
  */
-function bibdk_custom_search_features_revert($module){
+function bibdk_custom_search_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search', 'p_uuid', $module);
 }
-function bibdk_custom_search_elements_features_revert($module){
+function bibdk_custom_search_elements_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search_elements', 'e_uuid', $module);
 }
-function bibdk_custom_search_map_elements_features_revert($module){
+function bibdk_custom_search_map_elements_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search_map_elements', 'me_uuid', $module);
 }
-function bibdk_custom_search_map_values_features_revert($module){
+function bibdk_custom_search_map_values_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search_map_values', 'mv_uuid', $module);
 }
-function bibdk_custom_search_options_features_revert($module){
+function bibdk_custom_search_options_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search_options', 'o_uuid', $module);
 }
-function bibdk_custom_search_values_features_revert($module){
+function bibdk_custom_search_values_features_revert($module) {
   _bibdk_custom_search_revert_helper('bibdk_custom_search_values', 'v_uuid', $module);
 }
 
@@ -98,12 +99,12 @@ function bibdk_custom_search_values_features_revert($module){
  * @param $uuid string
  * @param $module string
  */
-function _bibdk_custom_search_revert_helper($table, $uuid, $module){
+function _bibdk_custom_search_revert_helper($table, $uuid, $module) {
   $defaults = features_get_default($table, $module);
   //print_r($defaults);
   foreach ($defaults as $object) {
     db_delete($table)->condition($uuid, $object->$uuid, '=')->execute();
-    drupal_write_record($table,$object);
+    drupal_write_record($table, $object);
   }
 }
 
@@ -162,22 +163,22 @@ function bibdk_custom_search_bibdk_custom_search_map_elements_list() {
  * @param string $module_name
  * @return array
  */
-function bibdk_custom_search_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search', 'p_uuid');
 }
-function bibdk_custom_search_values_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_values_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search_values', 'v_uuid');
 }
-function bibdk_custom_search_elements_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_elements_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search_elements', 'e_uuid');
 }
-function bibdk_custom_search_options_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_options_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search_options', 'o_uuid');
 }
-function bibdk_custom_search_map_elements_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_map_elements_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search_map_elements', 'me_uuid');
 }
-function bibdk_custom_search_map_values_features_export($data, &$export, $module_name = ''){
+function bibdk_custom_search_map_values_features_export($data, &$export, $module_name = '') {
   return bibdk_custom_search_features_export_helper($data, $export, 'bibdk_custom_search_map_values', 'mv_uuid');
 }
 
@@ -189,17 +190,18 @@ function bibdk_custom_search_map_values_features_export($data, &$export, $module
  * @param $uuid
  * @return array
  */
-function bibdk_custom_search_features_export_helper($data, &$export, $table, $uuid){
+function bibdk_custom_search_features_export_helper($data, &$export, $table, $uuid) {
   $export['dependencies']['features'] = 'features';
   $export['dependencies']['ctools'] = 'ctools';
   $export['dependencies']['bibdk_custom_search'] = 'bibdk_custom_search';
-  if (in_array('all_elements', $data)){
+  if (in_array('all_elements', $data)) {
    $data = bibdk_custom_search_list_helper($uuid, $table);
    unset($data['all_elements']);
-  foreach ($data as $component) {
-    $export['features'][$table][$component] = $component;
+    foreach ($data as $component) {
+      $export['features'][$table][$component] = $component;
+    }
   }
-  }else {
+  else {
     foreach ($data as $component) {
       $export['features'][$table][$component] = $component;
     }

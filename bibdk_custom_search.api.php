@@ -13,6 +13,8 @@
 /**
  * Combine two or more elements into a single search term.
  *
+ * - deprecated!
+ *
  * @param $form
  * @param $form_state
  * @return array
