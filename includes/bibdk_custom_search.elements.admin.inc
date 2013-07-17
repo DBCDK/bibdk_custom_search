@@ -18,7 +18,7 @@ function bibdk_custom_search_elements_admin() {
 
   $query = db_select('bibdk_custom_search_elements', 'e');
   $query
-    ->fields('e', array('e_uuid','element_title','sort','is_disabled'))
+    ->fields('e', array('e_uuid', 'element_title', 'sort', 'is_disabled'))
     ->orderBy('element_title', 'DESC')
     ->orderBy('sort', 'DESC');
   $result = $query->execute();
@@ -48,14 +48,14 @@ function bibdk_custom_search_elements_admin_submit($form, &$form_state) {
   foreach ( $values as $key => $value ) {
     if ( $value['e_uuid']=='_new' && !empty($value['element_title']) ) {
       _bibdk_custom_search_elements_admin_insert($value);
-      $message[] = t('The element "@element" have been created.',array('@element'=>$value['element_title']));
+      $message[] = t('The element "@element" have been created.', array('@element' => $value['element_title']));
     }
     if ( $value['e_uuid'] != '_new' ) {
       _bibdk_custom_search_elements_admin_update($value);
       $message[] = t('The elements have been updated.');
     }
   }
-  drupal_set_message(implode('<br/>',array_unique($message)));
+  drupal_set_message(check_plain(implode("<br/>\n", array_unique($message))));
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 }
 
@@ -96,8 +96,8 @@ function bibdk_custom_search_element_delete($form_id, $form_state, $element_id) 
   _bibdk_custom_search_element_validate_page_pointers($element_id, $form);
 
   $result = db_select('bibdk_custom_search_elements', 'e')
-    ->fields('e',array('element_title'))
-    ->condition('e_uuid', $element_id,'=')
+    ->fields('e', array('element_title'))
+    ->condition('e_uuid', $element_id, '=')
     ->execute()
     ->fetchAssoc();
 
@@ -133,8 +133,8 @@ function _bibdk_custom_search_element_validate_page_pointers($e_uuid, &$form) {
   $query -> join('bibdk_custom_search_elements', 'e', 'm.e_uuid = e.e_uuid');
   $query -> fields('p', array('page_title'));
   $query -> fields('e', array('element_title'));
-  $query -> fields('m', array('p_uuid','e_uuid'));
-  $query -> condition('m.e_uuid', $e_uuid,'=');
+  $query -> fields('m', array('p_uuid', 'e_uuid'));
+  $query -> condition('m.e_uuid', $e_uuid, '=');
   $result = $query -> execute();
   $page_title = '';
   $page_titles = '';
@@ -205,12 +205,12 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
   // bibdk_custom_search_elements
   $element = db_select('bibdk_custom_search_elements', 'e')
     ->fields('e')
-    ->condition('e_uuid', $element_id,'=')
+    ->condition('e_uuid', $element_id, '=')
     ->execute()
     ->fetchAssoc();
 
   if ( !$element ) {
-    drupal_set_message(t('The search element does not exist.', array(), array('context' => 'bibdk_custom_search')),'warning');
+    drupal_set_message(t('The search element does not exist.', array(), array('context' => 'bibdk_custom_search')), 'warning');
     return FALSE;
   }
 
@@ -218,7 +218,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
   $list_values[0] = 'Select values';
   $query = db_select('bibdk_custom_search_values', 'v');
   $query
-    ->fields('v', array('v_uuid','value_title','sort'))
+    ->fields('v', array('v_uuid', 'value_title', 'sort'))
     ->orderBy('sort', 'DESC');
   $result = $query->execute();
   foreach ($result as $row) {
@@ -230,9 +230,9 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
   // bibdk_custom_search_map_values
   $query = db_select('bibdk_custom_search_map_values', 'm');
   $query -> join('bibdk_custom_search_values', 'v', 'm.v_uuid = v.v_uuid');
-  $query -> fields('m', array('mv_uuid','v_uuid','sort'));
-  $query -> fields('v', array('value_title','is_disabled'));
-  $query -> condition('e_uuid', $element_id,'=');
+  $query -> fields('m', array('mv_uuid', 'v_uuid', 'sort'));
+  $query -> fields('v', array('value_title', 'is_disabled'));
+  $query -> condition('e_uuid', $element_id, '=');
   $query -> orderBy('sort', 'DESC');
   $result = $query -> execute();
   $element_values = array();
@@ -248,7 +248,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
   }
   $element['values'] = $element_values;
 
-  $form = _bibdk_custom_search_edit_element_form($element,$list_values);
+  $form = _bibdk_custom_search_edit_element_form($element, $list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/elements/' . $element_id . '/edit');
   $form['#validate'][] = 'bibdk_custom_search_element_edit_validate';
   $form['#submit'][] = 'bibdk_custom_search_element_edit_submit';
@@ -260,7 +260,7 @@ function bibdk_custom_search_element_edit($form_id, $form_state, $element_id, $v
  * Validation handler for bibdk_custom_search_element_edit();
  */
 function bibdk_custom_search_element_edit_validate($form, &$form_state) {
-  return true;
+  return TRUE;
 }
 
 
@@ -288,9 +288,10 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
   $element_values = $form_state['values']['bibdk_custom_search_page_element_values'];
   foreach ($element_values as $key => $element_value) {
     if ( $element_value['mv_uuid']=='_new' && !empty($element_value['v_uuid']) ) {
-      _bibdk_custom_search_element_value_insert($e_uuid,$element_value);
-    } else {
-      _bibdk_custom_search_element_values_update($e_uuid,$element_value);
+      _bibdk_custom_search_element_value_insert($e_uuid, $element_value);
+    }
+    else {
+      _bibdk_custom_search_element_values_update($e_uuid, $element_value);
     }
   }
 
@@ -309,7 +310,7 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
 /**
  * Search element value insert.
  */
-function _bibdk_custom_search_element_value_insert($e_uuid,$element_value) {
+function _bibdk_custom_search_element_value_insert($e_uuid, $element_value) {
   $result = FALSE;
   $result = db_insert('bibdk_custom_search_map_values')
     ->fields(array(
@@ -325,7 +326,7 @@ function _bibdk_custom_search_element_value_insert($e_uuid,$element_value) {
 /**
  * Search element value update.
  */
-function _bibdk_custom_search_element_values_update($e_uuid,$element_value) {
+function _bibdk_custom_search_element_values_update($e_uuid, $element_value) {
   $result = FALSE;
   $result = db_update('bibdk_custom_search_map_values')
     ->fields(array(

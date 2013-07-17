@@ -18,7 +18,7 @@ function bibdk_custom_search_values_admin() {
 
   $query = db_select('bibdk_custom_search_values', 'v');
   $query
-    ->fields('v', array('v_uuid','value_title','sort','is_disabled'))
+    ->fields('v', array('v_uuid', 'value_title', 'sort', 'is_disabled'))
     ->orderBy('value_title', 'DESC')
     ->orderBy('sort', 'DESC');
   $result = $query->execute();
@@ -48,16 +48,16 @@ function _bibdk_custom_search_values_admin_submit($form, &$form_state) {
   $values = $form_state['values']['bibdk_custom_search'];
 
   foreach ($values as $key => $value) {
-    if ($value['v_uuid']=='_new' && !empty($value['value_title'])) {
+    if ($value['v_uuid'] == '_new' && !empty($value['value_title'])) {
       _bibdk_custom_search_values_admin_insert($value);
-      $message[] = t('The value "@value" have been created.',array('@value'=>$value['value_title']));
+      $message[] = t('The value "@value" have been created.', array('@value' => $value['value_title']));
     }
-    if ($value['v_uuid']!='_new') {
+    if ($value['v_uuid'] != '_new') {
       _bibdk_custom_search_values_admin_update($value);
       $message[] = t('The values have been updated.');
     }
   }
-  drupal_set_message(implode('<br/>',array_unique($message)));
+  drupal_set_message(check_plain(implode('<br/>', array_unique($message))));
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 }
 
@@ -134,12 +134,12 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
 
   $value = db_select('bibdk_custom_search_values', 'v')
     ->fields('v')
-    ->condition('v_uuid', $value_id,'=')
+    ->condition('v_uuid', $value_id, '=')
     ->execute()
     ->fetchAssoc();
 
   if ( !$value ) {
-    drupal_set_message(t("The search value does not exist."),'warning');
+    drupal_set_message(t("The search value does not exist."), 'warning');
     return FALSE;
   }
 
@@ -147,7 +147,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
 
   $query = db_select('bibdk_custom_search_values', 'v');
   $query
-    ->fields('v', array('v_uuid','value_title','sort'))
+    ->fields('v', array('v_uuid', 'value_title', 'sort'))
     ->orderBy('sort', 'DESC');
   $result = $query->execute();
 
@@ -159,7 +159,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
 
   $value['options'] = _bibdk_custom_search_get_options_db($value_id);
 
-  $form = _bibdk_custom_search_edit_value_form($value,$list_values);
+  $form = _bibdk_custom_search_edit_value_form($value, $list_values);
   $form['#action'] = url('admin/config/search/bibdk_custom_search/values/' . $value_id . '/edit');
   $form['#submit'][] = 'bibdk_custom_search_value_edit_submit';
   return $form;
@@ -186,9 +186,10 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
   foreach ($element_value_options as $key => $value_option) {
     if ( ( $value_option['o_uuid']=='_new' && !empty($value_option['label']) ) ||
          ( $value_option['o_uuid']=='_submenu' && !empty($value_option['expand']) ) ) {
-      _bibdk_custom_search_value_options_insert($value_id,$value_option);
-    } else {
-      _bibdk_custom_search_values_options_update($value_id,$value_option);
+      _bibdk_custom_search_value_options_insert($value_id, $value_option);
+    }
+    else {
+      _bibdk_custom_search_values_options_update($value_id, $value_option);
     }
   }
 
@@ -202,7 +203,7 @@ function bibdk_custom_search_value_edit_submit($form, &$form_state) {
 /**
  * Search values list option insert.
  */
-function _bibdk_custom_search_value_options_insert($value_id,$value_option) {
+function _bibdk_custom_search_value_options_insert($value_id, $value_option) {
   $result = FALSE;
   $result = db_insert('bibdk_custom_search_options')
     ->fields(array(
@@ -226,7 +227,7 @@ function _bibdk_custom_search_value_options_insert($value_id,$value_option) {
 /**
  * Search values list option update.
  */
-function _bibdk_custom_search_values_options_update($v_uuid,$value_option) {
+function _bibdk_custom_search_values_options_update($v_uuid, $value_option) {
   $result = FALSE;
   $o_uuid = $value_option['o_uuid'];
   $is_disabled = ( isset($value_option['is_disabled']) ) ? (int)$value_option['is_disabled'] : 0;
@@ -256,8 +257,8 @@ function _bibdk_custom_search_values_options_update($v_uuid,$value_option) {
 function bibdk_custom_search_value_delete($form_id, $form_state, $value_id) {
   _bibdk_custom_search_element_validate_element_pointers($value_id, $form);
   $result = db_select('bibdk_custom_search_values', 'v')
-    ->fields('v',array('value_title'))
-    ->condition('v_uuid', $value_id,'=')
+    ->fields('v', array('value_title'))
+    ->condition('v_uuid', $value_id, '=')
     ->execute()
     ->fetchAssoc();
   $form['v_uuid'] = array(
@@ -290,9 +291,9 @@ function _bibdk_custom_search_element_validate_element_pointers($v_uuid, &$form)
   $query -> join('bibdk_custom_search_map_values', 'm', 'm.e_uuid = e.e_uuid');
   $query -> join('bibdk_custom_search_values', 'v', 'm.v_uuid = v.v_uuid');
   $query -> fields('e', array('element_title'));
-  $query -> fields('m', array('e_uuid','v_uuid'));
+  $query -> fields('m', array('e_uuid', 'v_uuid'));
   $query -> fields('v', array('value_title'));
-  $query -> condition('m.v_uuid', $v_uuid,'=');
+  $query -> condition('m.v_uuid', $v_uuid, '=');
   $result = $query -> execute();
   $element_title = '';
   $element_titles = '';

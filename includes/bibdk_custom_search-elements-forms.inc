@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * List elements form
  */
 function _bibdk_custom_search_elements_admin_form($elements = array()) {
@@ -17,7 +18,7 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
   $i = 0;
   foreach ($elements as $element => $data) {
     $form['bibdk_custom_search_page_elements'][$i] = array(
-      '#title'          => $data['element_title'],
+      '#title'          => check_plain($data['element_title']),
       '#weight'         => $data['sort'],
     );
     $form['bibdk_custom_search_page_elements'][$i]['e_uuid'] = array(
@@ -101,7 +102,7 @@ function _bibdk_custom_search_elements_admin_form($elements = array()) {
 /**
  * Edit element form
  */
-function _bibdk_custom_search_edit_element_form($element=array(),$list_values=array()) {
+function _bibdk_custom_search_edit_element_form($element=array(), $list_values=array()) {
   $form = array();
   drupal_add_css(drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css');
 
@@ -192,7 +193,7 @@ function _bibdk_custom_search_edit_element_form($element=array(),$list_values=ar
   $i = 0;
   foreach ($element['values'] as $key => $value) {
     $form['bibdk_custom_search_page_element_values'][$i] = array(
-      '#title'          => $value['value_title'],
+      '#title'          => check_plain($value['value_title']),
       '#weight'         => $value['sort'],
     );
     $form['bibdk_custom_search_page_element_values'][$i]['mv_uuid'] = array(
