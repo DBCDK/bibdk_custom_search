@@ -171,12 +171,12 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   $form['#attributes']['data-type'] = array($page_id);
 
-  $form['page_id'] = array(
+  /*$form['page_id'] = array(
     '#type'           => 'hidden',
     '#title'          => t('Page ID'),
     '#title_display'  => 'invisible',
     '#default_value'  => $page_id,
-  );
+  );*/
 
   $advanced_fields = _bibdk_custom_search_get_advanced_fields_form($page_id);
   $pages = _bibdk_custom_search_get_pages_db();
