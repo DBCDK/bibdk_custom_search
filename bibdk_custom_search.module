@@ -185,7 +185,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     _bibdk_custom_search_get_searchpage_buttons($form, $pages, $page_id);
    // $form['searchpages']['#type'] = 'container';
     $form['searchpages']['#prefix'] = '<nav id="search-tabs" class="clearfix"><ul class="horizontal-nav clearfix">';
-    $form['searchpages']['#suffix'] = '</ul></div>';
+    $form['searchpages']['#suffix'] = '</ul></nav>';
   }
 
   if ($advanced_fields) {
