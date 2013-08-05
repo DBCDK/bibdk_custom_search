@@ -623,7 +623,7 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
     switch ( $form['#type'] ) {
       CASE 'checkbox':
-        $value_id = $form['#attributes']['group'];
+        $value_id = $form['#attributes']['data-group'];
         if ( array_key_exists($value_id, $extended_fields) ) {
           $form['#default_value'] = NULL;
           foreach ( $extended_fields[$value_id]['values'] as $key => $val ) {
@@ -637,7 +637,7 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
         }
         break;
       DEFAULT:
-        $value_id = $form['#attributes']['term'][0];
+        $value_id = $form['#attributes']['data-term'][0];
         if ( array_key_exists($value_id, $extended_fields) ) {
           $form['#default_value'] = $extended_fields[$value_id]['values'];
         }
@@ -826,7 +826,7 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         '#attributes' => array(
           'tabindex' => array($element['tab_index']),
           'accesskey' => array($element['access_key']),
-          'term' => array($v_uuid)),
+          'data-term' => array($v_uuid)),
         '#tree' => FALSE,
       );
       switch ($value['value_type']) {
@@ -909,7 +909,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value 
       '#title' => $value['label'],
       '#return_value' => $key,
       '#attributes' => array(
-        'group' => $parent,
+        'data-group' => $parent,
         'class' => array(($default_value == $key) ? 'default-value' : ''),
       ),
     );
@@ -920,7 +920,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value 
     }
     if (isset($value['childElem'])) {
       $form[$key][$value['label']]['#attributes'] += array(
-        'parent' => $key,
+        'data-parent' => $key,
       );
       $form[$key][$value['label']]['#title'] = '<span child="' . $key . '" class="toggle-subgroup"> + </span>' . $form[$key][$value['label']]['#title'];
       $form[$key . '-fieldset'] = array(

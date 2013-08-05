@@ -128,7 +128,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
             array(
               0 => 'f',
             ),
-            'term' =>
+            'data-term' =>
             array(
               0 => '1150ebb6-8e38-27d4-b929-840f71d17137',
             ),
