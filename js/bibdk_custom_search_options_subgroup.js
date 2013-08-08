@@ -75,7 +75,6 @@
 
     Drupal.toggleSearchPage = function() {
         $('.text-white').addClass('toggled');
-        $('#search-advanced-panel').removeClass('visuallyhidden');
     };
 
     Drupal.getSearchPage = function(element) {
