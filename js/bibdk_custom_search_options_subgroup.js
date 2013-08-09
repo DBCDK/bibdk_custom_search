@@ -10,13 +10,13 @@
         $('fieldset[child] input').change(function() {
             if($(this).attr('checked') == true) {
                 var parentKey = $(this).closest('fieldset[child]').attr('child');
-                $('[parent=' + parentKey + ']').attr('checked', false);
+                $('[data-parent=' + parentKey + ']').attr('checked', false);
             }
         });
         // If parent checkbox is checked remove checked from children
-        $('input[parent]').change(function() {
+        $('input[data-parent]').change(function() {
             if($(this).attr('checked') == true) {
-                var childKey = $(this).attr('parent');
+                var childKey = $(this).attr('data-parent');
                 $('fieldset[child=' + childKey + '] input').attr('checked', false);
             }
         });
@@ -29,18 +29,18 @@
         // Autoselect the 'all' values under checkboxes
         $('input[type=checkbox].master').attr('checked', true);
         $('input[type=checkbox]').change(function(e) {
-            var group = $(this).attr('group');
+            var group = $(this).attr('data-group');
             if($(this).attr('checked')) {
                 if($(this).hasClass('master')) {
-                    $('[group=' + group + ']').attr('checked', false);
+                    $('[data-group=' + group + ']').attr('checked', false);
                     $(this).attr('checked', true);
                 }
                 else {
-                    $('[group=' + group + '].master').attr('checked', false)
+                    $('[data-group=' + group + '].master').attr('checked', false)
                 }
             }
-            else if($('[group=' + group + ']:checked').length == 0) {
-                $('[group=' + group + '].master').attr('checked', true);
+            else if($('[data-group=' + group + ']:checked').length == 0) {
+                $('[data-group=' + group + '].master').attr('checked', true);
             }
         });
     };
