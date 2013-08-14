@@ -193,7 +193,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       '#type' => 'fieldset',
       '#theme' => 'bibdk_custom_advanced_search_menu',
       '#custom_submit' => _bibdk_custom_search_get_additional_submit(),
-      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded(),
+      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($get['qe']),
       '#attributes' => array(
         'class' => array(
           _bibdk_custom_search_trim_string($advanced_fields['#main_search_name']),
@@ -250,15 +250,17 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 /** Check if advanced searchsettings have been activated in previous search
  * @return bool
  */
-function _bibdk_custom_search_is_advanced_search_expanded(){
-  $get = $_GET['qe'];
-  if (isset($get['year.op'][0]) && $get['year.op'][0] == 'year_eq') {
-    unset($get['year.op']);
+function _bibdk_custom_search_is_advanced_search_expanded($query){
+
+
+  if (isset($query['year.op'][0]) && $query['year.op'][0] == 'year_eq') {
+    unset($query['year.op']);
   }
-  if (isset($get['term.workType'])){
-    unset($get['term.workType']);
+  if (isset($query['term.workType'])){
+    unset($query['term.workType']);
   }
-  return (count($get) > 0) ? FALSE : TRUE;
+
+  return (count($query) > 0) ? FALSE : TRUE;
 
 }
 
