@@ -1,9 +1,42 @@
 <?php
+class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
+  public static function getInfo() {
+    return array(
+      'name' => 'Custom Search Unit Test',
+      'description' => 'Bibdk Custom Unit test.',
+      'group' => 'Bibliotek.dk  - Custom Search',
+    );
+  }
 
-/**
- * @file
- * Tests the functionality of bibdk custom search.
- */
+  public function test_bibdk_custom_search_is_advanced_search_expanded() {
+
+    // Test empty query
+    $query = array();
+    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $this->assertTrue($result, 'Do not expand if query is empty');
+
+    // Test default query
+    $query = array(
+      'year.op' => array('year_eq'),
+      'term.workType' => 'test',
+    );
+    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $this->assertTrue($result, 'Do not expand when year is default and worktype is set');
+
+    // Test advanced query
+    $query = array(
+      'year.op' => array('year_eq'),
+      'term.workType' => 'test',
+      'work' => 'test',
+    );
+    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $this->assertFalse($result, 'Expand if advanced elements have been set');
+
+  }
+
+}
+
+
 
 class BibdkCustomSearchTestCase extends DrupalWebTestCase {
 
