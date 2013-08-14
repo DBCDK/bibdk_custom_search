@@ -32,6 +32,24 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $result = _bibdk_custom_search_is_advanced_search_expanded($query);
     $this->assertFalse($result, 'Expand if advanced elements have been set');
 
+    // Test advanced query on book-page not expanding
+    $query = array(
+      'year.op' => array('year_eq'),
+      'term.workType' => array('literature'),
+      'term.type' => array('bog'),
+    );
+    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $this->assertTrue($result, 'Do not expand if on basic book page');
+
+    // Test advanced query on book-page expanding
+    $query = array(
+      'year.op' => array('year_eq'),
+      'term.workType' => array('literature'),
+      'term.type' => array('bog', 'test'),
+    );
+    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $this->assertFalse($result, 'expand if advanced fields set on book page');
+
   }
 
 }
