@@ -252,9 +252,14 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
  */
 function _bibdk_custom_search_is_advanced_search_expanded($query){
 
-
   if (isset($query['year.op'][0]) && $query['year.op'][0] == 'year_eq') {
     unset($query['year.op']);
+  }
+  if (isset($query['term.workType'][0]) && $query['term.workType'][0] == 'literature' && isset($query['term.type']) && count($query['term.type']) == 1 && $query['term.type'][0] == 'bog'){
+    unset($query['term.type']);
+  }
+  if (isset($query['term.accessType']) && $query['term.accessType'][0] == 'online'){
+    unset($query['term.accessType']);
   }
   if (isset($query['term.workType'])){
     unset($query['term.workType']);
