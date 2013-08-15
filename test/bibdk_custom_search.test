@@ -11,45 +11,31 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
   public function test_bibdk_custom_search_is_advanced_search_expanded() {
 
     // Test empty query
-    $query = array();
-    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $get = array();
+    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
     $this->assertTrue($result, 'Do not expand if query is empty');
 
     // Test default query
-    $query = array(
-      'year.op' => array('year_eq'),
-      'term.workType' => 'test',
+    $get = array(
+      'qe' => array(
+        'year.op' => array('year_eq'),
+      ),
+      'type' => 'bibdk_frontpage',
     );
-    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
-    $this->assertTrue($result, 'Do not expand when year is default and worktype is set');
+
+    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
+    $this->assertTrue($result, 'Do not expand when on frontpage and default search');
 
     // Test advanced query
-    $query = array(
-      'year.op' => array('year_eq'),
-      'term.workType' => 'test',
-      'work' => 'test',
+    $get = array(
+      'qe' => array(
+        'year.op' => array('year_eq'),
+        'work' => 'test',
+      ),
+      'type' => 'bibdk_frontpage',
     );
-    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
+    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
     $this->assertFalse($result, 'Expand if advanced elements have been set');
-
-    // Test advanced query on book-page not expanding
-    $query = array(
-      'year.op' => array('year_eq'),
-      'term.workType' => array('literature'),
-      'term.type' => array('bog'),
-    );
-    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
-    $this->assertTrue($result, 'Do not expand if on basic book page');
-
-    // Test advanced query on book-page expanding
-    $query = array(
-      'year.op' => array('year_eq'),
-      'term.workType' => array('literature'),
-      'term.type' => array('bog', 'test'),
-    );
-    $result = _bibdk_custom_search_is_advanced_search_expanded($query);
-    $this->assertFalse($result, 'expand if advanced fields set on book page');
-
   }
 
 }
