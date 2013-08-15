@@ -193,7 +193,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       '#type' => 'fieldset',
       '#theme' => 'bibdk_custom_advanced_search_menu',
       '#custom_submit' => _bibdk_custom_search_get_additional_submit(),
-      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($get['qe']),
+      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($get),
       '#attributes' => array(
         'class' => array(
           _bibdk_custom_search_trim_string($advanced_fields['#main_search_name']),
@@ -250,22 +250,12 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 /** Check if advanced searchsettings have been activated in previous search
  * @return bool
  */
-function _bibdk_custom_search_is_advanced_search_expanded($query){
+function _bibdk_custom_search_is_advanced_search_expanded($get){
+  $query = isset($get['qe']) ? $get['qe'] : array();
 
-  if (isset($query['year.op'][0]) && $query['year.op'][0] == 'year_eq') {
-    unset($query['year.op']);
-  }
-  if (isset($query['term.workType'][0]) && $query['term.workType'][0] == 'literature' && isset($query['term.type']) && count($query['term.type']) == 1 && $query['term.type'][0] == 'bog'){
-    unset($query['term.type']);
-  }
-  if (isset($query['term.accessType']) && $query['term.accessType'][0] == 'online'){
-    unset($query['term.accessType']);
-  }
-  if (isset($query['term.workType'])){
-    unset($query['term.workType']);
-  }
+  $front = (!isset($get['type']) || $get['type']== 'bibdk_frontpage') ? TRUE : FALSE;
 
-  return (count($query) > 0) ? FALSE : TRUE;
+  return  ($front && (count($query) <= 1 )) ? TRUE : FALSE;
 
 }
 
