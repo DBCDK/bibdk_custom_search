@@ -133,6 +133,7 @@ function bibdk_custom_search_menu() {
 function bibdk_custom_search_help($path, $arg) {
   switch ($path) {
     case 'admin/help#bibdk_custom_search';
+    case 'admin/config/search/bibdk_custom_search/values';
       $file = drupal_get_path('module', 'bibdk_custom_search') . "/help/bibdk_custom_search.html";
       return $output = file_get_contents($file);
     break;
