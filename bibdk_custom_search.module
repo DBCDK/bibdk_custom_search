@@ -253,9 +253,22 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 function _bibdk_custom_search_is_advanced_search_expanded($get){
   $query = isset($get['qe']) ? $get['qe'] : array();
 
-  $front = (!isset($get['type']) || $get['type']== 'bibdk_frontpage') ? TRUE : FALSE;
+  if (isset($query['year.op'])) unset($query['year.op']);
 
-  return  ($front && (count($query) <= 1 )) ? TRUE : FALSE;
+  if ((isset($get['q']) && $get['q'] == 'bibdk_frontpage') || (isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage'))
+    $front = TRUE;
+
+  if (isset($query['term.workType'])){
+    unset($query['term.workType']);
+    $front = TRUE;
+  }
+
+  if ((isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage/net')){
+    unset($query['term.accessType']);
+    $front = true;
+  }
+
+  return  ($front && (count($query) < 1 )) ? TRUE : FALSE;
 
 }
 
