@@ -194,7 +194,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       '#type' => 'fieldset',
       '#theme' => 'bibdk_custom_advanced_search_menu',
       '#custom_submit' => _bibdk_custom_search_get_additional_submit(),
-      '#visuallyhidden' => ($get['q'] !== 'bibdk_frontpage') ? TRUE : TRUE,
+      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($get),
       '#attributes' => array(
         'class' => array(
           _bibdk_custom_search_trim_string($advanced_fields['#main_search_name']),
@@ -246,6 +246,33 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   $form['#submit'] = array('bibdk_custom_search_submit');
 
   return $form;
+}
+
+/** Check if advanced searchsettings have been activated in previous search
+ * @return bool
+ */
+function _bibdk_custom_search_is_advanced_search_expanded($get){
+  $query = isset($get['qe']) ? $get['qe'] : array();
+
+  $front = FALSE;
+
+  if (isset($query['year.op'])) unset($query['year.op']);
+
+  if ((isset($get['q']) && $get['q'] == 'bibdk_frontpage') || (isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage'))
+    $front = TRUE;
+
+  if (isset($query['term.workType'])){
+    unset($query['term.workType']);
+    $front = TRUE;
+  }
+
+  if ((isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage/net')){
+    unset($query['term.accessType']);
+    $front = true;
+  }
+
+  return  ($front && (count($query) < 1 )) ? TRUE : FALSE;
+
 }
 
 function _bibdk_custom_search_get_additional_submit() {
@@ -893,7 +920,6 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars) {
 
 
 function _create_checkboxes_for_search_element($values, $parent, $default_value = '', $is_disabled = FALSE) {
-
   $form = array();
   foreach ($values as $key => $value) {
     $and = _bibdk_custom_search_get_cql('AND');
