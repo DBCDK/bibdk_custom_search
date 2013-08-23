@@ -949,11 +949,11 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value 
       $form[$key][$value['label']]['#attributes'] += array(
         'data-parent' => $key,
       );
-      $form[$key][$value['label']]['#title'] = '<span child="' . $key . '" class="toggle-subgroup"> + </span>' . $form[$key][$value['label']]['#title'];
+      $form[$key][$value['label']]['#title'] = '<span data-child="' . $key . '" class="toggle-subgroup"> + </span>' . $form[$key][$value['label']]['#title'];
       $form[$key . '-fieldset'] = array(
         '#type' => 'fieldset',
         '#attributes' => array(
-          'child' => $key,
+          'data-child' => $key,
           'class' => array('sub-elements'),
         ),
         '#parents' => array($parent),
