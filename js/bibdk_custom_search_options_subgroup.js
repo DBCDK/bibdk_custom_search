@@ -5,11 +5,11 @@
     });
 
     Drupal.bibdkCustomSearchOptionsSubgroup = function() {
-        $('fieldset[child]').hide();
+        $('fieldset[data-child]').hide();
         // If child checkbox is checked remove checked from parent
-        $('fieldset[child] input').change(function() {
+        $('fieldset[data-child] input').change(function() {
             if($(this).attr('checked') == true) {
-                var parentKey = $(this).closest('fieldset[child]').attr('child');
+                var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
                 $('[data-parent=' + parentKey + ']').attr('checked', false);
             }
         });
@@ -17,13 +17,13 @@
         $('input[data-parent]').change(function() {
             if($(this).attr('checked') == true) {
                 var childKey = $(this).attr('data-parent');
-                $('fieldset[child=' + childKey + '] input').attr('checked', false);
+                $('fieldset[data-child=' + childKey + '] input').attr('checked', false);
             }
         });
         $('.toggle-subgroup').click(function(e) {
             e.preventDefault();
-            var childKey = $(this).attr('child');
-            $('fieldset[child=' + childKey + ']').toggle();
+            var childKey = $(this).attr('data-child');
+            $('fieldset[data-child=' + childKey + ']').toggle();
         });
 
         // Autoselect the 'all' values under checkboxes
@@ -75,7 +75,6 @@
 
     Drupal.toggleSearchPage = function() {
         $('.text-white').addClass('toggled');
-        $('#search-advanced-panel').removeClass('visuallyhidden');
     };
 
     Drupal.getSearchPage = function(element) {
