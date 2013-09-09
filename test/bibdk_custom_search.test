@@ -10,17 +10,19 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
 
   public function test_bibdk_custom_search_is_advanced_search_expanded() {
 
+    module_load_include('module', 'bibdk_custom_search', 'bibdk_custom_search');
+
     // Test empty query
     $get = array();
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertTrue($result, 'Do not expand if query is empty');
+    $this->assertFalse($result, 'Do not expand if query is empty');
 
     // Test default query
     $get = array(
       'qe' => array(
         'year.op' => array('year_eq'),
       ),
-      'type' => 'bibdk_frontpage',
+      'q' => 'bibdk_frontpage',
     );
 
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
@@ -32,7 +34,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
         'year.op' => array('year_eq'),
         'work' => 'test',
       ),
-      'type' => 'bibdk_frontpage',
+      'q' => 'bibdk_frontpage',
     );
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
     $this->assertFalse($result, 'Expand if advanced elements have been set');
