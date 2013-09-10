@@ -22,8 +22,9 @@
         });
         $('.toggle-subgroup').click(function(e) {
             e.preventDefault();
-            var childKey = $(this).attr('data-child');
-            $('fieldset[data-child=' + childKey + ']').toggle();
+          $(this).toggleClass('toggled');
+          var childKey = $(this).attr('data-child');
+          $('fieldset[data-child=' + childKey + ']').toggle();
         });
 
         // Autoselect the 'all' values under checkboxes
