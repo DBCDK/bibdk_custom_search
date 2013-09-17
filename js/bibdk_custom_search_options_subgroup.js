@@ -134,7 +134,7 @@
             }
           })
           if(!counter) {
-            $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
+            $(this).closest(".bibdk-custom-search-element").find("input.default-value").filter(function(){return $(this).val() == '';}).attr('checked', true);
           }
         }
       });
