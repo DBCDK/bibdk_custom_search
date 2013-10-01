@@ -137,8 +137,6 @@ function bibdk_custom_search_delete_page_submit($form, &$form_state) {
     ->condition('p_uuid', $p_uuid)
     ->execute();
 
-  bibdk_custom_search_translate_remove('page', $p_uuid, 'menu_title');
-
   drupal_set_message(t("'@page' deleted.", array('@page' => $form_state['values']['page_title'])));
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
