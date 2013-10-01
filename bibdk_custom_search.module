@@ -1117,7 +1117,7 @@ function _bibdk_custom_search_get_field_searchcodes() {
  */
 function bibdk_custom_search_translate_remove($type, $id, $key) {
   return function_exists('i18n_string_remove')
-    ? i18n_string_remove("bibdk_custom_search:$type:$id:$key")
+    ? i18n_string_remove("bibdk_custom_search-$type-$id-$key:bibdk_custom_search")
     : TRUE;
 }
 
@@ -1127,7 +1127,7 @@ function bibdk_custom_search_translate_remove($type, $id, $key) {
  */
 function bibdk_custom_search_translate_update($type, $id, $key, $string) {
   return function_exists('i18n_string_update')
-    ? i18n_string_update(array('bibdk_custom_search', $type, $id, $key), check_plain($string))
+    ? i18n_string_update("bibdk_custom_search-$type-$id-$key:bibdk_custom_search", check_plain($string))
     : TRUE;
 }
 
@@ -1137,7 +1137,7 @@ function bibdk_custom_search_translate_update($type, $id, $key, $string) {
  */
 function bibdk_custom_search_translate($type, $id, $key, $string) {
   return function_exists('i18n_string')
-    ? i18n_string("bibdk_custom_search:$type:$id:$key", $string)
+    ? i18n_string("bibdk_custom_search-$type-$id-$key:bibdk_custom_search", $string)
     : $string;
 }
 
