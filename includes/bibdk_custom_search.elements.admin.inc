@@ -177,10 +177,6 @@ function bibdk_custom_search_element_delete_submit($form, &$form_state) {
     ->condition('e_uuid', $e_uuid)
     ->execute();
 
-  bibdk_custom_search_translate_remove('element', $e_uuid, 'element_label');
-  bibdk_custom_search_translate_remove('element', $e_uuid, 'description');
-  bibdk_custom_search_translate_remove('element', $e_uuid, 'help_text');
-
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 
   drupal_set_message(t("'@element' deleted.", array('@element' => $form_state['values']['element_title']), array('context' => 'bibdk_custom_search')));
