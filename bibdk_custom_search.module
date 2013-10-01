@@ -136,10 +136,9 @@ function bibdk_custom_search_help($path, $arg) {
     case 'admin/config/search/bibdk_custom_search/values';
       $file = drupal_get_path('module', 'bibdk_custom_search') . "/help/bibdk_custom_search.html";
       return $output = file_get_contents($file);
-    break;
+      break;
   }
 }
-
 
 
 /**
@@ -162,9 +161,9 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   $get = $_GET;
 
-  $page_id = ( isset($get['page_id']) ) ? $get['page_id'] : ( ( isset($get['q']) ) ? $get['q'] : NULL );
+  $page_id = (isset($get['page_id'])) ? $get['page_id'] : ((isset($get['q'])) ? $get['q'] : NULL);
 
-  $default_value = ( isset($get['req']) ) ? $get['req'] : $form['search_block_form']['#default_value'];
+  $default_value = (isset($get['req'])) ? $get['req'] : $form['search_block_form']['#default_value'];
 
   $form['search_block_form']['#default_value'] = $default_value;
 
@@ -173,10 +172,10 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   $form['#attributes']['data-type'] = array($page_id);
 
   $form['page_id'] = array(
-    '#type'           => 'hidden',
-    '#title'          => t('Page ID'),
-    '#title_display'  => 'invisible',
-    '#default_value'  => $page_id,
+    '#type' => 'hidden',
+    '#title' => t('Page ID'),
+    '#title_display' => 'invisible',
+    '#default_value' => $page_id,
   );
 
   $advanced_fields = _bibdk_custom_search_get_advanced_fields_form($page_id);
@@ -251,27 +250,30 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 /** Check if advanced searchsettings have been activated in previous search
  * @return bool
  */
-function _bibdk_custom_search_is_advanced_search_expanded($get){
+function _bibdk_custom_search_is_advanced_search_expanded($get) {
   $query = isset($get['qe']) ? $get['qe'] : array();
 
   $front = FALSE;
 
-  if (isset($query['year.op'])) unset($query['year.op']);
+  if (isset($query['year.op'])) {
+    unset($query['year.op']);
+  }
 
-  if ((isset($get['q']) && $get['q'] == 'bibdk_frontpage') || (isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage'))
+  if ((isset($get['q']) && $get['q'] == 'bibdk_frontpage') || (isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage')) {
     $front = TRUE;
+  }
 
-  if (isset($query['term.workType'])){
+  if (isset($query['term.workType'])) {
     unset($query['term.workType']);
     $front = TRUE;
   }
 
-  if ((isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage/net')){
+  if ((isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage/net')) {
     unset($query['term.accessType']);
-    $front = true;
+    $front = TRUE;
   }
 
-  return  ($front && (count($query) < 1 )) ? TRUE : FALSE;
+  return ($front && (count($query) < 1)) ? TRUE : FALSE;
 
 }
 
@@ -342,16 +344,21 @@ function bibdk_custom_searchpage_ajax_callback() {
   $_GET['q'] = $type;
 
   $bodyClass = 'page-' . strtr($type, array(
-    '/' => '-',
-    '_' => '-',
-  ));
+      '/' => '-',
+      '_' => '-',
+    ));
 
   $form = drupal_render(drupal_get_form('search_block_form'));
   $request = $type . '?req=' . $req;
 
   $label_type = t('label_' . str_replace('/', '_', $type), array(), array('context' => 'bibdk_custom_search'));
 
-  drupal_json_output(array('bodyclass' => $bodyClass, 'form' => $form, 'request' => $request, 'label_type' => $label_type));
+  drupal_json_output(array(
+    'bodyclass' => $bodyClass,
+    'form' => $form,
+    'request' => $request,
+    'label_type' => $label_type
+  ));
   exit();
 }
 
@@ -369,7 +376,8 @@ function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
     drupal_goto($dest, array(
       'query' => array(
         'req' => $form_state['values']['search_block_form'],
-      )));
+      )
+    ));
   }
   else {
     drupal_goto($dest);
@@ -467,20 +475,20 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $fragment = 'content';
   $q = array();
 
-  if ( !empty($keys) ) {
+  if (!empty($keys)) {
     $q[] = $keys;
   }
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
 
   foreach ($form_state['values'] as $key => $values) {
-    if ( isset($extended_fields[$key]['search_code']) ) {
+    if (isset($extended_fields[$key]['search_code'])) {
       $term = $extended_fields[$key]['search_code'];
-      if ( !is_array($values) ) {
+      if (!is_array($values)) {
         $values = array($values);
       }
       foreach ($values as $k => $value) {
-        if ( $value ) {
+        if ($value) {
           $extended['qe'][$term][] = $value;
         }
       }
@@ -493,7 +501,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
   // because that results in a confusing error message.  It would say a plain
   // "field is required" because the search keywords field has no title.
   // The error message would also complain about a missing #title field.)
-  if ( sizeof($q) == 0 && sizeof($extended) == 0 ) {
+  if (sizeof($q) == 0 && sizeof($extended) == 0) {
     form_set_error('keys', t('Please enter some keywords.', array(), array('context' => 'bibdk_custom_search:error')));
     $fragment = 'messages';
     return FALSE;
@@ -501,10 +509,10 @@ function bibdk_custom_search_submit($form, &$form_state) {
 
   if (isset($form_state['values']['delimiter']) && $delimiter = $form_state['values']['delimiter']) {
     $d = explode('=', $delimiter);
-    $extended['qe'][ $d[0] ][] = $d[1];
+    $extended['qe'][$d[0]][] = $d[1];
   }
 
-  if ( isset($form_state['values']['page_id']) ) {
+  if (isset($form_state['values']['page_id'])) {
     $extended['page_id'] = $form_state['values']['page_id'];
   }
 
@@ -530,7 +538,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
     }
   }
 
-  if ( !empty($search_info['path']) && in_array($search_info['module'], variable_get('search_active_modules', array())) ) {
+  if (!empty($search_info['path']) && in_array($search_info['module'], variable_get('search_active_modules', array()))) {
     $form_state['redirect'] = FALSE;
     $url = 'search/' . $search_info['path'] . '/' . trim($q);
     drupal_goto($url, array('query' => $query, 'fragment' => $fragment));
@@ -580,14 +588,14 @@ function bibdk_custom_search_block_view($delta = '') {
 /**
  * get form for advanced search fields
  */
-function _bibdk_custom_search_get_advanced_fields_form($destination=FALSE) {
+function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   global $language;
 
-  $path['destination'] = ( $destination ) ? $destination : $_GET['q'];
+  $path['destination'] = ($destination) ? $destination : $_GET['q'];
 
   // If cache exists return cache;
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/', '_', $path['destination']) . $language->language;
-  if ( $cache = cache_get($cache_id) ) {
+  if ($cache = cache_get($cache_id)) {
     $form = $cache->data;
     _bibdk_custom_search_default_values($form);
     return $form;
@@ -620,14 +628,14 @@ function _bibdk_custom_search_default_values(&$form) {
   $get = $_GET;
   $used_fields = array();
 
-  if ( isset($get['qe']) ) { // expanded search elements query elements
+  if (isset($get['qe'])) { // expanded search elements query elements
     $query_elements = $get['qe'];
 
     $extended_fields = _bibdk_custom_search_get_field_searchcodes();
-    foreach ( $extended_fields as $key => $val ) {
-      if ( isset($query_elements[ $val['search_code'] ]) ) {
+    foreach ($extended_fields as $key => $val) {
+      if (isset($query_elements[$val['search_code']])) {
         $used_fields[$key] = $extended_fields[$key];
-        $used_fields[$key]['values'] = $query_elements[ $val['search_code'] ];
+        $used_fields[$key]['values'] = $query_elements[$val['search_code']];
       }
     }
 
@@ -647,15 +655,15 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
   $controls = array('checkbox', 'radio', 'select', 'textarea', 'textfield');
 
-  if ( isset($form['#type']) && in_array($form['#type'], $controls) ) {
+  if (isset($form['#type']) && in_array($form['#type'], $controls)) {
 
-    switch ( $form['#type'] ) {
+    switch ($form['#type']) {
       CASE 'checkbox':
         $value_id = $form['#attributes']['data-group'];
-        if ( array_key_exists($value_id, $extended_fields) ) {
+        if (array_key_exists($value_id, $extended_fields)) {
           $form['#default_value'] = NULL;
-          foreach ( $extended_fields[$value_id]['values'] as $key => $val ) {
-            if ( $val == $form['#return_value'] ) {
+          foreach ($extended_fields[$value_id]['values'] as $key => $val) {
+            if ($val == $form['#return_value']) {
               $form['#default_value'] = $val;
             }
           }
@@ -666,7 +674,7 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
         break;
       DEFAULT:
         $value_id = $form['#attributes']['data-term'][0];
-        if ( array_key_exists($value_id, $extended_fields) ) {
+        if (array_key_exists($value_id, $extended_fields)) {
           $form['#default_value'] = $extended_fields[$value_id]['values'];
         }
         else {
@@ -677,8 +685,8 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
   }
 
-  foreach ( $form as $key => $val ) {
-    if ( is_array($form[$key]) && substr($key, 0, 1) != '#' ) {
+  foreach ($form as $key => $val) {
+    if (is_array($form[$key]) && substr($key, 0, 1) != '#') {
       _bibdk_custom_search_set_default_values($form[$key], $extended_fields);
     }
   }
@@ -713,11 +721,32 @@ function _bibdk_custom_search_get_advanced_fields_db($page) {
   $query->join('bibdk_custom_search_values', 'v', 'mv.v_uuid = v.v_uuid');
   $query->leftjoin('bibdk_custom_search_options', 'o', 'v.v_uuid = o.v_uuid');
   $query->fields('me', array('region', 'sort'));
-  $query->fields('e', array('e_uuid', 'element_label', 'description', 'help_text', 'access_key', 'tab_index', 'is_disabled'));
+  $query->fields('e', array(
+    'e_uuid',
+    'element_label',
+    'description',
+    'help_text',
+    'access_key',
+    'tab_index',
+    'is_disabled'
+  ));
   $query->fields('mv', array('sort'));
-  $query->fields('v', array('v_uuid', 'value_title', 'value_type', 'search_code', 'default_value'));
+  $query->fields('v', array(
+    'v_uuid',
+    'value_title',
+    'value_type',
+    'search_code',
+    'default_value'
+  ));
   $query->addField('v', 'is_disabled', 'value_disabled');
-  $query->fields('o', array('o_uuid', 'sort', 'label', 'value', 'expand', 'is_disabled'));
+  $query->fields('o', array(
+    'o_uuid',
+    'sort',
+    'label',
+    'value',
+    'expand',
+    'is_disabled'
+  ));
   $query->addField('o', 'is_disabled', 'option_disabled');
   $query->condition('s.p_uuid', $page['p_uuid'], '=');
   // $query -> condition('e.is_disabled', FALSE,'=');
@@ -748,7 +777,8 @@ function _bibdk_custom_search_structure_elements_array($result) {
     // init element
     if (!isset($elements[$e_uuid])) {
       $elements[$e_uuid] = array(
-        'element_label' => bibdk_custom_search_translate($record->element_label, 'element_label'),//bibdk_custom_search_translate('element', $e_uuid, 'element_label', $record->element_label),
+        'element_label' => bibdk_custom_search_translate($record->element_label, 'element_label'),
+        //bibdk_custom_search_translate('element', $e_uuid, 'element_label', $record->element_label),
         'description' => bibdk_custom_search_translate($record->description, 'description'),
         'help_text' => bibdk_custom_search_translate($record->help_text, 'help_text'),
         'region' => $record->region,
@@ -795,7 +825,13 @@ function _bibdk_custom_search_structure_elements_array($result) {
 function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
   foreach ($elements as $e_uuid => $element) {
     $machine_readable = strtolower($element['element_label']);
-    $machine_readable = preg_replace(array('@[æøå]+@', '@[^a-z0-9_]+@'), array('a', '_'), $machine_readable);
+    $machine_readable = preg_replace(array(
+      '@[æøå]+@',
+      '@[^a-z0-9_]+@'
+    ), array(
+      'a',
+      '_'
+    ), $machine_readable);
     $is_disabled = isset($element['disabled']) ? $element['disabled'] : 0;
     $form['bibdk_custom_search_element_' . $e_uuid] = array(
       '#type' => 'fieldset',
@@ -825,7 +861,8 @@ function _bibdk_custom_search_advanced_fields_parse_form($elements, $page) {
         '#attributes' => array(
           'tabindex' => array($element['tab_index']),
           'accesskey' => array($element['access_key']),
-          'data-term' => array($v_uuid)),
+          'data-term' => array($v_uuid)
+        ),
         '#tree' => FALSE,
       );
       switch ($value['value_type']) {
@@ -902,7 +939,7 @@ function _create_checkboxes_for_search_element($values, $parent, $default_value 
     );
     $form[$key][$value['label']] = array(
       '#type' => 'checkbox',
-      '#default_value' => ( $default_value == $key ) ? $default_value : NULL,
+      '#default_value' => ($default_value == $key) ? $default_value : NULL,
       '#disabled' => ($is_disabled || (isset($value['disabled']) && $value['disabled'])) ? TRUE : FALSE,
       '#title' => $value['label'],
       '#return_value' => $key,
@@ -1018,7 +1055,15 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $query = db_select('bibdk_custom_search_options', 'o');
     $query
-      ->fields('o', array('o_uuid', 'v_uuid', 'label', 'value', 'expand', 'sort', 'is_disabled'))
+      ->fields('o', array(
+        'o_uuid',
+        'v_uuid',
+        'label',
+        'value',
+        'expand',
+        'sort',
+        'is_disabled'
+      ))
       ->condition('v_uuid', $value_id, '=')
       ->orderBy('sort', 'ASC');
     $result = $query->execute();
@@ -1062,14 +1107,20 @@ function _bibdk_custom_search_get_field_searchcodes() {
     else {
 
       $query = db_select('bibdk_custom_search_values', 'v');
-      $query->fields('v', array('v_uuid', 'value_title', 'value_type', 'search_code', 'default_value'));
+      $query->fields('v', array(
+        'v_uuid',
+        'value_title',
+        'value_type',
+        'search_code',
+        'default_value'
+      ));
       $result = $query->execute();
 
       $fields = array();
       foreach ($result as $record) {
-        $fields[$record->v_uuid]['value_title']   = $record->value_title;
-        $fields[$record->v_uuid]['value_type']    = $record->value_type;
-        $fields[$record->v_uuid]['search_code']   = $record->search_code;
+        $fields[$record->v_uuid]['value_title'] = $record->value_title;
+        $fields[$record->v_uuid]['value_type'] = $record->value_type;
+        $fields[$record->v_uuid]['search_code'] = $record->search_code;
         $fields[$record->v_uuid]['default_value'] = $record->default_value;
       }
 
