@@ -218,7 +218,7 @@ function _bibdk_custom_search_value_options_insert($value_id, $value_option) {
     ->execute();
 
   if ($result) {
-    bibdk_custom_search_translate_update('option', $result, 'label', $value_option['label']);
+    bibdk_custom_search_translate_update($value_option['label'], 'label');
   }
 
   return $result;
@@ -244,7 +244,7 @@ function _bibdk_custom_search_values_options_update($v_uuid, $value_option) {
     ->execute();
 
   if ($result) {
-    bibdk_custom_search_translate_update('option', $o_uuid, 'label', $value_option['label']);
+    bibdk_custom_search_translate_update($value_option['label'], 'label');
   }
 
   return $result;

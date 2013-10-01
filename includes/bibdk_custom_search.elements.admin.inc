@@ -291,9 +291,9 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
     }
   }
 
-  bibdk_custom_search_translate_update('element', $e_uuid , 'element_label', $element['element_label']);
-  bibdk_custom_search_translate_update('element', $e_uuid , 'description', $element['description']);
-  bibdk_custom_search_translate_update('element', $e_uuid , 'help_text', $element['help_text']);
+  bibdk_custom_search_translate_update($element['element_label'], 'element_label');
+  bibdk_custom_search_translate_update($element['description'], 'description');
+  bibdk_custom_search_translate_update($element['help_text'], 'help_text');
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 

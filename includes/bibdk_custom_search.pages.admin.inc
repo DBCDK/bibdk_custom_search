@@ -242,7 +242,7 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
     }
   }
 
-  bibdk_custom_search_translate_update('page', $p_uuid , 'menu_title', $page['menu_title']);
+  bibdk_custom_search_translate_update($page['menu_title'], 'menu_title');
 
   cache_clear_all('bibdk_custom_search', 'cache', TRUE);
 

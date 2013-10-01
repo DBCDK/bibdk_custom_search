@@ -748,9 +748,9 @@ function _bibdk_custom_search_structure_elements_array($result) {
     // init element
     if (!isset($elements[$e_uuid])) {
       $elements[$e_uuid] = array(
-        'element_label' => bibdk_custom_search_translate('element', $e_uuid, 'element_label', $record->element_label),
-        'description' => bibdk_custom_search_translate('element', $e_uuid, 'description', $record->description),
-        'help_text' => bibdk_custom_search_translate('element', $e_uuid, 'help_text', $record->help_text),
+        'element_label' => bibdk_custom_search_translate($record->element_label, 'element_label'),//bibdk_custom_search_translate('element', $e_uuid, 'element_label', $record->element_label),
+        'description' => bibdk_custom_search_translate($record->description, 'description'),
+        'help_text' => bibdk_custom_search_translate($record->help_text, 'help_text'),
         'region' => $record->region,
         'access_key' => $record->access_key,
         'tab_index' => $record->tab_index,
@@ -771,7 +771,7 @@ function _bibdk_custom_search_structure_elements_array($result) {
 
     // Structure options
     if ($o_uuid) {
-      $elements[$e_uuid]['values'][$v_uuid]['options'][$record->value]['label'] = bibdk_custom_search_translate('option', $o_uuid, 'label', $record->label);
+      $elements[$e_uuid]['values'][$v_uuid]['options'][$record->value]['label'] = bibdk_custom_search_translate($record->label, 'label');
       $elements[$e_uuid]['values'][$v_uuid]['options'][$record->value]['v_uuid'] = $v_uuid;
       $elements[$e_uuid]['values'][$v_uuid]['options'][$record->value]['disabled'] = $record->option_disabled;
     }
@@ -986,7 +986,7 @@ function _bibdk_custom_search_get_pages_db() {
         $p_uuid = $page->p_uuid;
         $attributes = ($page->is_disabled) ? array('disabled' => 'disabled') : array();
         $row = array(
-          'title' => bibdk_custom_search_translate('page', $p_uuid, 'menu_title', $page->menu_title),
+          'title' => bibdk_custom_search_translate($page->menu_title, 'menu_title'),
           'href' => $page->page_path,
           'attributes' => $attributes,
         );
@@ -1027,7 +1027,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
       $row = array(
         'o_uuid' => $option->o_uuid,
         'v_uuid' => $option->v_uuid,
-        'label' => bibdk_custom_search_translate('option', $option->o_uuid, 'label', $option->label),
+        'label' => bibdk_custom_search_translate($option->label, 'label'),
         'value' => $option->value,
         'expand' => $option->expand,
         'sort' => $option->sort,
@@ -1082,33 +1082,29 @@ function _bibdk_custom_search_get_field_searchcodes() {
 
 }
 
-
 /**
- * Wrapper function for i18n_string_remove()
+ * Translates a string and appends the given context.
+ * The main purpose of this function is to ensure that any changes made to
+ * bibdk_custom_search pages is written to db immediately and thereby availabel
+ * for translation with clearing cache.
+ *
+ * @param string $string
+ * @param string $context
+ * @return null|string
  */
-function bibdk_custom_search_translate_remove($type, $id, $key) {
-  return function_exists('i18n_string_remove')
-    ? i18n_string_remove("bibdk_custom_search-$type-$id-$key:bibdk_custom_search")
-    : TRUE;
+function bibdk_custom_search_translate_update($string, $context) {
+  return t($string, array(), array('context' => "bibdk_custom_search:$context"));
 }
 
 
 /**
- * Wrapper function for i18n_string_update()
+ * Translates a string and appends the given context.
+ *
+ * @param string $string
+ * @param string $context
+ * @return null|string
  */
-function bibdk_custom_search_translate_update($type, $id, $key, $string) {
-  return function_exists('i18n_string_update')
-    ? i18n_string_update("bibdk_custom_search-$type-$id-$key:bibdk_custom_search", check_plain($string))
-    : TRUE;
-}
-
-
-/**
- * Wrapper function for i18n_string()
- */
-function bibdk_custom_search_translate($type, $id, $key, $string) {
-  return function_exists('i18n_string')
-    ? i18n_string("bibdk_custom_search-$type-$id-$key:bibdk_custom_search", $string)
-    : $string;
+function bibdk_custom_search_translate($string, $context) {
+  return t($string, array(), array('context' => "bibdk_custom_search:$context"));
 }
 
