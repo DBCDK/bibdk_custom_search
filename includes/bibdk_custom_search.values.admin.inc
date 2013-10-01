@@ -126,7 +126,7 @@ function bibdk_custom_search_value_edit($form_id, $form_state, $value_id, $optio
       ->condition('v_uuid', $value_id)
       ->condition('o_uuid', $option_id)
       ->execute();
-    bibdk_custom_search_translate_remove('option', $option_id, 'label');
+
     cache_clear_all('bibdk_custom_search', 'cache', TRUE);
     drupal_set_message(t("Option deleted."));
   }
@@ -332,12 +332,6 @@ function _bibdk_custom_search_value_delete_submit($form, &$form_state) {
   $result = db_delete('bibdk_custom_search_options')
     ->condition('v_uuid', $v_uuid)
     ->execute();
-
-  $options = _bibdk_custom_search_get_options_db($v_uuid);
-  foreach ($options as $option) {
-    $o_uuid = $option['o_uuid'];
-    bibdk_custom_search_translate_remove('option', $o_uuid, 'label');
-  }
 
   $result = db_delete('bibdk_custom_search_values')
     ->condition('v_uuid', $form_state['values']['v_uuid'])
