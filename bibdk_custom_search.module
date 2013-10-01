@@ -685,35 +685,6 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
 }
 
-
-/*
-function _bibdk_custom_search_parse_query($default_value) {
-  $get = $_GET;
-
-  $res[] = ( isset($get['req']) ) ? $get['req'] : $default_value;
-
-  if ( isset($get['qe']) ) { // expanded search elements query elements
-    $op = _bibdk_custom_search_get_cql('OR');
-    foreach ( $get['qe'] as $term => $group ) {
-      foreach ( $group as $key => $val ) {
-        $group[$key] = $term . '=' . $val;
-      }
-      $fields[] = '(' . implode($op, $group) . ')';
-    }
-  }
-
-  $op = _bibdk_custom_search_get_cql('AND');
-  if ( !empty($fields) ) {
-    $res[] = '(' . implode($op, $fields) . ')';
-  }
-
-  $res = join($op, $res);
-
-  return $res;
-}
-*/
-
-
 /**
  *  Get searchpage from db
  * @param $page_path
