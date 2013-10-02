@@ -46,7 +46,7 @@ function bibdk_custom_search_admin_submit($form, &$form_state) {
   $pages = $form_state['values']['bibdk_custom_search'];
   $size = sizeof($pages);
   foreach ($pages as $key => $page) {
-    if ( $page['p_uuid'] == '_new' && !empty($page['page_title']) ) {
+    if ($page['p_uuid'] == '_new' && !empty($page['page_title'])) {
       _bibdk_custom_search_page_insert($page);
       $message[] = t('The page "@page" have been created.', array('@page' => $page['page_title']));
     }
@@ -67,7 +67,7 @@ function _bibdk_custom_search_page_insert($page) {
     ->fields(array(
       'p_uuid' => uuid_generate(),
       'page_title' => check_plain($page['page_title']),
-      'sort' => (int)$page['sort'],
+      'sort' => (int) $page['sort'],
       'is_disabled' => 0,
     ))
     ->execute();
@@ -80,8 +80,8 @@ function _bibdk_custom_search_page_insert($page) {
 function _bibdk_custom_search_page_update($page) {
   $result = db_update('bibdk_custom_search')
     ->fields(array(
-      'sort' => (int)$page['sort'],
-      'is_disabled' => ( isset($page['is_disabled']) ) ? (int)$page['is_disabled'] : 0,
+      'sort' => (int) $page['sort'],
+      'is_disabled' => (isset($page['is_disabled'])) ? (int) $page['is_disabled'] : 0,
     ))
     ->condition('p_uuid', $page['p_uuid'])
     ->execute();
@@ -147,15 +147,15 @@ function bibdk_custom_search_delete_page_submit($form, &$form_state) {
 /**
  *
  */
-function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element_pointer=FALSE) {
+function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element_pointer = FALSE) {
 
-  if ( $element_pointer ) {
+  if ($element_pointer) {
     $result = db_delete('bibdk_custom_search_map_elements')
       ->condition('me_uuid', $element_pointer)
       ->execute();
-    drupal_set_message( t("Element removed.") );
+    drupal_set_message(t("Element removed."));
   }
-  if ( !$page = bibdk_custom_search_page_load($page_id) ) {
+  if (!$page = bibdk_custom_search_page_load($page_id)) {
     drupal_set_message(t("The search page does not exist."), 'warning');
     return FALSE;
   }
@@ -175,12 +175,12 @@ function bibdk_custom_search_page_edit($form_id, $form_state, $page_id, $element
 
   // bibdk_custom_search_map_elements
   $query = db_select('bibdk_custom_search_map_elements', 'm');
-  $query -> join('bibdk_custom_search_elements', 'e', 'm.e_uuid = e.e_uuid');
-  $query -> fields('m', array('me_uuid', 'e_uuid', 'region', 'sort'));
-  $query -> fields('e', array('element_title', 'is_disabled'));
-  $query -> condition('p_uuid', $page_id, '=');
-  $query -> orderBy('sort', 'DESC');
-  $result = $query -> execute();
+  $query->join('bibdk_custom_search_elements', 'e', 'm.e_uuid = e.e_uuid');
+  $query->fields('m', array('me_uuid', 'e_uuid', 'region', 'sort'));
+  $query->fields('e', array('element_title', 'is_disabled'));
+  $query->condition('p_uuid', $page_id, '=');
+  $query->orderBy('sort', 'DESC');
+  $result = $query->execute();
   $page_elements = array();
   foreach ($result as $record) {
     $row = array(
@@ -234,10 +234,10 @@ function bibdk_custom_search_edit_page_submit($form, &$form_state) {
 
   $page_elements = $form_state['values']['elements'];
   foreach ($page_elements as $key => $page_element) {
-    if ( $page_element['me_uuid'] == '_new' && !empty($page_element['e_uuid']) ) {
+    if ($page_element['me_uuid'] == '_new' && !empty($page_element['e_uuid'])) {
       _bibdk_custom_search_page_element_insert($p_uuid, $page_element);
     }
-    if ( $page_element['me_uuid'] !== '_new' ) {
+    if ($page_element['me_uuid'] !== '_new') {
       _bibdk_custom_search_page_element_update($p_uuid, $page_element);
     }
   }
@@ -260,10 +260,10 @@ function _bibdk_custom_search_page_element_insert($p_uuid, $page_element) {
   $result = db_insert('bibdk_custom_search_map_elements')
     ->fields(array(
       'me_uuid' => uuid_generate(),
-      'p_uuid'  => $p_uuid,
-      'e_uuid'  => $page_element['e_uuid'],
+      'p_uuid' => $p_uuid,
+      'e_uuid' => $page_element['e_uuid'],
       'region' => check_plain($page_element['region']),
-      'sort' => (int)$page_element['sort'],
+      'sort' => (int) $page_element['sort'],
     ))
     ->execute();
   return $result;
@@ -277,15 +277,15 @@ function _bibdk_custom_search_page_element_update($p_uuid, $page_element) {
   $result = db_update('bibdk_custom_search_map_elements')
     ->fields(array(
       'region' => check_plain($page_element['region']),
-      'sort' => (int)$page_element['sort'],
+      'sort' => (int) $page_element['sort'],
     ))
     ->condition('me_uuid', $page_element['me_uuid'])
     ->execute();
-  if ( $result ) {
+  if ($result) {
     $result = FALSE;
     $result = db_update('bibdk_custom_search_elements')
       ->fields(array(
-        'is_disabled' => ( isset($page_element['is_disabled']) ) ? (int)$page_element['is_disabled'] : 0,
+        'is_disabled' => (isset($page_element['is_disabled'])) ? (int) $page_element['is_disabled'] : 0,
       ))
       ->condition('e_uuid', $page_element['e_uuid'])
       ->execute();
