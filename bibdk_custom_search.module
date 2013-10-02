@@ -126,6 +126,34 @@ function bibdk_custom_search_menu() {
   return $items;
 }
 
+function bibdk_custom_search_get_custom_search_pages() {
+  static $elements;
+  if (isset($elements)) {
+    return $elements;
+  }
+  
+  $query = db_select('bibdk_custom_search', 'p');
+  $query
+    ->fields('p', array('p_uuid', 'page_title', 'sort', 'is_disabled', 'page_path'))
+    ->orderBy('page_title', 'DESC')
+    ->orderBy('sort', 'DESC');
+  $result = $query->execute();
+
+  $elements = array();
+  foreach ($result as $record) {
+    $row = array(
+      'p_uuid' => check_plain($record->p_uuid),
+      'page_title' => check_plain($record->page_title),
+      'sort' => check_plain($record->sort),
+      'is_disabled' => check_plain($record->is_disabled),
+      'page_path' => $record->page_path,
+    );
+    $elements[] = $row;
+  }
+  
+  return $elements;
+}
+
 
 /**
  * Implements hook_help().
@@ -181,13 +209,14 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   $advanced_fields = _bibdk_custom_search_get_advanced_fields_form($page_id);
   $pages = _bibdk_custom_search_get_pages_db();
-
+  
   if ($pages) {
     _bibdk_custom_search_get_searchpage_buttons($form, $pages, $page_id);
     $form['searchpages']['#type'] = 'markup';
     $form['searchpages']['#prefix'] = '<nav id="search-tabs" class="clearfix"><ul class="horizontal-nav clearfix">';
     $form['searchpages']['#suffix'] = '</ul></nav>';
   }
+  
 
   if ($advanced_fields) {
     $form['advanced'] = array(
@@ -216,15 +245,9 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
       }
     }
 
-    $form['#attached'] = array(
-      'css' => array(
-        drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css',
-      ),
-      'js' => array(
-        drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js',
-      )
-    );
-
+    $form['#attached']['css'][] = drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css';
+    $form['#attached']['js'][] = drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js';
+   
     if (isset($advanced_fields['#bibdk_pre_search_process'])) {
       $form['#bibdk_pre_search_process'] = $advanced_fields['#bibdk_pre_search_process'];
       $form['#attached']['js'] = array_merge($form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js', $advanced_fields['#bibdk_pre_search_process']));
@@ -244,7 +267,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   }
 
   $form['#submit'] = array('bibdk_custom_search_submit');
-
+  
   return $form;
 }
 
@@ -363,6 +386,9 @@ function bibdk_custom_searchpage_ajax_callback() {
  * @param $form
  * @param $form_state
  */
+
+// @TODO this method is not used anywhere ?? DELETE ??
+ 
 function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
   $dest = $form_state['clicked_button']['#dest'];
   if (isset($form_state['values']['search_block_form']) && !empty($form_state['values']['search_block_form'])) {
