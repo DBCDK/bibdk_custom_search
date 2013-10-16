@@ -158,6 +158,7 @@ function bibdk_custom_search_permission() {
  * Implements hook_form_FORM_ID_alter() for form search_block_form.
  */
 function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+  dpm('alter');
 
   $get = $_GET;
 
@@ -340,7 +341,6 @@ function _bibdk_custom_search_get_searchpage_buttons(&$form, $pages, $req) {
 
 function bibdk_custom_searchpage_ajax_callback() {
   $type = $_GET['type'];
-  $req = $_GET['req'];
   $_GET['q'] = $type;
 
   $bodyClass = 'page-' . strtr($type, array(
@@ -349,14 +349,13 @@ function bibdk_custom_searchpage_ajax_callback() {
     ));
 
   $form = drupal_render(drupal_get_form('search_block_form'));
-  $request = $type . '?req=' . $req;
 
   $label_type = t('label_' . str_replace('/', '_', $type), array(), array('context' => 'bibdk_custom_search'));
 
   drupal_json_output(array(
     'bodyclass' => $bodyClass,
     'form' => $form,
-    'request' => $request,
+    'request' => $type,
     'label_type' => $label_type
   ));
   exit();
@@ -1004,6 +1003,7 @@ function _bibdk_custom_search_get_pages_db() {
   global $language;
 
   $pages = & drupal_static(__FUNCTION__);
+  $pages = NULL; //TODO mmj remove this line
 
   if (!isset($pages)) {
     if ($cache = cache_get('bibdk_custom_search_pages_db_' . $language->language)) {
