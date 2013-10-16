@@ -1,50 +1,8 @@
 <?php
-class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
-  public static function getInfo() {
-    return array(
-      'name' => 'Custom Search Unit Test',
-      'description' => 'Bibdk Custom Unit test.',
-      'group' => 'Bibliotek.dk  - Custom Search',
-    );
-  }
-
-  public function test_bibdk_custom_search_is_advanced_search_expanded() {
-
-    module_load_include('module', 'bibdk_custom_search', 'bibdk_custom_search');
-
-    // Test empty query
-    $get = array();
-    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertFalse($result, 'Do not expand if query is empty');
-
-    // Test default query
-    $get = array(
-      'qe' => array(
-        'year.op' => array('year_eq'),
-      ),
-      'q' => 'bibdk_frontpage',
-    );
-
-    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertTrue($result, 'Do not expand when on frontpage and default search');
-
-    // Test advanced query
-    $get = array(
-      'qe' => array(
-        'year.op' => array('year_eq'),
-        'work' => 'test',
-      ),
-      'q' => 'bibdk_frontpage',
-    );
-    $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertFalse($result, 'Expand if advanced elements have been set');
-  }
-
-}
 
 
 
-class BibdkCustomSearchTestCase extends DrupalWebTestCase {
+class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
   protected $privileged_user;
 
@@ -63,7 +21,10 @@ class BibdkCustomSearchTestCase extends DrupalWebTestCase {
     variable_set('bibdk_provider_security_code', 'testhest');
     variable_set('search_active_modules', array('ting_openformat' => 'ting_openformat'));
     variable_set('search_default_module', 'ting_openformat');
-    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array('access content', 'search content'));
+    user_role_grant_permissions(DRUPAL_ANONYMOUS_RID, array(
+      'access content',
+      'search content'
+    ));
     menu_rebuild();
   }
 
@@ -224,16 +185,24 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'element_value[value_type]',
       $edit['element_value[value_type]'],
-      format_string('The value "@value_title" have been set to a type "@type".', array('@value_title' => $_bibdk_custom_search_value_title, '@type' => $edit['element_value[value_type]']))
+      format_string('The value "@value_title" have been set to a type "@type".', array(
+        '@value_title' => $_bibdk_custom_search_value_title,
+        '@type' => $edit['element_value[value_type]']
+      ))
     );
     $this->assertFieldByName(
       'element_value[search_code]',
       $edit['element_value[search_code]'],
-      format_string('The value "@value_title" have been assigned a search code "@code".', array('@value_title' => $_bibdk_custom_search_value_title, '@code' => $edit['element_value[search_code]']))
+      format_string('The value "@value_title" have been assigned a search code "@code".', array(
+        '@value_title' => $_bibdk_custom_search_value_title,
+        '@code' => $edit['element_value[search_code]']
+      ))
     );
 
     // Test editing a custom search element.
-    $value = db_select('bibdk_custom_search_elements', 't')->fields('t', array('e_uuid'))->condition('eid', 1, '=')->execute()->fetchAssoc();
+    $value = db_select('bibdk_custom_search_elements', 't')
+      ->fields('t', array('e_uuid'))->condition('eid', 1, '=')->execute()
+      ->fetchAssoc();
     $e_uuid = $value['e_uuid'];
 
     $this->drupalGet('admin/config/search/bibdk_custom_search/elements');
@@ -245,35 +214,52 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $edit['bibdk_custom_search_page_element[tab_index]'] = rand(0, 100);
     $element_description = $edit['bibdk_custom_search_page_element[description]'] = $this->randomName(40);
     $edit['bibdk_custom_search_page_element[help_text]'] = $this->randomName(10);
-    $this->drupalPost(null, $edit, 'Save');
+    $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[element_label]',
       $edit['bibdk_custom_search_page_element[element_label]'],
-      format_string('The element "@element_title" have been assigned a label "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[element_label]']))
+      format_string('The element "@element_title" have been assigned a label "@val".', array(
+        '@element_title' => $element_title,
+        '@val' => $edit['bibdk_custom_search_page_element[element_label]']
+      ))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[access_key]',
       $edit['bibdk_custom_search_page_element[access_key]'],
-      format_string('The element "@element_title" have been assigned an accesskey "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[access_key]']))
+      format_string('The element "@element_title" have been assigned an accesskey "@val".', array(
+        '@element_title' => $element_title,
+        '@val' => $edit['bibdk_custom_search_page_element[access_key]']
+      ))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[tab_index]',
       $edit['bibdk_custom_search_page_element[tab_index]'],
-      format_string('The element "@element_title" have been assigned a tabindex "@val".', array('@element_title' => $element_title, '@val' => $edit['bibdk_custom_search_page_element[tab_index]']))
+      format_string('The element "@element_title" have been assigned a tabindex "@val".', array(
+        '@element_title' => $element_title,
+        '@val' => $edit['bibdk_custom_search_page_element[tab_index]']
+      ))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[description]',
       $edit['bibdk_custom_search_page_element[description]'],
-      format_string('The element "@element_title" have been assigned a description "@val".', array('@element_title' => $element_title, '@val' => substr($edit['bibdk_custom_search_page_element[description]'], 0, 40) . '[...]'))
+      format_string('The element "@element_title" have been assigned a description "@val".', array(
+        '@element_title' => $element_title,
+        '@val' => substr($edit['bibdk_custom_search_page_element[description]'], 0, 40) . '[...]'
+      ))
     );
     $this->assertFieldByName(
       'bibdk_custom_search_page_element[help_text]',
       $edit['bibdk_custom_search_page_element[help_text]'],
-      format_string('The element "@element_title" have been assigned a helptext "@val".', array('@element_title' => $element_title, '@val' => substr($edit['bibdk_custom_search_page_element[help_text]'], 0, 40) . '[...]'))
+      format_string('The element "@element_title" have been assigned a helptext "@val".', array(
+        '@element_title' => $element_title,
+        '@val' => substr($edit['bibdk_custom_search_page_element[help_text]'], 0, 40) . '[...]'
+      ))
     );
 
     // Test adding a value to a custom search element.
-    $value = db_select('bibdk_custom_search_values', 'v')->fields('v', array('v_uuid'))->condition('vid', 1, '=')->execute()->fetchAssoc();
+    $value = db_select('bibdk_custom_search_values', 'v')
+      ->fields('v', array('v_uuid'))->condition('vid', 1, '=')->execute()
+      ->fetchAssoc();
     $_bibdk_custom_search_v_uuid = $value['v_uuid'];
     $edit = array();
     $edit['bibdk_custom_search_page_element_values[0][v_uuid]'] = $_bibdk_custom_search_v_uuid;
@@ -283,7 +269,9 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertLinkByHref(
       'admin/config/search/bibdk_custom_search/values/' . $_bibdk_custom_search_v_uuid . '/edit'
     );
-    $value = db_select('bibdk_custom_search_map_values', 'v')->fields('v', array('mv_uuid'))->condition('mid', 1, '=')->execute()->fetchAssoc();
+    $value = db_select('bibdk_custom_search_map_values', 'v')
+      ->fields('v', array('mv_uuid'))->condition('mid', 1, '=')->execute()
+      ->fetchAssoc();
     $mv_uuid = $value['mv_uuid'];
 
     $this->assertLinkByHref(
@@ -291,7 +279,8 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     );
 
     // Test editing a custom search page.
-    $value = db_select('bibdk_custom_search', 't')->fields('t', array('p_uuid'))->condition('pid', 1, '=')->execute()->fetchAssoc();
+    $value = db_select('bibdk_custom_search', 't')->fields('t', array('p_uuid'))
+      ->condition('pid', 1, '=')->execute()->fetchAssoc();
     $p_uuid = $value['p_uuid'];
 
     $edit = array();
@@ -302,16 +291,24 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'page[menu_title]',
       $edit['page[menu_title]'],
-      format_string('The page "@page_title" have been assigned a menu title "@val".', array('@page_title' => $_bibdk_custom_search_page_title, '@val' => $edit['page[menu_title]']))
+      format_string('The page "@page_title" have been assigned a menu title "@val".', array(
+        '@page_title' => $_bibdk_custom_search_page_title,
+        '@val' => $edit['page[menu_title]']
+      ))
     );
     $this->assertFieldByName(
       'page[page_path]',
       $edit['page[page_path]'],
-      format_string('The page "@page_title" have been assigned a path "@val".', array('@page_title' => $_bibdk_custom_search_page_title, '@val' => $edit['page[page_path]']))
+      format_string('The page "@page_title" have been assigned a path "@val".', array(
+        '@page_title' => $_bibdk_custom_search_page_title,
+        '@val' => $edit['page[page_path]']
+      ))
     );
 
     // Test adding an element to a custom search page.
-    $value = db_select('bibdk_custom_search_map_elements', 't')->fields('t', array('me_uuid'))->condition('mid', 1, '=')->execute()->fetchAssoc();
+    $value = db_select('bibdk_custom_search_map_elements', 't')
+      ->fields('t', array('me_uuid'))->condition('mid', 1, '=')->execute()
+      ->fetchAssoc();
     $me_uuid = $value['me_uuid'];
     $edit = array();
     $edit['elements[0][e_uuid]'] = $e_uuid;
@@ -454,17 +451,24 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'element_value[value_type]',
       $edit['element_value[value_type]'],
-      format_string('The value "@value_title" have been set to a type "@type", with a label "@label".', array('@value_title' => $_bibdk_custom_search_value_title, '@type' => $edit['element_value[value_type]'], '@label' => $option_label))
+      format_string('The value "@value_title" have been set to a type "@type", with a label "@label".', array(
+        '@value_title' => $_bibdk_custom_search_value_title,
+        '@type' => $edit['element_value[value_type]'],
+        '@label' => $option_label
+      ))
     );
 
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[ $_bibdk_custom_search_v_uuid . '[' . $option_label . ']' ] = TRUE;
+    $edit[$_bibdk_custom_search_v_uuid . '[' . $option_label . ']'] = TRUE;
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that value is present in search result
-    $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(':value' => $option_value, ':value' => $option_value));
+    $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
+      ':value' => $option_value,
+      ':value' => $option_value
+    ));
     $this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
 
     // assert default value in select elements
@@ -481,12 +485,20 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'element_value_options[0][label]',
       $option_label_0,
-      format_string('The value "@value_title" have added an option with the label "@label".', array('@value_title' => $_bibdk_custom_search_value_title, '@value' => $option_value_0, '@label' => $option_label_0))
+      format_string('The value "@value_title" have added an option with the label "@label".', array(
+        '@value_title' => $_bibdk_custom_search_value_title,
+        '@value' => $option_value_0,
+        '@label' => $option_label_0
+      ))
     );
     $this->assertFieldByName(
       'element_value_options[0][value]',
       $option_value_0,
-      format_string('The value "@value_title" have added an option with the value "@value".', array('@value_title' => $_bibdk_custom_search_value_title, '@value' => $option_value_0, '@label' => $option_label_0))
+      format_string('The value "@value_title" have added an option with the value "@value".', array(
+        '@value_title' => $_bibdk_custom_search_value_title,
+        '@value' => $option_value_0,
+        '@label' => $option_label_0
+      ))
     );
 
     // set a second select element
@@ -513,7 +525,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[ $_bibdk_custom_search_v_uuid ] = $option_value_0;
+    $edit[$_bibdk_custom_search_v_uuid] = $option_value_0;
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that second option is selected by default in search result form.
