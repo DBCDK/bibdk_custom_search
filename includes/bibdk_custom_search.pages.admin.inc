@@ -16,28 +16,14 @@ module_load_include('inc', 'bibdk_custom_search', 'includes/bibdk_custom_search-
  */
 function bibdk_custom_search_admin() {
   // Page ordering and create new page.
-  $query = db_select('bibdk_custom_search', 'p');
-  $query
-    ->fields('p', array('p_uuid', 'page_title', 'sort', 'is_disabled'))
-    ->orderBy('page_title', 'DESC')
-    ->orderBy('sort', 'DESC');
-  $result = $query->execute();
-
-  $elements = array();
-  foreach ($result as $record) {
-    $row = array(
-      'p_uuid' => check_plain($record->p_uuid),
-      'page_title' => check_plain($record->page_title),
-      'sort' => check_plain($record->sort),
-      'is_disabled' => check_plain($record->is_disabled),
-    );
-    $elements[] = $row;
-  }
-
+  $elements = bibdk_custom_search_get_custom_search_pages();
+  
   $form = _bibdk_custom_search_default_admin_form($elements);
   $form['#submit'][] = 'bibdk_custom_search_admin_submit';
   return $form;
 }
+
+
 
 /**
  * Submit handler for bibdk_custom_search_admin();
