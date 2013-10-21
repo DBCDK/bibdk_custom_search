@@ -79,17 +79,7 @@
   };
 
   Drupal.getSearchPage = function(element) {
-
-    /*
-     var url = document.URL;
-     if(url.indexOf('bibdk_frontpage') <= -1 && location.pathname.length >= 6){
-     }*/
-
     var type = element.find('input').attr('data-type');
-    var searchString = $('input[name=search_block_form]').val();
-    if(searchString === Drupal.t('placeholder_text', {}, {context: 'bibdk_custom_search'})) {
-      searchString = '';
-    }
 
     element.addClass('ajax-progress');
     element.append('<span class="throbber">&nbsp;</span>');
@@ -98,8 +88,7 @@
       url: Drupal.settings.basePath + Drupal.settings.pathPrefix + 'frontpage/searchpage_callback',
       type: 'GET',
       data: {
-        type: type,
-        req: searchString
+        type: type
       },
       dataType: 'json',
       success: Drupal.response
@@ -134,7 +123,9 @@
             }
           })
           if(!counter) {
-            $(this).closest(".bibdk-custom-search-element").find("input.default-value").filter(function(){return $(this).val() == '';}).attr('checked', true);
+            $(this).closest(".bibdk-custom-search-element").find("input.default-value").filter(function() {
+              return $(this).val() == '';
+            }).attr('checked', true);
           }
         }
       });

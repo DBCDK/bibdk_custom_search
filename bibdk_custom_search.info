@@ -1,15 +1,15 @@
 name = Bibliotek.dk - Extended Search
 description = Customize the default search, add custom search pages, and change input types, labels, values & ordering.
 core = 7.x
-version = 7.x-0.17
+version = 7.x-0.18
 package = Bibliotek.dk
 
 dependencies[] = uuid
 dependencies[] = ting_openformat
 
-files[] = bibdk_custom_search.i18n.inc
 files[] = bibdk_custom_search.export.inc
-files[] = test/bibdk_custom_search.test
+files[] = test/bibdk_custom_search_unit_test.test
+files[] = test/bibdk_custom_search_web_test.test
 
 files[] = js/bibdk_custom_search_options_subgroup.js
 
