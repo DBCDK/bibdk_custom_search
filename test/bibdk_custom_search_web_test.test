@@ -1,7 +1,6 @@
 <?php
 
 
-
 class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
   protected $privileged_user;

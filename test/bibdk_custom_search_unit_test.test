@@ -10,10 +10,12 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     );
   }
 
-  public function test_bibdk_custom_search_is_advanced_search_expanded() {
-
+  public function setUp() {
     module_load_include('module', 'bibdk_custom_search', 'bibdk_custom_search');
+    parent::setUp();
+  }
 
+  public function test_bibdk_custom_search_is_advanced_search_expanded() {
     // Test empty query
     $get = array();
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
