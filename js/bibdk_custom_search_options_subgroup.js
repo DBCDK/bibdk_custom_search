@@ -61,6 +61,9 @@
   };
 
   Drupal.response = function(response) {
+    $('.panel-left').empty();
+    $('.works').empty();
+
     $('#search-form').html(response.form);
 
     $(document).attr('title', response.label_type);
