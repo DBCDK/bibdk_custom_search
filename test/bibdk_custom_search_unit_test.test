@@ -43,4 +43,113 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
     $this->assertFalse($result, 'Expand if advanced elements have been set');
   }
+
+  public function testSettingDefaultValuesForCheckboxes() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          'key1' => 'value1',
+          'key2' => 'value2',
+        ),
+      ),
+    );
+    $empty = array();
+    _bibdk_custom_search_set_default_values($empty, $fields);
+    $this->assertTrue($empty == array(), 'Still empty.');
+    $checkbox_group_mismatch = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'mismatch',
+      ),
+      '#return_value' => 'test',
+    );
+    _bibdk_custom_search_set_default_values($checkbox_group_mismatch, $fields);
+    $this->assertTrue($checkbox_group_mismatch['#default_value'] == '', '#default_value set to empty string.');
+    $checkbox_not_in_group = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'id1',
+      ),
+      '#return_value' => '',
+    );
+    _bibdk_custom_search_set_default_values($checkbox_not_in_group, $fields);
+    $this->assertFalse(isset($checkbox_not_in_group['#default_value']), '#default_value is not set.');
+    $checkbox_in_group = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'id1',
+      ),
+      '#return_value' => 'value2',
+    );
+    _bibdk_custom_search_set_default_values($checkbox_in_group, $fields);
+    $this->assertTrue($checkbox_in_group['#default_value'] == 'value2', '#default_value is set to value2.');
+  }
+
+  public function testSettingDefaultValuesForTextfield() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          '1',
+          '2',
+        ),
+      ),
+    );
+    $empty = array();
+    _bibdk_custom_search_set_default_values($empty, $fields);
+    $this->assertTrue($empty == array(), 'Still empty.');
+    $textfield_term_mismatch = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'id2',
+        ),
+      ),
+    );
+    _bibdk_custom_search_set_default_values($textfield_term_mismatch, $fields);
+    $this->assertTrue($textfield_term_mismatch['#default_value'] == '', '#default_value set to empty string.');
+    $textfield_term_match = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'id1',
+        ),
+      ),
+    );
+    _bibdk_custom_search_set_default_values($textfield_term_match, $fields);
+    $this->assertTrue($textfield_term_match['#default_value'] == array(1, 2), '#default_value set to array containing 1 and 2.');
+  }
+
+  public function testSettingDefaultValuesRecursion() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          '1',
+          '2',
+        ),
+      ),
+    );
+    $recursion = array(
+      'recursion' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'id1',
+          ),
+        ),
+      ),
+      '#no_recursion' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'id1',
+          ),
+        ),
+      ),
+      'nonarray' => 'simple value',
+    );
+    _bibdk_custom_search_set_default_values($recursion, $fields);
+    $this->assertTrue($recursion['recursion']['#default_value'] == array(1, 2), 'Recursion done for keys not beginning with # and has a value which is an array.');
+    $this->assertFalse(isset($recursion['#no_recursion']['#default_value']), 'Recursion is not done for keys beginning with #.');
+    $this->assertTrue($recursion['nonarray'] == 'simple value', 'Recursion is not done for keys which do not have an array as value.');
+  }
 }
