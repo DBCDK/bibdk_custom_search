@@ -675,7 +675,6 @@ function _bibdk_custom_search_default_values(&$form) {
  * @param $extended_fields
  */
 function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
-
   $controls = array('checkbox', 'radio', 'select', 'textarea', 'textfield');
 
   if (isset($form['#type']) && in_array($form['#type'], $controls)) {
@@ -705,7 +704,6 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
         }
         break;
     }
-
   }
 
   foreach ($form as $key => $val) {
@@ -713,7 +711,6 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
       _bibdk_custom_search_set_default_values($form[$key], $extended_fields);
     }
   }
-
 }
 
 /**
