@@ -620,7 +620,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/', '_', $path['destination']) . $language->language;
   if ($cache = cache_get($cache_id)) {
     $form = $cache->data;
-    _bibdk_custom_search_default_values($form);
+    _bibdk_custom_search_default_values($form, $_GET);
     return $form;
   }
 
@@ -642,13 +642,12 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   // create form from search elements
   $form = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
   cache_set($cache_id, $form, 'cache');
-  _bibdk_custom_search_default_values($form);
+  _bibdk_custom_search_default_values($form, $_GET);
   return $form;
 }
 
 
-function _bibdk_custom_search_default_values(&$form) {
-  $get = $_GET;
+function _bibdk_custom_search_default_values(&$form, $get) {
   $used_fields = array();
 
   if (isset($get['qe'])) { // expanded search elements query elements
