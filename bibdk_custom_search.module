@@ -662,7 +662,7 @@ function _bibdk_custom_search_default_values(&$form) {
       }
     }
 
-    _bibdk_custom_search_set_default_values($form, $used_fields);
+    $form = _bibdk_custom_search_set_default_values($form, $used_fields);
 
   }
 
@@ -671,10 +671,11 @@ function _bibdk_custom_search_default_values(&$form) {
 
 /**
  * Set default values in extended search form to submitted values
- * @param $form
- * @param $extended_fields
+ * @param array $form
+ * @param array $extended_fields
+ * @return array
  */
-function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
+function _bibdk_custom_search_set_default_values($form, $extended_fields) {
   $controls = array('checkbox', 'radio', 'select', 'textarea', 'textfield');
 
   if (isset($form['#type']) && in_array($form['#type'], $controls)) {
@@ -708,9 +709,11 @@ function _bibdk_custom_search_set_default_values(&$form, $extended_fields) {
 
   foreach ($form as $key => $val) {
     if (is_array($form[$key]) && substr($key, 0, 1) != '#') {
-      _bibdk_custom_search_set_default_values($form[$key], $extended_fields);
+      $form[$key] = _bibdk_custom_search_set_default_values($form[$key], $extended_fields);
     }
   }
+
+  return $form;
 }
 
 /**
