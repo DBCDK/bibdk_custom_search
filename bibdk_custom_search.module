@@ -614,13 +614,14 @@ function bibdk_custom_search_block_view($delta = '') {
 function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   global $language;
 
+  $extended_fields = _bibdk_custom_search_get_field_searchcodes();
   $path['destination'] = ($destination) ? $destination : $_GET['q'];
 
   // If cache exists return cache;
   $cache_id = 'bibdk_custom_search_fields_' . str_replace('/', '_', $path['destination']) . $language->language;
   if ($cache = cache_get($cache_id)) {
     $form = $cache->data;
-    _bibdk_custom_search_default_values($form, $_GET);
+    _bibdk_custom_search_default_values($form, $_GET, $extended_fields);
     return $form;
   }
 
@@ -642,18 +643,17 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   // create form from search elements
   $form = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
   cache_set($cache_id, $form, 'cache');
-  _bibdk_custom_search_default_values($form, $_GET);
+  _bibdk_custom_search_default_values($form, $_GET, $extended_fields);
   return $form;
 }
 
 
-function _bibdk_custom_search_default_values(&$form, $get) {
+function _bibdk_custom_search_default_values(&$form, $get, $extended_fields) {
   $used_fields = array();
 
   if (isset($get['qe'])) { // expanded search elements query elements
     $query_elements = $get['qe'];
 
-    $extended_fields = _bibdk_custom_search_get_field_searchcodes();
     foreach ($extended_fields as $key => $val) {
       if (isset($query_elements[$val['search_code']])) {
         $used_fields[$key] = $extended_fields[$key];
