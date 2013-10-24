@@ -647,7 +647,13 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   return $form;
 }
 
-
+/**
+ * Fills form with parameters from search request.
+ *
+ * @param array &$form
+ * @param array $get
+ * @param array $extended_fields
+ */
 function _bibdk_custom_search_default_values(&$form, $get, $extended_fields) {
   $used_fields = array();
 
@@ -662,11 +668,8 @@ function _bibdk_custom_search_default_values(&$form, $get, $extended_fields) {
     }
 
     $form = _bibdk_custom_search_set_default_values($form, $used_fields);
-
   }
-
 }
-
 
 /**
  * Set default values in extended search form to submitted values
