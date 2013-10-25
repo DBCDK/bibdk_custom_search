@@ -152,4 +152,78 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $this->assertFalse(isset($recursion_r['#no_recursion']['#default_value']), 'Recursion is not done for keys beginning with #.');
     $this->assertTrue($recursion_r['nonarray'] == 'simple value', 'Recursion is not done for keys which do not have an array as value.');
   }
+
+  public function testDefaultValues() {
+    $form = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'term',
+        ),
+      ),
+    );
+    $no_fields = array();
+    $no_qe = array();
+    $single_field = array(
+      'term' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $single_field_nonredundant = array(
+      'key' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $mismatch_search_code = array(
+      'qe' => array(
+        'noterm' => 'some value',
+      ),
+    );
+    $search_code_match = array(
+      'qe' => array(
+        'term' => 'value',
+      ),
+    );
+    $no_qe_r = _bibdk_custom_search_default_values($form, $no_qe, $single_field);
+    $this->assertTrue($no_qe_r == $form, 'Form unchanged if not extended search.');
+    $no_fields_r = _bibdk_custom_search_default_values($form, $mismatch_search_code, $no_fields);
+    $this->assertTrue($no_fields_r['#default_value'] == '', 'Form got set #default_value to empty string if no extended fields exist.');
+    $mismatch_search_code_r = _bibdk_custom_search_default_values($form, $mismatch_search_code, $single_field);
+    $this->assertTrue($mismatch_search_code_r['#default_value'] == '', 'Form got set #default_value to empty string if search code does not match.');
+    $search_code_match_r = _bibdk_custom_search_default_values($form, $search_code_match, $single_field);
+    $this->assertTrue($search_code_match_r['#default_value'] == 'value', 'Form changed when search code matches.');
+    $nonredundant_r = _bibdk_custom_search_default_values($form, $search_code_match, $single_field_nonredundant);
+    $this->assertTrue($nonredundant_r['#default_value'] == '', 'Form changed when search code matches.');
+    $form_checkbox_empty = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'term',
+      ),
+      '#return_value' => '',
+    );
+    $form_checkbox_return = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'term',
+      ),
+      '#return_value' => 'val1',
+    );
+    $qe_checkbox = array(
+      'qe' => array(
+        'term' => array(
+          'k1' => 'val1',
+          'k2' => '2val',
+        ),
+      ),
+    );
+    $single_field_checkbox = array(
+      'term' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $checkbox_empty = _bibdk_custom_search_default_values($form_checkbox_empty, $qe_checkbox, $single_field);
+    $this->assertFalse(isset($checkbox_empty['#default_value']), 'Form unchanged when #return_value is empty.');
+    $checkbox_return = _bibdk_custom_search_default_values($form_checkbox_return, $qe_checkbox, $single_field);
+    $this->assertTrue($checkbox_return['#default_value'] == 'val1', 'Form changed when #return_value matches.');
+  }
 }
