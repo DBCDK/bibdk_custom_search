@@ -661,7 +661,9 @@ function _bibdk_custom_search_default_values($form, $get, $extended_fields) {
     foreach ($extended_fields as $key => $val) {
       if (isset($query_elements[$val['search_code']])) {
         $used_fields[$key] = $extended_fields[$key];
-        $used_fields[$key]['values'] = $query_elements[$val['search_code']];
+        // assigned by reference needed because it is possible to have more
+        // elements with same search code.
+        $used_fields[$key]['values'] = &$query_elements[$val['search_code']];
       }
     }
 
@@ -700,7 +702,7 @@ function _bibdk_custom_search_set_default_values($form, $extended_fields) {
       DEFAULT:
         $value_id = $form['#attributes']['data-term'][0];
         if (array_key_exists($value_id, $extended_fields)) {
-          $form['#default_value'] = $extended_fields[$value_id]['values'];
+          $form['#default_value'] = array_shift($extended_fields[$value_id]['values']);
         }
         else {
           $form['#default_value'] = '';
