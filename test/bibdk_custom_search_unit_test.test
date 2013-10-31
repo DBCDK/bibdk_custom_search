@@ -10,10 +10,12 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     );
   }
 
-  public function test_bibdk_custom_search_is_advanced_search_expanded() {
-
+  public function setUp() {
     module_load_include('module', 'bibdk_custom_search', 'bibdk_custom_search');
+    parent::setUp();
+  }
 
+  public function test_bibdk_custom_search_is_advanced_search_expanded() {
     // Test empty query
     $get = array();
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
@@ -40,5 +42,233 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     );
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
     $this->assertFalse($result, 'Expand if advanced elements have been set');
+  }
+
+  public function testSettingDefaultValuesForCheckboxes() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          'key1' => 'value1',
+          'key2' => 'value2',
+        ),
+      ),
+    );
+    $empty = array();
+    $empty_r = _bibdk_custom_search_set_default_values($empty, $fields);
+    $this->assertTrue($empty_r == array(), 'Still empty.');
+    $checkbox_group_mismatch = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'mismatch',
+      ),
+      '#return_value' => 'test',
+    );
+    $checkbox_group_mismatch_r = _bibdk_custom_search_set_default_values($checkbox_group_mismatch, $fields);
+    $this->assertTrue($checkbox_group_mismatch_r['#default_value'] == '', '#default_value set to empty string.');
+    $checkbox_not_in_group = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'id1',
+      ),
+      '#return_value' => '',
+    );
+    $checkbox_not_in_group_r = _bibdk_custom_search_set_default_values($checkbox_not_in_group, $fields);
+    $this->assertFalse(isset($checkbox_not_in_group_r['#default_value']), '#default_value is not set.');
+    $checkbox_in_group = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'id1',
+      ),
+      '#return_value' => 'value2',
+    );
+    $checkbox_in_group_r = _bibdk_custom_search_set_default_values($checkbox_in_group, $fields);
+    $this->assertTrue($checkbox_in_group_r['#default_value'] == 'value2', '#default_value is set to value2.');
+  }
+
+  public function testSettingDefaultValuesForTextfield() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          '1',
+          '2',
+        ),
+      ),
+    );
+    $empty = array();
+    $empty_r = _bibdk_custom_search_set_default_values($empty, $fields);
+    $this->assertTrue($empty_r == array(), 'Still empty.');
+    $textfield_term_mismatch = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'id2',
+        ),
+      ),
+    );
+    $textfield_term_mismatch_r = _bibdk_custom_search_set_default_values($textfield_term_mismatch, $fields);
+    $this->assertTrue($textfield_term_mismatch_r['#default_value'] == '', '#default_value set to empty string.');
+    $textfield_term_match = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'id1',
+        ),
+      ),
+    );
+    $textfield_term_match_r = _bibdk_custom_search_set_default_values($textfield_term_match, $fields);
+    $this->assertTrue($textfield_term_match_r['#default_value'] == 1, '#default_value set to 1.');
+  }
+
+  public function testSettingDefaultValuesRecursion() {
+    $fields = array(
+      'id1' => array(
+        'values' => array(
+          '1',
+          '2',
+        ),
+      ),
+    );
+    $recursion = array(
+      'recursion' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'id1',
+          ),
+        ),
+      ),
+      '#no_recursion' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'id1',
+          ),
+        ),
+      ),
+      'nonarray' => 'simple value',
+    );
+    $recursion_r = _bibdk_custom_search_set_default_values($recursion, $fields);
+    $this->assertTrue($recursion_r['recursion']['#default_value'] == 1, 'Recursion done for keys not beginning with # and has a value which is an array.');
+    $this->assertFalse(isset($recursion_r['#no_recursion']['#default_value']), 'Recursion is not done for keys beginning with #.');
+    $this->assertTrue($recursion_r['nonarray'] == 'simple value', 'Recursion is not done for keys which do not have an array as value.');
+  }
+
+  public function testDefaultValues() {
+    $form = array(
+      '#type' => 'textfield',
+      '#attributes' => array(
+        'data-term' => array(
+          'term',
+        ),
+      ),
+    );
+    $no_fields = array();
+    $no_qe = array();
+    $single_field = array(
+      'term' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $single_field_nonredundant = array(
+      'key' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $mismatch_search_code = array(
+      'qe' => array(
+        'noterm' => array(
+          'some value',
+        ),
+      ),
+    );
+    $search_code_match = array(
+      'qe' => array(
+        'term' => array(
+          'value',
+        ),
+      ),
+    );
+    $no_qe_r = _bibdk_custom_search_default_values($form, $no_qe, $single_field);
+    $this->assertTrue($no_qe_r == $form, 'Form unchanged if not extended search.');
+    $no_fields_r = _bibdk_custom_search_default_values($form, $mismatch_search_code, $no_fields);
+    $this->assertTrue($no_fields_r['#default_value'] == '', 'Form got set #default_value to empty string if no extended fields exist.');
+    $mismatch_search_code_r = _bibdk_custom_search_default_values($form, $mismatch_search_code, $single_field);
+    $this->assertTrue($mismatch_search_code_r['#default_value'] == '', 'Form got set #default_value to empty string if search code does not match.');
+    $search_code_match_r = _bibdk_custom_search_default_values($form, $search_code_match, $single_field);
+    $this->assertTrue($search_code_match_r['#default_value'] == 'value', 'Form changed when search code matches.');
+    $nonredundant_r = _bibdk_custom_search_default_values($form, $search_code_match, $single_field_nonredundant);
+    $this->assertTrue($nonredundant_r['#default_value'] == '', 'Form changed when search code matches.');
+    $form_checkbox_empty = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'term',
+      ),
+      '#return_value' => '',
+    );
+    $form_checkbox_return = array(
+      '#type' => 'checkbox',
+      '#attributes' => array(
+        'data-group' => 'term',
+      ),
+      '#return_value' => 'val1',
+    );
+    $qe_checkbox = array(
+      'qe' => array(
+        'term' => array(
+          'k1' => 'val1',
+          'k2' => '2val',
+        ),
+      ),
+    );
+    $single_field_checkbox = array(
+      'term' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $checkbox_empty = _bibdk_custom_search_default_values($form_checkbox_empty, $qe_checkbox, $single_field);
+    $this->assertFalse(isset($checkbox_empty['#default_value']), 'Form unchanged when #return_value is empty.');
+    $checkbox_return = _bibdk_custom_search_default_values($form_checkbox_return, $qe_checkbox, $single_field);
+    $this->assertTrue($checkbox_return['#default_value'] == 'val1', 'Form changed when #return_value matches.');
+  }
+
+  public function testDefaultValuesSameTerm() {
+    $form = array(
+      'no1' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'term1',
+          ),
+        ),
+      ),
+      'no2' => array(
+        '#type' => 'textfield',
+        '#attributes' => array(
+          'data-term' => array(
+            'term2',
+          ),
+        ),
+      ),
+    );
+    $same_term_field = array(
+      'term1' => array(
+        'search_code' => 'term',
+      ),
+      'term2' => array(
+        'search_code' => 'term',
+      ),
+    );
+    $search_code_match = array(
+      'qe' => array(
+        'term' => array(
+          'value1',
+          'value2',
+        ),
+      ),
+    );
+
+    $form_r = _bibdk_custom_search_default_values($form, $search_code_match, $same_term_field);
+    $this->assertTrue($form_r['no1']['#default_value'] == 'value1', 'First value assigned to first element.');
+    $this->assertTrue($form_r['no2']['#default_value'] == 'value2', 'Second value assigned to second element.');
   }
 }
