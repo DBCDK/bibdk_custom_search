@@ -209,8 +209,8 @@ function _bibdk_custom_search_value_options_insert($value_id, $value_option) {
     ->fields(array(
       'v_uuid' => $value_id,
       'o_uuid' => uuid_generate(),
-      'label' => check_plain($value_option['label']),
-      'value' => check_plain($value_option['value']),
+      'label' => $value_option['label'],
+      'value' => $value_option['value'],
       'expand' => $value_option['expand'],
       'sort' => (int) $value_option['sort'],
       'is_disabled' => 0,
@@ -233,8 +233,8 @@ function _bibdk_custom_search_values_options_update($v_uuid, $value_option) {
   $is_disabled = (isset($value_option['is_disabled'])) ? (int) $value_option['is_disabled'] : 0;
   $result = db_update('bibdk_custom_search_options')
     ->fields(array(
-      'label' => check_plain($value_option['label']),
-      'value' => check_plain($value_option['value']),
+      'label' => $value_option['label'],
+      'value' => $value_option['value'],
       'expand' => check_plain($value_option['expand']),
       'sort' => (int) $value_option['sort'],
       'is_disabled' => $is_disabled,
@@ -242,7 +242,7 @@ function _bibdk_custom_search_values_options_update($v_uuid, $value_option) {
     ->condition('o_uuid', $o_uuid)
     ->condition('v_uuid', $v_uuid)
     ->execute();
-
+  
   if ($result) {
     bibdk_custom_search_translate_update($value_option['label'], 'label');
   }
