@@ -131,7 +131,7 @@ function bibdk_custom_search_get_custom_search_pages() {
   if (isset($elements)) {
     return $elements;
   }
-  
+
   $query = db_select('bibdk_custom_search', 'p');
   $query
     ->fields('p', array('p_uuid', 'page_title', 'sort', 'is_disabled', 'page_path'))
@@ -150,7 +150,7 @@ function bibdk_custom_search_get_custom_search_pages() {
     );
     $elements[] = $row;
   }
-  
+
   return $elements;
 }
 
@@ -207,14 +207,14 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
   $advanced_fields = _bibdk_custom_search_get_advanced_fields_form($page_id);
   $pages = _bibdk_custom_search_get_pages_db();
-  
+
   if ($pages) {
     _bibdk_custom_search_get_searchpage_buttons($form, $pages, $page_id);
     $form['searchpages']['#type'] = 'markup';
     $form['searchpages']['#prefix'] = '<nav id="search-tabs" class="clearfix"><ul class="horizontal-nav clearfix">';
     $form['searchpages']['#suffix'] = '</ul></nav>';
   }
-  
+
 
   if ($advanced_fields) {
     $form['advanced'] = array(
@@ -245,7 +245,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
     $form['#attached']['css'][] = drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css';
     $form['#attached']['js'][] = drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js';
-   
+
     if (isset($advanced_fields['#bibdk_pre_search_process'])) {
       $form['#bibdk_pre_search_process'] = $advanced_fields['#bibdk_pre_search_process'];
       $form['#attached']['js'] = array_merge($form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js', $advanced_fields['#bibdk_pre_search_process']));
@@ -265,7 +265,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   }
 
   $form['#submit'] = array('bibdk_custom_search_submit');
-  
+
   return $form;
 }
 
@@ -392,7 +392,7 @@ function bibdk_custom_searchpage_ajax_callback() {
  */
 
 // @TODO this method is not used anywhere ?? DELETE ??
- 
+
 function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
   $dest = $form_state['clicked_button']['#dest'];
   if (isset($form_state['values']['search_block_form']) && !empty($form_state['values']['search_block_form'])) {
@@ -481,6 +481,39 @@ function bibdk_custom_search_theme() {
 
 
 /**
+ * Translate boolean operators used in form values.
+ */
+function _translate_boolean($value) {
+  global $language;
+
+  $booleanEnglish = array(
+    ' AND ',
+    ' OR ',
+    ' NOT '
+  );
+
+  $booleanDanish = array(
+    ' OG ',
+    ' ELLER ',
+    ' IKKE'
+  );
+
+  switch ( $language->language ) {
+    CASE 'gb-en':
+      $replaceFrom = $booleanDanish;
+      $replaceTo = $booleanEnglish;
+      break;
+    DEFAULT:
+      $replaceFrom = $booleanEnglish;
+      $replaceTo = $booleanDanish;
+      break;
+  }
+
+  return str_ireplace($replaceFrom, $replaceTo, $value);
+
+}
+
+/**
  * Process a block search form submission.
  */
 function bibdk_custom_search_submit($form, &$form_state) {
@@ -512,7 +545,7 @@ function bibdk_custom_search_submit($form, &$form_state) {
       }
       foreach ($values as $k => $value) {
         if ($value) {
-          $extended['qe'][$term][] = $value;
+          $extended['qe'][$term][] = _translate_boolean($value);
         }
       }
     }
