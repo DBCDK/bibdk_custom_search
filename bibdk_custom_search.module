@@ -499,7 +499,7 @@ function _translate_boolean($value) {
   );
 
   switch ( $language->language ) {
-    CASE 'en-gb':
+    CASE 'gb-en':
       $replaceFrom = $booleanDanish;
       $replaceTo = $booleanEnglish;
       break;
@@ -538,18 +538,14 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
 
   foreach ($form_state['values'] as $key => $values) {
-    if ( isset($extended_fields[$key]['search_code']) ) {
-      $term = ( !empty($extended_fields[$key]['search_code']) ) ? $extended_fields[$key]['search_code'] : 'n/a';
+    if (isset($extended_fields[$key]['search_code'])) {
+      $term = $extended_fields[$key]['search_code'];
       if (!is_array($values)) {
         $values = array($values);
       }
       foreach ($values as $k => $value) {
-        if ( $value ) {
-          if ( $term == 'n/a' ) {
-            $extended['qe'][$term][$key][] = _translate_boolean($value);
-          } else {
-            $extended['qe'][$term][] = _translate_boolean($value);
-          }
+        if ($value) {
+          $extended['qe'][$term][] = _translate_boolean($value);
         }
       }
     }
@@ -696,18 +692,14 @@ function _bibdk_custom_search_default_values($form, $get, $extended_fields) {
     $query_elements = $get['qe'];
 
     foreach ($extended_fields as $key => $val) {
-      if ( isset($query_elements[$val['search_code']]) ) {
+      if (isset($query_elements[$val['search_code']])) {
         $used_fields[$key] = $extended_fields[$key];
         // assigned by reference needed because it is possible to have more
         // elements with same search code.
         $used_fields[$key]['values'] = &$query_elements[$val['search_code']];
       }
-      // empty search_code, and [term]=[value] set defined in value.
-      if ( array_key_exists($key, $query_elements['n/a']) ) {
-        $used_fields[$key] = $extended_fields[$key];
-        $used_fields[$key]['values'] = $query_elements['n/a'][$key];
-      }
     }
+
     $form = _bibdk_custom_search_set_default_values($form, $used_fields);
   }
 
