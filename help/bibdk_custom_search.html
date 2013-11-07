@@ -6,4 +6,16 @@
 
 <p>Search pre-process and javascript for combined form values are mantained seperately, in bibdk_custom_search_preprocess (or any module that implements hook_bibdk_custom_search_field_preprocess().)</p>
 
-<p>When adding <a href='admin/config/search/bibdk_custom_search/values'>custom values</a> for searchpages use english cql language (even though the rest might be written in another language eg. danish) e.g. (fra OR fre)</p>
+<h3>Form values</h3>
+
+<p>When adding <a href='admin/config/search/bibdk_custom_search/values'>custom values</a> for searchpages, use english cql language (even though the rest might be written in another language eg. danish) e.g. (fra OR fre)</p>
+
+<p><strong>Search code</strong><br/>
+   The search code will be combined with the values to form a search query, f.ex.:<br/>
+   <quote>Search code: term.type + Value: cd-rom => term.type=cd-rom</quote><br/>
+   <quote>Search code: term.type + Value: (avis OR tidsskrift) => term.type=(avis OR tidsskrift)</quote><br/><br/>
+
+   If the value list is a submenu, the Search code will be inherited from the parent value list.<br/><br/>
+
+   If the search code is not used in EVERY value, leave it empty, and type in the query string in the value. f.ex.:<br/>
+   <quote>Search code: [blank]  + Value: term.type.bog OR term.workType=literature</quote><br/>
