@@ -384,27 +384,28 @@ function bibdk_custom_searchpage_ajax_callback() {
 
 /**
  * Submit handler for search page selection.
- * When a searchpage is selected a form submit will happen and if the user have
- * entered anything into the searchfield it will be used as default value.
+ * When a searchpage is selected for the first time a form submit will happen
  *
  * @param $form
  * @param $form_state
  */
 
-// @TODO this method is not used anywhere ?? DELETE ??
-
 function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
   $dest = $form_state['clicked_button']['#dest'];
-  if (isset($form_state['values']['search_block_form']) && !empty($form_state['values']['search_block_form'])) {
+  
+  // code is only commented out. PO might change her mind later. When a search page
+  // is requested search-form should be cleared.
+  
+  /*if (isset($form_state['values']['search_block_form']) && !empty($form_state['values']['search_block_form'])) {
     drupal_goto($dest, array(
       'query' => array(
         'req' => $form_state['values']['search_block_form'],
       )
     ));
   }
-  else {
+  else {*/
     drupal_goto($dest);
-  }
+ // }
 }
 
 
