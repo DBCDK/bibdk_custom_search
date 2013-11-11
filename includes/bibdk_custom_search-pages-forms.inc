@@ -160,7 +160,7 @@ function _bibdk_custom_search_edit_page_form($page = stdClass, $list_elements=ar
     '#default_value'  => $page['delimiter'],
     '#title'          => t('Delimiter'),
     '#description'    => t('Common search expression for all queries in this form, f.ex. dc.type=book.'),
-    '#size'           => 12,
+    '#size'           => 28,
   );
 
   $form['bibdk_custom_search']['page']['expand'] = array(
