@@ -1,7 +1,7 @@
 name = Bibliotek.dk - Extended Search
 description = Customize the default search, add custom search pages, and change input types, labels, values & ordering.
 core = 7.x
-version = 7.x-0.21
+version = 7.x-0.22
 package = Bibliotek.dk
 
 dependencies[] = uuid
