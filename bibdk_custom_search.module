@@ -263,7 +263,6 @@ function bibdk_custom_search_submit($form, &$form_state) {
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
   $extended = array();
 
-  dpm($form_state['values']);
   foreach ($form_state['values'] as $_key => $values) {
     $key = str_replace('_', '.', $_key);
     if (!isset($extended_fields[$key]['search_code'])) {

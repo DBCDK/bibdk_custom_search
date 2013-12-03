@@ -8,8 +8,6 @@
  * @param $extended_fields
  */
 function _bibdk_custom_search_create_advanced_form($elements, $current_page, $default_values) {
-
-  dpm($default_values);
   $fields = array();
 
   // We loop through all search elements
@@ -29,13 +27,6 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
 
     // GROUPS
     $group = strtolower($element->element_label);
-    $group = preg_replace(array(
-      '@[æøå]+@',
-      '@[^a-z0-9_]+@'
-    ), array(
-      'a',
-      '_'
-    ), $group);
 
     // we add a subgroup because elements can have matching searchcodes
     $subgroup = $element->value_title;
@@ -62,8 +53,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
       $fields[$region][$group][$subgroup][$value] = array(
         '#type' => $element->value_type,
         '#title' => $element->value_title,
-        //'#default_value' => _bibdk_custom_search_get_default_values($group, $value, $default_values),
-        '#disabled' => $element->is_disabled,
+        '#disabled' => $element->is_disabled || $element->value_disabled,
         '#attributes' => array(
           'tabindex' => $element->tab_index,
           'accesskey' => $element->access_key,
@@ -89,10 +79,13 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         }
         break;
       CASE 'checkboxes':
-        // TODO: Add load more lists
         $fields[$region][$group][$subgroup][$value]['#type'] = 'container';
         $fields[$region][$group][$subgroup][$value]['#tree'] = TRUE;
-        $fields[$region][$group][$subgroup][$value] += _create_checkboxes($element, $default_values); //$options, $value, $element->default_value, $element->is_disabled);
+        if(strpos($element->value, 'facet.') !== FALSE ){
+          $fields[$region][$group][$subgroup][$value] += bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values);
+        } else {
+          $fields[$region][$group][$subgroup][$value] += bibdk_custom_search_create_checkboxes($element, $default_values); //$options, $value, $element->default_value, $element->is_disabled);
+        }
         break;
       DEFAULT:
         break;
@@ -102,7 +95,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
 }
 
 
-function _create_checkboxes($element, $default_values) {
+function bibdk_custom_search_create_checkboxes($element, $default_values) {
   $parent = str_replace('.', '_', $element->search_code);
   // Get default values
 
@@ -141,7 +134,7 @@ function _create_checkboxes($element, $default_values) {
     $options = _bibdk_custom_search_get_options_db_raw($element->expand);
     foreach ($options as $option) {
       $option = (object)array_merge((array)$element, (array)$option);
-      $return[$key . '-fieldset'] += _create_checkboxes($option, $default_values);
+      $return[$key . '-fieldset'] += bibdk_custom_search_create_checkboxes($option, $default_values);
     }
   }
   return $return;
