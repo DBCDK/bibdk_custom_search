@@ -2,6 +2,14 @@
 
   $(document).ready(function() {
     Drupal.bibdkCustomSearchOptionsSubgroup();
+
+    // show #search-advanced if the search include advanced search query items.
+    if ( $('#search-advanced-toggle').attr('data-toggle-state-hidden') != '1' ) {
+      $('#search-advanced-toggle').toggleClass('toggled');
+      $('#search-advanced').toggleClass('visuallyhidden');
+    }
+
+
   });
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
