@@ -128,8 +128,8 @@ function bibdk_custom_search_get_custom_search_pages() {
   }
   // Get cached result
   $cache_id = 'bibdk_custom_search_pages';
-  if ($elements = cache_get($cache_id)) {
-    return $elements;
+  if ($cache = cache_get($cache_id)) {
+    return $elements = $cache->data;
   }
 
   $query = db_select('bibdk_custom_search', 'p');
@@ -159,9 +159,8 @@ function _bibdk_custom_search_get_options_db_raw($value_id){
 
   $cache_id = 'bibdk_custom_search_options_' . $value_id;
   if ($cache = cache_get($cache_id)) {
-    return $cache;
+    return $cache->data;
   }
-
 
     $query = db_select('bibdk_custom_search_options', 'o');
   $query
