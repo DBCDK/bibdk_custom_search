@@ -201,41 +201,77 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
    */
   if ($advanced_fields = _bibdk_custom_search_get_advanced_fields_form($page_id)) {
 
-    $form['advanced'] = array(
-      '#type' => 'fieldset',
-      '#theme' => 'bibdk_custom_advanced_search_menu',
-      '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($_GET),
-      '#attributes' => array(
-        'class' => array(//_bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
-        ),
-        'data-type' => array($_GET['q']),
-      ),
-    );
-
-    $form['advanced']['#custom_submit'] = array(
-      '#type' => 'submit',
-      '#value' => t('custom_search', array(), array('context' => 'bibdk_custom_search')),
-      '#region' => 'main',
-      '#executes_submit_callback' => TRUE,
-      '#attributes' => array(
-        'class' => array(
-          'btn-submit'
-        ),
-      ),
-    );
-
-    $form['advanced'] += $advanced_fields;
+    $form['advanced'] = $advanced_fields;
   }
 
 
   $form['#attached']['css'][] = drupal_get_path('module', 'bibdk_custom_search') . '/css/bibdk_custom_search.css';
   $form['#attached']['js'][] = drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_options_subgroup.js';
-  // TODO: Check if it is used.
-  //$form['#attached']['js'] = array_merge($form['#attached']['js'], module_invoke_all('bibdk_custom_search_add_js', $advanced_fields['#bibdk_pre_search_process']));
-
   $form['#submit'] = array('bibdk_custom_search_submit');
+
   return $form;
 }
+
+/**
+ * get form for advanced search fields
+ */
+function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
+
+  // get search page
+  $page = _bibdk_custom_search_get_page_db($destination);
+  if (empty($page)) {
+    return NULL;
+  }
+
+  // Get results form db
+  $result = _bibdk_custom_search_get_advanced_fields_db($page);
+  if (empty($result)) {
+    return NULL;
+  }
+
+  // Get default values
+  $default_values = isset($_GET['qe']) ? $_GET['qe'] : array();
+
+  $form = array(
+    '#type' => 'fieldset',
+    '#theme' => 'bibdk_custom_advanced_search_menu',
+    '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($_GET),
+    '#attributes' => array(
+      'class' => array(_bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
+      ),
+      'data-type' => array($_GET['q']),
+    ),
+  );
+
+  $form += _bibdk_custom_search_create_advanced_form($result, $page, $default_values);
+
+  // Page specific elements
+  if ($page['delimiter']) {
+    $form['delimiter'] = array(
+      '#type' => 'hidden',
+      '#region' => 'main',
+      '#value' => $page['delimiter'],
+    );
+  }
+
+  $form['#custom_submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('custom_search', array(), array('context' => 'bibdk_custom_search')),
+    '#region' => 'main',
+    '#executes_submit_callback' => TRUE,
+    '#attributes' => array(
+      'class' => array(
+        'btn-submit'
+      ),
+    ),
+  );
+
+  $form['#collapsed'] = ($page['expand']) ? $page['expand'] : FALSE;
+  $form['#main_search_name'] = ($page['page_title']) ? $page['page_title'] : FALSE;
+
+  return $form;
+}
+
 
 
 /**
@@ -375,6 +411,22 @@ function _bibdk_custom_search_trim_string($string) {
 }
 
 /**
+ * Strips a string for spaces, æøå and lowercawes it
+ *
+ * @param string $string
+ * @return string
+ */
+function _bibdk_custom_search_machine_readable($string) {
+  return strtolower(preg_replace(array(
+    '@[æøå]+@',
+    '@[^a-z0-9_]+@'
+  ), array(
+    'a',
+    '_'
+  ), $string));
+}
+
+/**
  * Renders a form button for each page in pages array
  *
  * @param string $req
@@ -445,20 +497,7 @@ function bibdk_custom_searchpage_ajax_callback() {
 
 function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
   $dest = $form_state['clicked_button']['#dest'];
-
-  // code is only commented out. PO might change her mind later. When a search page
-  // is requested search-form should be cleared.
-
-  /*if (isset($form_state['values']['search_block_form']) && !empty($form_state['values']['search_block_form'])) {
-    drupal_goto($dest, array(
-      'query' => array(
-        'req' => $form_state['values']['search_block_form'],
-      )
-    ));
-  }
-  else {*/
   drupal_goto($dest);
-  // }
 }
 
 
@@ -605,52 +644,6 @@ function bibdk_custom_search_block_view($delta = '') {
   }
   return $block;
 }
-
-/**
- * get form for advanced search fields
- */
-function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
-
-  // get search page
-  $page = _bibdk_custom_search_get_page_db($destination);
-  if (empty($page)) {
-    return NULL;
-  }
-
-  // Get results form db
-  $result = _bibdk_custom_search_get_advanced_fields_db($page);
-  if (empty($result)) {
-    return NULL;
-  }
-
-  // Get default values
-  $default_values = isset($_GET['qe']) ? $_GET['qe'] : array();
-
-  $form = _bibdk_custom_search_create_advanced_form($result, $page, $default_values);
-
-  // Page specific elements
-  if ($page['delimiter']) {
-    $form['delimiter'] = array(
-      '#type' => 'hidden',
-      '#region' => 'main',
-      '#value' => $page['delimiter'],
-    );
-  }
-
-  $form['#collapsed'] = ($page['expand']) ? $page['expand'] : FALSE;
-  $form['#main_search_name'] = ($page['page_title']) ? $page['page_title'] : FALSE;
-
-  // TODO : Check om det skal bruges
-  /*if (isset($value['attached'])) {
-    $form['bibdk_custom_search_element_' . $e_uuid]['#attached']['js'][] = array(
-      'data' => array('expanded' => array($e_uuid => $value['attached'])),
-      'type' => 'setting',
-    );
-  }*/
-
-  return $form;
-}
-
 
 /**
  * Extract title, description and helptext from render-array, and set them as individual variables to be set in the template

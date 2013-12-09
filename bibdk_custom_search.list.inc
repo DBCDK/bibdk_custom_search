@@ -1,13 +1,34 @@
 <?php
 
-/** Returns a list of custom search options as an a array where:
- *    key = search code
- *    value = label
- *
- * @param $type
- * @return array
- */
 
+
+/** Returns a link, a list of options and a list of form elements, for a defined
+ * facet
+ * @param $facet_type type of facet e.g. facet.type
+ * @param $term_type Sets the parent of the returned elements
+ * @param array $default_values elements that has a default value
+ * @param array $ignore_values elements that should not be returned
+ * @return array Render-array
+ */
+function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array(), $ignore_values= array()) {
+  // Get options from webservice
+  $result = bibdk_custom_search_list_from_webservice($facet_type);
+  // Create options array with webservice result
+  $options = bibdk_custom_search_list_options($result, $ignore_values);
+
+  // Create form
+  $form = array();
+  $form += bibdk_custom_search_get_list_elements($options, $term_type,  $default_values);
+  $form += bibdk_custom_search_get_list_popup_form($options, $facet_type);
+
+  return $form;
+}
+
+/** Get elements from webservice
+ * @param $type  type of facet e.g. facet.type
+ * @param int $number_requested number of elements to request from service
+ * @return bool|stdClass|string
+ */
 function bibdk_custom_search_list_from_webservice($type, $number_requested = 1000) {
 
   $params = array(
@@ -20,60 +41,41 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
 
   $client = new ting_client_class();
 
-  return $client->do_request('search', $params);
+  $result = $client->do_request('search', $params);
+
+  return isset($result->facets[$type]) ? $result->facets[$type]->terms : array();
+}
+
+/** Returns a list of custom search options as an a array where:
+ * key = value & ignore values are omitted
+ *
+ *
+ * @param $type
+ * @return array
+ */
+function bibdk_custom_search_list_options($result, $ignore_values) {
+
+  // Set keys = values in options array
+  $options = array_keys($result);
+  $options = array_combine($options, $options);
+
+  // Sort alphabetically
+  ksort($options);
+
+  // We don't want double values in view
+  $options = array_diff($options, $ignore_values);
+
+  return $options;
 
 }
 
-function bibdk_custom_search_get_list($type) {
 
-  $result = bibdk_custom_search_list_from_webservice($type);
-  $terms = array_keys($result->facets[$type]->terms);
-  $terms = array_combine($terms, $terms);
-  ksort($terms);
-  return $terms;
-
-}
-
-function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array()) {
-  $options = bibdk_custom_search_get_list($facet_type);
-  $return = bibdk_custom_search_get_list_elements($options, $term_type,  $default_values);
-  $return['form'] = bibdk_custom_search_get_list_view_form($options, $facet_type);
-
-  $return['link'] = array(
-    '#theme' => 'link',
-    '#text' => t('see all options'),
-    '#options' => array(
-      'attributes' => array(
-        'class' => array('popover-button-list'),
-      ),
-      'fragment' => 'show-options',
-      'html' => true,
-      'absolute' => false,
-      'external' => true,
-    ),
-    '#attached' => array(
-      'js' => array(
-        drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_list.js',
-      ),
-    ),
-  );
-  return $return;
-}
-
-
-function bibdk_custom_search_get_list_view_form($options, $type) {
-
-  $form = array(
-    '#type' => 'container',
-    '#region' => 'main',
-    '#attributes' => array(
-      'id' => 'custom-search-options-list',
-    ),
-  );
+function bibdk_custom_search_get_list_popup_form($options, $type) {
 
   $form['pop-over'] = array(
     '#type' => 'container',
     '#attributes' => array(
+      'id' => 'custom-search-options-list',
       'class' => array('popover', 'visuallyhidden'),
     ),
   );
@@ -152,18 +154,44 @@ function bibdk_custom_search_get_list_view_form($options, $type) {
       'data-action-send-to' => array($type . '-options-array'),
     ),
   );
+
+  $form['link'] = array(
+    '#theme' => 'link',
+    '#text' => t('see all options'),
+    '#options' => array(
+      'attributes' => array(
+        'class' => array('popover-button-list'),
+      ),
+      'fragment' => 'show-options',
+      'html' => true,
+      'absolute' => false,
+      'external' => true,
+    ),
+    '#attached' => array(
+      'js' => array(
+        drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_list.js',
+      ),
+    ),
+  );
+
   return $form;
 
 }
 
-
-function bibdk_custom_search_get_list_elements($elements, $type, $default_values) {
+/**
+ * @param $elements
+ * @param $parent
+ * @param $default_values
+ * @return array
+ */
+function bibdk_custom_search_get_list_elements($elements, $parent, $default_values) {
+  $return = array();
   foreach ($elements as $element) {
-    $default = isset($default_values[$type]) && is_array($default_values[$type]) && in_array($element, $default_values[$type]) ? true : false;
+    $default = isset($default_values[$parent]) && is_array($default_values[$parent]) && in_array($element, $default_values[$parent]) ? true : false;
     $return[$element.'-container'] = array(
       '#type' => 'container',
       //'#tree' => false,
-      '#parents' => array(str_replace('.', '_', $type)),
+      '#parents' => array(str_replace('.', '_', $parent)),
       '#attributes' => array(
         'data-value' => $element,
         'class' => array(($default) ? 'default' : 'visuallyhidden')
@@ -176,7 +204,7 @@ function bibdk_custom_search_get_list_elements($elements, $type, $default_values
       '#return_value' => $element,
 
       '#attributes' => array(
-        'data-group' => $type,
+        'data-group' => $parent,
       ),
     );
   }
