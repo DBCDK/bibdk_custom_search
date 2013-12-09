@@ -301,15 +301,22 @@ function bibdk_custom_search_submit($form, &$form_state) {
 
   foreach ($form_state['values'] as $_key => $values) {
     $key = str_replace('_', '.', $_key);
-    if (!isset($extended_fields[$key]['search_code'])) {
+    $no_searchcode = preg_match('@n/a@', $key);
+    if (!isset($extended_fields[$key]['search_code']) && !$no_searchcode ) {
       continue;
     }
     if (!is_array($values)) {
       $values = array($values);
     }
     foreach ($values as $value) {
+
       if ($value) {
+        if ($no_searchcode){
+          $extended['qe']['n/a'][$key][] = _translate_boolean($value);
+        } else {
           $extended['qe'][$key][] = _translate_boolean($value);
+        }
+
       }
     }
   }

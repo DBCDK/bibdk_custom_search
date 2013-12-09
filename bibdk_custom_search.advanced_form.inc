@@ -10,16 +10,23 @@
 function _bibdk_custom_search_create_advanced_form($elements, $current_page, $default_values) {
   $fields = array();
 
+  if (isset($default_values['n/a'])){
+    $default_values += $default_values['n/a'];
+    unset($default_values['n/a']);
+  }
+
   // We loop through all search elements
   foreach ($elements as $element) {
 
-
+    if (empty($element->search_code)){
+      $element->search_code = 'n/a' . strtolower($element->element_label);
+    }
     // Explode elements with key-value pairs in value and empty search_code
-    if (empty($element->search_code) && strpos($element->value, '=')){
+    /*if (empty($element->search_code) && strpos($element->value, '=')){
       $exploded = explode('=', $element->value);
       $element->search_code = $exploded[0];
       $element->value = $exploded[1];
-    }
+    }*/
 
     // translate all values
     $element->value = _translate_boolean($element->value);
@@ -28,8 +35,6 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
     $element->element_label = bibdk_custom_search_translate($element->element_label, 'element_label');
     $element->description = bibdk_custom_search_translate($element->description, 'description');
     $element->help_text = bibdk_custom_search_translate($element->help_text, 'help_text');
-
-
 
     /* REGIONS */
     $region = $element->region;
@@ -95,7 +100,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
       CASE 'radios':
         $fields[$region][$group][$subgroup][$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
         if (!$element->option_disabled) {
-          $fields[$region][$group][$subgroup][$value]['#options'][$element->value] = bibdk_custom_search_translate($element->label, 'label');
+          $fields[$region][$group][$subgroup][$value]['#options'][$element->value] = $element->label;
         }
         break;
       CASE 'checkboxes':
@@ -103,7 +108,9 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         $fields[$region][$group][$subgroup][$value]['#tree'] = TRUE;
         $checkbox_values = isset($fields[$region][$group][$subgroup][$value]['#values']) ? $fields[$region][$group][$subgroup][$value]['#values'] : array();
         if(strpos($element->value, 'facet.') !== FALSE ){
-          $fields[$region][$group][$subgroup][$value] += bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
+          $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
+          $field = $fields[$region][$group][$subgroup][$value];
+          $fields[$region][$group][$subgroup][$value] = array_merge($field, $checkboxes);
         } else {
           $options = $element->expand ? _bibdk_custom_search_get_options_db_raw($element->expand) : array();
           $checkboxes = bibdk_custom_search_create_checkboxes($element, $default_values, $options);
