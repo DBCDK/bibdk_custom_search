@@ -5,7 +5,21 @@
   });
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
-    $('fieldset[data-child]').hide();
+      // Autoselect the 'all' values under checkboxes
+      /*$('input[type=checkbox].master').each(function(i, element){
+          var group = $(element).attr('data-group');
+          console.log(element);
+          console.log($('[data-group=' + group + ']' + '[checked=checked]'));
+          if (!$('[data-group=' + group + ']' + '[checked=checked]').length){
+              $(element).attr('checked', true);
+          }
+      });*/
+      $('fieldset[data-child]').each(function(i, element){
+
+      if (!$(element).find('input[checked=checked]').length){
+          $(element).hide();
+      }
+      });
     // If child checkbox is checked remove checked from parent
     $('fieldset[data-child] input').change(function() {
       if($(this).attr('checked') == true) {
@@ -27,8 +41,6 @@
       $('fieldset[data-child=' + childKey + ']').toggle();
     });
 
-    // Autoselect the 'all' values under checkboxes
-    $('input[type=checkbox].master').attr('checked', true);
     $('input[type=checkbox]').change(function(e) {
       var group = $(this).attr('data-group');
       if($(this).attr('checked')) {

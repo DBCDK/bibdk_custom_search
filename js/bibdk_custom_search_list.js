@@ -18,11 +18,11 @@
             $('.custom-search-list-close').trigger('click');
         },
         close: function (id){
-            $(id + ' .popover').addClass('visuallyhidden');
+            $(id).addClass('visuallyhidden');
         },
         open : function (id){
             $('.popover').addClass('visuallyhidden');
-            $(id + ' .popover').removeClass('visuallyhidden').find('input').select();
+            $(id).removeClass('visuallyhidden').find('input').select();
         }
     };
     /** Move element from one select to another */
