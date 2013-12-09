@@ -11,6 +11,11 @@
  * @return array Render-array
  */
 function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array(), $ignore_values= array()) {
+  if (strpos($facet_type, '=')){
+    $exploded = explode('=', $facet_type);
+    $term_type = $exploded[0];
+    $facet_type = $exploded[1];
+  }
   // Get options from webservice
   $result = bibdk_custom_search_list_from_webservice($facet_type);
   // Create options array with webservice result
@@ -69,7 +74,11 @@ function bibdk_custom_search_list_options($result, $ignore_values) {
 
 }
 
-
+/** Create form with more options as a pop-over box
+ * @param $options
+ * @param $type
+ * @return mixed
+ */
 function bibdk_custom_search_get_list_popup_form($options, $type) {
 
   $form['pop-over'] = array(
@@ -178,7 +187,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
 
 }
 
-/**
+/** Create list render array elements
  * @param $elements
  * @param $parent
  * @param $default_values
