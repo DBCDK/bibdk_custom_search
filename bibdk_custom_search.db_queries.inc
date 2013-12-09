@@ -7,6 +7,13 @@
  * @return DatabaseStatementInterface|null
  */
 function _bibdk_custom_search_get_advanced_fields_db($page) {
+
+  // Get cached result
+  $cache_id = 'bibdk_custom_search_fields_' . $page['p_uuid'];
+  if ($cache = cache_get($cache_id)) {
+    return $cache->data;
+  }
+
   // bibdk_custom_search_elements
   $query = db_select('bibdk_custom_search', 's');
   $query->leftjoin('bibdk_custom_search_map_elements', 'me', 's.p_uuid = me.p_uuid');
@@ -51,6 +58,8 @@ function _bibdk_custom_search_get_advanced_fields_db($page) {
   $query->orderBy('v.value_title', 'ASC');
   $query->orderBy('o.sort', 'ASC');
   $result = $query->execute()->fetchAll();
+
+  cache_set($cache_id, $result, 'cache');
   return $result;
 }
 
@@ -117,6 +126,11 @@ function bibdk_custom_search_get_custom_search_pages() {
   if (isset($elements)) {
     return $elements;
   }
+  // Get cached result
+  $cache_id = 'bibdk_custom_search_pages';
+  if ($elements = cache_get($cache_id)) {
+    return $elements;
+  }
 
   $query = db_select('bibdk_custom_search', 'p');
   $query
@@ -137,11 +151,19 @@ function bibdk_custom_search_get_custom_search_pages() {
     $elements[] = $row;
   }
 
+  cache_set($cache_id, $elements, 'cache');
   return $elements;
 }
 
 function _bibdk_custom_search_get_options_db_raw($value_id){
-  $query = db_select('bibdk_custom_search_options', 'o');
+
+  $cache_id = 'bibdk_custom_search_options_' . $value_id;
+  if ($cache = cache_get($cache_id)) {
+    return $cache;
+  }
+
+
+    $query = db_select('bibdk_custom_search_options', 'o');
   $query
     ->fields('o', array(
       'o_uuid',
@@ -154,7 +176,11 @@ function _bibdk_custom_search_get_options_db_raw($value_id){
     ))
     ->condition('v_uuid', $value_id, '=')
     ->orderBy('sort', 'ASC');
-  return $query->execute()->fetchAll();
+  $result = $query->execute()->fetchAll();
+
+  cache_set($cache_id, $result, 'cache');
+
+  return $result;
 
 }
 
