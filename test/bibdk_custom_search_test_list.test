@@ -33,6 +33,9 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
   public function testRunner() {
     $page = $this->_addElements();
     $this->testPopUpWindowIsPresent($page);
+    $this->testNoDuplets($page);
+    $this->testSelectedOptions($page);
+    $this->testInvalidFacet($page);
     // Create and log in our privileged user.
   }
 
@@ -46,6 +49,7 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
   }
 
   private function testNoDuplets($page){
+    $this->drupalGet($page);
     $this->assertUniqueText('test-value-1');
     $this->assertNoText('<option value="test-value-2">test-value-1</option>');
     $this->assertNoText('<label class="option" for="edit-test-searchcode-test-value-1">test-value-1 </label>');
@@ -53,12 +57,15 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
 
   private function testSelectedOptions($page){
     // Test to see if options are present
+    $this->drupalGet($page);
     $this->assertText('<option value="test-value-2">test-value-2</option>');
     $this->assertText('<option value="test-value-2">test-value-3</option>');
   }
 
   private function testInvalidFacet($page){
-    //db_update()
+    db_update('bibdk_custom_search_options')->fields(array('value' => 'invalid'))->condition('value', 'facet.type', '=')->execute();
+    $this->drupalGet($page);
+    $this->assertNoLink('see all options');
   }
 
   /**

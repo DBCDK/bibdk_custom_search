@@ -30,7 +30,7 @@
 
         attach: function (context) {
             $('.popover-button-list', context).click(function (e) {
-                CustomSearchList.open('#custom-search-options-list');
+                CustomSearchList.open('#' + $(this).attr('data-id'));
             });
             $('.custom-search-list-action', context).click(function (event) {
                 event.preventDefault();
@@ -42,7 +42,7 @@
             });
             $('.custom-search-list-close', context).click(function (event) {
                 event.preventDefault();
-                CustomSearchList.close('#custom-search-options-list');
+                CustomSearchList.close('#' + $(this).attr('data-id'));
 
             });
         },
