@@ -81,7 +81,8 @@ function bibdk_custom_search_list_options($result, $ignore_values) {
  */
 function bibdk_custom_search_get_list_popup_form($options, $type) {
 
-  $id = 'custom-search-options-list-' . str_replace('.', '-', $type);
+  $type_id = str_replace('.', '-', $type);
+  $id = 'custom-search-options-list-' . $type_id;
   $form['pop-over'] = array(
     '#type' => 'container',
     '#attributes' => array(
@@ -102,7 +103,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#options' => $options,
     '#size' => 20,
     '#attributes' => array(
-      'id' => array('select-from-list'),
+      'id' => array('select-from-list-' . $type_id),
     ),
   );
 
@@ -119,8 +120,8 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-action'),
-      'data-action-move-from' => array('select-from-list'),
-      'data-action-move-to' => array('select-to-list'),
+      'data-action-move-from' => array('select-from-list-' . $type_id),
+      'data-action-move-to' => array('select-to-list-' . $type_id),
     ),
   );
 
@@ -130,8 +131,8 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-action'),
-      'data-action-move-from' => array('select-to-list'),
-      'data-action-move-to' => array('select-from-list'),
+      'data-action-move-from' => array('select-to-list-' . $type_id),
+      'data-action-move-to' => array('select-from-list-' . $type_id),
     ),
   );
 
@@ -141,7 +142,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#options' => array(),
     '#size' => 20,
     '#attributes' => array(
-      'id' => array('select-to-list'),
+      'id' => array('select-to-list-' . $type_id),
     ),
   );
 
@@ -161,7 +162,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-save'),
-      'data-action-selected' => array('select-to-list'),
+      'data-action-selected' => array('select-to-list-' . $type_id),
       'data-action-send-to' => array($type . '-options-array'),
     ),
   );
