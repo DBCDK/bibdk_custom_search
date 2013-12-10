@@ -324,8 +324,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     );
     $this->assertText($element_label, format_string('The element label "@element_label" was found', array('@element_label' => $element_label)));
     $this->assertText($element_description, format_string('The element description "@element_description" was found', array('@element_description' => substr($element_description, 0, 40) . '[...]')));
-    debug($edit);
-    $this->assertFieldByName($_bibdk_custom_search_value_search_code);
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title .']');
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', format_string('No nested forms found.'));
 
   }
@@ -333,7 +332,6 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
   private function _testBibdkCustomSearchDisable() {
     global $_bibdk_custom_search_value_title;
     global $_bibdk_custom_search_page_path;
-    global $_bibdk_custom_search_v_uuid;
     global $_bibdk_custom_search_page_menu_title;
     global $_bibdk_custom_search_page_title;
     global $_bibdk_custom_search_value_search_code;
@@ -352,7 +350,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'search_block_form'
     );
-    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code) ));
+    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code) . '-' . strtolower($_bibdk_custom_search_value_title)));
     $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title)));
 
 
@@ -378,7 +376,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'search_block_form'
     );
-    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code)));
+    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code) . '-' . strtolower($_bibdk_custom_search_value_title)));
     $this->assertTrue($disabled_field, format_string('The values ("@value_title") in the element was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title)));
 
     // Test setting a custom search page to 'disabled'.
@@ -430,12 +428,12 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
 
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[$_bibdk_custom_search_value_search_code] = 'bar';
+    $edit[$_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']' ] = 'bar';
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that value is present in search result
-    $this->assertFieldByName($_bibdk_custom_search_value_search_code);
-    $this->assertFieldByName($_bibdk_custom_search_value_search_code, 'bar', 'default value in the custom search field is the search term.');
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']');
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']', 'bar', 'default value in the custom search field is the search term.');
 
     // assert default value in checkbox elements
     // first, set a checkbox element
