@@ -81,11 +81,12 @@ function bibdk_custom_search_list_options($result, $ignore_values) {
  */
 function bibdk_custom_search_get_list_popup_form($options, $type) {
 
+  $id = 'custom-search-options-list-' . str_replace('.', '-', $type);
   $form['pop-over'] = array(
     '#type' => 'container',
     '#attributes' => array(
-      'id' => 'custom-search-options-list',
-      'class' => array('popover', 'visuallyhidden'),
+      'id' => $id,
+      'class' => array('popover', 'visuallyhidden', 'custom-search-options-list'),
     ),
   );
 
@@ -150,6 +151,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-close'),
+      'data-id' => $id,
     ),
   );
 
@@ -170,6 +172,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#options' => array(
       'attributes' => array(
         'class' => array('popover-button-list'),
+        'data-id' => $id,
       ),
       'fragment' => 'show-options',
       'html' => true,
