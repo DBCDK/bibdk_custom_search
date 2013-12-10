@@ -43,16 +43,18 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
     $this->assertFieldByName('test_searchcode[test-value-1]');
     $this->assertFieldByName('test_searchcode[test-value-2]');
     $this->assertFieldByName('test_searchcode[test-value-3]');
-    $this->assertUniqueText('test-value-1');
-    //$this->assertFieldByXPath();
   }
 
   private function testNoDuplets($page){
-
+    $this->assertUniqueText('test-value-1');
+    $this->assertNoText('<option value="test-value-2">test-value-1</option>');
+    $this->assertNoText('<label class="option" for="edit-test-searchcode-test-value-1">test-value-1 </label>');
   }
 
   private function testSelectedOptions($page){
-
+    // Test to see if options are present
+    $this->assertText('<option value="test-value-2">test-value-2</option>');
+    $this->assertText('<option value="test-value-2">test-value-3</option>');
   }
 
   private function testInvalidFacet($page){
