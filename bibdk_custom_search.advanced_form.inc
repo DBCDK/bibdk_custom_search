@@ -10,31 +10,14 @@
 function _bibdk_custom_search_create_advanced_form($elements, $current_page, $default_values) {
   $fields = array();
 
-  if (isset($default_values['n/a'])){
-    $default_values += $default_values['n/a'];
-    unset($default_values['n/a']);
-  }
-
   // We loop through all search elements
   foreach ($elements as $element) {
 
     if (empty($element->search_code)){
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
-    // Explode elements with key-value pairs in value and empty search_code
-    /*if (empty($element->search_code) && strpos($element->value, '=')){
-      $exploded = explode('=', $element->value);
-      $element->search_code = $exploded[0];
-      $element->value = $exploded[1];
-    }*/
 
-    // translate all values
-    $element->value = _translate_boolean($element->value);
-
-    // Translate all labels, descriptions and help-texts
-    $element->element_label = bibdk_custom_search_translate($element->element_label, 'element_label');
-    $element->description = bibdk_custom_search_translate($element->description, 'description');
-    $element->help_text = bibdk_custom_search_translate($element->help_text, 'help_text');
+    _bibdk_custom_search_translate_element($element);
 
     /* REGIONS */
     $region = $element->region;
@@ -71,58 +54,81 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
     }
 
     /* VALUES */
-    $value = str_replace('.', '_', $element->search_code);
-    if (!isset($fields[$region][$group][$subgroup][$value])) {
-      $fields[$region][$group][$subgroup][$value] = array(
-        '#type' => $element->value_type,
-        '#title' => $element->value_title,
-        '#title_display' => 'invisible',
-        '#disabled' => $element->is_disabled || $element->value_disabled,
-        '#attributes' => array(
-          'tabindex' => $element->tab_index,
-          'accesskey' => $element->access_key,
-          'data-term' => array($value),
-        ),
-      );
-    }
+    _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
 
-    // Add type specific settings for values
-    switch ($element->value_type) {
-      CASE 'textarea':
-        $fields[$region][$group][$subgroup][$value]['#size'] = 30;
-      CASE 'textfield':
-        $fields[$region][$group][$subgroup][$value]['#maxlength'] = 64;
-        $fields[$region][$group][$subgroup][$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
-        $fields[$region][$group][$subgroup][$value]['#parents'] = array($value, $element->value_title);
-        $fields[$region][$group][$subgroup][$value]['#tree'] = FALSE;
-        break;
-      CASE 'select':
-      CASE 'radios':
-        $fields[$region][$group][$subgroup][$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
-        if (!$element->option_disabled) {
-          $fields[$region][$group][$subgroup][$value]['#options'][$element->value] = $element->label;
-        }
-        break;
-      CASE 'checkboxes':
-        $fields[$region][$group][$subgroup][$value]['#type'] = 'container';
-        $fields[$region][$group][$subgroup][$value]['#tree'] = TRUE;
-        $checkbox_values = isset($fields[$region][$group][$subgroup][$value]['#values']) ? $fields[$region][$group][$subgroup][$value]['#values'] : array();
-        if(strpos($element->value, 'facet.') !== FALSE ){
-          $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
-          $field = $fields[$region][$group][$subgroup][$value];
-          $fields[$region][$group][$subgroup][$value] = array_merge($field, $checkboxes);
-        } else {
-          $options = $element->expand ? _bibdk_custom_search_get_options_db_raw($element->expand) : array();
-          $checkboxes = bibdk_custom_search_create_checkboxes($element, $default_values, $options);
-          $fields[$region][$group][$subgroup][$value] +=  $checkboxes['elements'];
-          $fields[$region][$group][$subgroup][$value]['#values'] =  array_merge((array)$checkbox_values, $checkboxes['values']);
-        }
-        break;
-      DEFAULT:
-        break;
-    }
   }
   return $fields;
+}
+
+function _bibdk_custom_search_translate_element(&$element){
+  // translate all values
+  $element->value = _translate_boolean($element->value);
+
+  // Translate all labels, descriptions and help-texts
+  $element->element_label = bibdk_custom_search_translate($element->element_label, 'element_label');
+  $element->description = bibdk_custom_search_translate($element->description, 'description');
+  $element->help_text = bibdk_custom_search_translate($element->help_text, 'help_text');
+
+}
+
+
+/** Add single field to fields array
+ * @param $element
+ * @param $field
+ * @param $default_values
+ */
+function _bibdk_custom_search_add_element($element, &$field, $default_values){
+  $value = str_replace('.', '_', $element->search_code);
+  if (!isset($field[$value])) {
+    $field[$value] = array(
+      '#type' => $element->value_type,
+      '#title' => $element->value_title,
+      '#title_display' => 'invisible',
+      '#disabled' => $element->is_disabled || $element->value_disabled,
+      '#attributes' => array(
+        'tabindex' => $element->tab_index,
+        'accesskey' => $element->access_key,
+        'data-term' => array($value),
+      ),
+    );
+  }
+
+  // Add type specific settings for values
+  switch ($element->value_type) {
+    CASE 'textarea':
+      $field[$value]['#size'] = 30;
+    CASE 'textfield':
+      $field[$value]['#maxlength'] = 64;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
+      $field[$value]['#parents'] = array($value, $element->value_title);
+      $field[$value]['#tree'] = FALSE;
+      break;
+    CASE 'select':
+    CASE 'radios':
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+      if (!$element->option_disabled) {
+        $field[$value]['#options'][$element->value] = $element->label;
+      }
+      break;
+    CASE 'checkboxes':
+      $field[$value]['#type'] = 'container';
+      $field[$value]['#tree'] = TRUE;
+      $checkbox_values = isset($field[$value]['#values']) ? $field[$value]['#values'] : array();
+      // If value includes a facet get a list of options
+      if(strpos($element->value, 'facet.') !== FALSE ){
+        $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
+        $field[$value] += $checkboxes;
+      } else {
+        $options = $element->expand ? _bibdk_custom_search_get_options_db_raw($element->expand) : array();
+        $checkboxes = bibdk_custom_search_create_checkboxes($element, $default_values, $options);
+        $field[$value] +=  $checkboxes['elements'];
+        $field[$value]['#values'] =  array_merge((array)$checkbox_values, $checkboxes['values']);
+      }
+      break;
+    DEFAULT:
+      break;
+  }
+
 }
 
 /** Generate checkboxes for advanced search elements. Function works recursively
