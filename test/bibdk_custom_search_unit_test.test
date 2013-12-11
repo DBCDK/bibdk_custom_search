@@ -44,7 +44,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $this->assertFalse($result, 'Expand if advanced elements have been set');
   }
 
-  public function testSettingDefaultValuesForCheckboxes() {
+  /*public function testSettingDefaultValuesForCheckboxes() {
     $fields = array(
       'id1' => array(
         'values' => array(
@@ -270,5 +270,5 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $form_r = _bibdk_custom_search_default_values($form, $search_code_match, $same_term_field);
     $this->assertTrue($form_r['no1']['#default_value'] == 'value1', 'First value assigned to first element.');
     $this->assertTrue($form_r['no2']['#default_value'] == 'value2', 'Second value assigned to second element.');
-  }
+  }*/
 }

@@ -5,8 +5,8 @@
   });
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
-    $('fieldset[data-child]').hide();
-    // If child checkbox is checked remove checked from parent
+      $('fieldset[data-child]').hide();
+      // If child checkbox is checked remove checked from parent
     $('fieldset[data-child] input').change(function() {
       if($(this).attr('checked') == true) {
         var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
@@ -27,8 +27,8 @@
       $('fieldset[data-child=' + childKey + ']').toggle();
     });
 
-    // Autoselect the 'all' values under checkboxes
-    $('input[type=checkbox].master').attr('checked', true);
+      // Autoselect the 'all' values under checkboxes
+      $('input[type=checkbox].master').attr('checked', true);
     $('input[type=checkbox]').change(function(e) {
       var group = $(this).attr('data-group');
       if($(this).attr('checked')) {
