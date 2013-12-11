@@ -12,7 +12,7 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
   }
 
   public function setUp() {
-    parent::setUp('bibdk_custom_search','ting_openformat' ,'bibdk_custom_search_ting_openformat_mockup');
+    parent::setUp('bibdk_custom_search','ting_openformat' ,'bibdk_custom_search_ting_openformat_mockup', 'devel');
     variable_set('ting_search_url', $this->getAbsoluteUrl('ting_openformat_webservice'));
     variable_set('bibdk_provider_security_code', 'testhest');
     variable_set('search_active_modules', array('ting_openformat' => 'ting_openformat'));
@@ -31,10 +31,11 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
   }
 
   public function testRunner() {
+    debug('test');
     $page = $this->_addElements();
     $this->testPopUpWindowIsPresent($page);
     $this->testNoDuplets($page);
-    $this->testSelectedOptions($page);
+    $this->testSelectOptionsPresent($page);
     $this->testInvalidFacet($page);
     // Create and log in our privileged user.
   }
@@ -49,20 +50,21 @@ class BibdkCustomSearchListTestCase extends DrupalWebTestCase {
   }
 
   private function testNoDuplets($page){
-    $this->drupalGet($page);
-    $this->assertUniqueText('test-value-1');
+    //$this->drupalGet($page);
     $this->assertNoText('<option value="test-value-2">test-value-1</option>');
     $this->assertNoText('<label class="option" for="edit-test-searchcode-test-value-1">test-value-1 </label>');
   }
 
-  private function testSelectedOptions($page){
+  private function testSelectOptionsPresent($page){
     // Test to see if options are present
-    $this->drupalGet($page);
-    $this->assertText('<option value="test-value-2">test-value-2</option>');
-    $this->assertText('<option value="test-value-2">test-value-3</option>');
+    //$this->drupalGet($page);
+    $this->assertRaw('<option value="test-value-2">test-value-2</option>');
+    $this->assertRaw('<option value="test-value-2">test-value-3</option>');
   }
 
   private function testInvalidFacet($page){
+    $result = db_select('bibdk_custom_search_options')->fields('value')->execute()->fetchAssoc();
+    debug($result);
     db_update('bibdk_custom_search_options')->fields(array('value' => 'invalid'))->condition('value', 'facet.type', '=')->execute();
     $this->drupalGet($page);
     $this->assertNoLink('see all options');
