@@ -60,6 +60,10 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
   return $fields;
 }
 
+
+/** Translate element values
+ * @param $element
+ */
 function _bibdk_custom_search_translate_element(&$element){
   // translate all values
   $element->value = _translate_boolean($element->value);
@@ -140,13 +144,13 @@ function _bibdk_custom_search_add_element($element, &$field, $default_values){
  */
 function bibdk_custom_search_create_checkboxes($element, $default_values, $options = array()) {
   $parent = str_replace('.', '_', $element->search_code);
-  // Get default values
 
-  // TODO : Simplefy
+  // Get default values
   $default = ($element->default_value == $element->value) ? $element->default_value : NULL;
   $default = isset($default_values[$element->search_code]) && is_array($default_values[$element->search_code]) && in_array($element->value, $default_values[$element->search_code]) ? $element->value : $default;
 
-
+  // Create checkbox
+  $return = array();
   $return[$element->value] = array(
     '#type' => 'checkbox',
     '#default_value' => $default,
@@ -159,7 +163,9 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
       'class' => array(($element->default_value == $element->value) ? 'default-value' : ''),
     ),
   );
+
   $values = array($element->value);
+
   // Create nested checkbox options
   if ($element->expand) {
     $key = $element->value;
