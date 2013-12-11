@@ -72,6 +72,9 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
  */
 function bibdk_custom_search_list_options($result, $ignore_values) {
 
+  if (!is_array($result) || empty($result))
+    return array();
+
   // Set keys = values in options array
   $options = array_keys($result);
   $options = array_combine($options, $options);
