@@ -153,7 +153,7 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
     '#disabled' => ($element->is_disabled || $element->option_disabled) ? TRUE : FALSE,
     '#title' => $element->label,
     '#return_value' => $element->value,
-    //'#parents' => array($parent),
+    '#parents' => array($parent, $element->value),
     '#attributes' => array(
       'data-group' => $parent,
       'class' => array(($element->default_value == $element->value) ? 'default-value' : ''),
