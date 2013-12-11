@@ -21,6 +21,11 @@ function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_
   // Create options array with webservice result
   $options = bibdk_custom_search_list_options($result, $ignore_values);
 
+  // If no options are set we do not return form elements
+  if (empty($options)){
+    return array();
+  }
+
   // Create form
   $form = array();
   $form += bibdk_custom_search_get_list_elements($options, $term_type,  $default_values);
