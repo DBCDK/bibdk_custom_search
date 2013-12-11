@@ -240,6 +240,7 @@ function bibdk_custom_search_get_list_elements($elements, $parent, $default_valu
     $return[$element.'-container'][$element] = array(
       '#type' => 'checkbox',
       '#default_value' => ($default) ? $element : NULL,
+      '#parents' => array(str_replace('.', '_', $parent), $element),
       '#title' => t($element, array(), array('context' => 'bibdk_custom_search')),
       '#return_value' => $element,
 
