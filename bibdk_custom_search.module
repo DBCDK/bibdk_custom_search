@@ -273,29 +273,32 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
  * @return bool
  */
 function _bibdk_custom_search_is_advanced_search_expanded($get) {
+
   $query = isset($get['qe']) ? $get['qe'] : array();
 
-  $front = FALSE;
-
-  if (isset($query['year.op'])) {
+  // one of the year.op options are always selected
+  if ( isset($query['year.op']) ) {
     unset($query['year.op']);
   }
 
-  if ((isset($get['q']) && $get['q'] == 'bibdk_frontpage') || (isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage')) {
-    $front = TRUE;
+  // specialized search pages are only toggled visible if one of the elements are used
+  // not including the delimiter
+  if ( isset($query['delimiter']) ) {
+    unset($query['delimiter']);
   }
 
-  if (isset($query['term.workType'])) {
-    unset($query['term.workType']);
-    $front = TRUE;
+  if ( count($query) > 0 ) {
+    return TRUE;
   }
 
-  if ((isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage/net')) {
-    unset($query['term.accessType']);
-    $front = TRUE;
+  if (
+    ( isset($get['q']) && $get['q'] == 'bibdk_frontpage' ) ||
+    ( isset($get['page_id']) && $get['page_id'] == 'bibdk_frontpage' )
+  ) {
+    return FALSE;
   }
 
-  return ($front && (count($query) < 1)) ? TRUE : FALSE;
+  return TRUE;
 
 }
 
@@ -379,6 +382,7 @@ function bibdk_custom_searchpage_ajax_callback() {
     'request' => $type,
     'label_type' => $label_type
   ));
+
   exit();
 }
 
