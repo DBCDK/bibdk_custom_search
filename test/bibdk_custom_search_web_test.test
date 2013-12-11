@@ -29,11 +29,6 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
 
   public function testRunner() {
-    global $_bibdk_custom_search_value_title;
-    global $_bibdk_custom_search_page_path;
-    global $_bibdk_custom_search_v_uuid;
-    global $_bibdk_custom_search_page_menu_title;
-    global $_bibdk_custom_search_page_title;
 
     // Create and log in our privileged user.
     $this->privileged_user = $this->drupalCreateUser(array(
@@ -43,103 +38,11 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
       'search content',
     ));
     $this->drupalLogin($this->privileged_user);
-    // Function findes ikke længere
-    //$this->_testParseFormFunction();
     $this->_testBibdkCustomSearchCreatePage();
     $this->_testBibdkCustomSearchDisable();
     $this->_testBibdkCustomSearchResult();
   }
 
-  private function _testParseFormFunction() {
-    $elements = array(
-      '81335603-ae1d-5de4-25c7-a1538e7ad8f5' => array(
-        'element_label' => 'Forfatter',
-        'description' => 'fx nesbo',
-        'help_text' => 'Sog forfatter:
-Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
-        'region' => 'main',
-        'access_key' => 'f',
-        'tab_index' => '0',
-        'values' => array(
-          '1150ebb6-8e38-27d4-b929-840f71d17137' => array(
-            'value_title' => 'ophav',
-            'value_type' => 'textfield',
-            'search_code' => 'dkcclterm.fo',
-            'default_value' => '',
-            'options' => array(
-              'nnj' => array(
-                'label' => 'fjhfjhgfjh',
-                'v_uuid' => '1150ebb6-8e38-27d4-b929-840f71d17137',
-              )
-            )
-          )
-        )
-      )
-    );
-    $page = array(
-      'pid' => '5',
-      'p_uuid' => 'd3099a71-b1b6-f5c4-4170-6b8593ad446b',
-      'page_title' => 'Alle materialer',
-      'page_path' => 'bibdk_frontpage',
-      'menu_title' => 'Alle materialer',
-      'delimiter' => NULL,
-      'expand' => '1',
-      'sort' => '-10',
-    );
-    $expected_result = array(
-      'bibdk_custom_search_element_81335603-ae1d-5de4-25c7-a1538e7ad8f5' =>
-      array(
-        '#type' => 'fieldset',
-        '#collapsible' => FALSE,
-        '#collapsed' => FALSE,
-        '#tree' => TRUE,
-        '#region' => 'main',
-        '#theme' => 'bibdk_search_element',
-        '#title_text' => 'Forfatter',
-        '#description_text' => 'fx nesbo',
-        '#help_text' => 'Sog forfatter:
-Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
-        '#attributes' =>
-        array(
-          'class' =>
-          array(
-            0 => 'forfatter',
-            1 => 'element-wrapper',
-          ),
-        ),
-        '1150ebb6-8e38-27d4-b929-840f71d17137' =>
-        array(
-          '#type' => 'textfield',
-          '#title' => 'ophav',
-          '#title_display' => 'invisible',
-          '#default_value' => '',
-          '#disabled' => 0,
-          '#attributes' =>
-          array(
-            'tabindex' =>
-            array(
-              0 => '0',
-            ),
-            'accesskey' =>
-            array(
-              0 => 'f',
-            ),
-            'data-term' =>
-            array(
-              0 => '1150ebb6-8e38-27d4-b929-840f71d17137',
-            ),
-          ),
-          '#tree' => FALSE,
-          '#size' => 30,
-          '#maxlength' => 64,
-        ),
-      ),
-      '#collapsed' => '1',
-      '#main_search_name' => 'Alle materialer',
-    );
-    $result = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
-    $this->assertEqual($result, $expected_result, 'Render array correctly parsed');
-  }
 
   private function _testBibdkCustomSearchCreatePage() {
     global $_bibdk_custom_search_value_title;
