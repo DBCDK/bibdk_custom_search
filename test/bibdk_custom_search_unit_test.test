@@ -30,7 +30,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     );
 
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertTrue($result, 'Do not expand when on frontpage and default search');
+    $this->assertFalse($result, 'Do not expand when on frontpage and default search');
 
     // Test advanced query
     $get = array(
