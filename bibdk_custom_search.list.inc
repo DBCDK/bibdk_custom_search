@@ -13,8 +13,10 @@
 function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array(), $ignore_values= array()) {
   if (strpos($facet_type, '=')){
     $exploded = explode('=', $facet_type);
-    $term_type = $exploded[0];
+    $facet_term = $exploded[0];
     $facet_type = $exploded[1];
+  } else {
+    $facet_term = $term_type;
   }
   // Get options from webservice
   $result = bibdk_custom_search_list_from_webservice($facet_type);
@@ -28,7 +30,7 @@ function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_
 
   // Create form
   $form = array();
-  $form += bibdk_custom_search_get_list_elements($options, $term_type,  $default_values);
+  $form += bibdk_custom_search_get_list_elements($options, $term_type, $facet_term, $default_values);
   $form += bibdk_custom_search_get_list_popup_form($options, $facet_type);
 
   return $form;
@@ -224,7 +226,9 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
  * @param $default_values
  * @return array
  */
-function bibdk_custom_search_get_list_elements($elements, $parent, $default_values) {
+
+// bibdk_custom_search_get_list_elements($options, $term_type, $facet_type, $default_values);
+function bibdk_custom_search_get_list_elements($elements, $parent, $facet_term, $default_values) {
   $return = array();
   foreach ($elements as $element) {
     $default = isset($default_values[$parent]) && is_array($default_values[$parent]) && in_array($element, $default_values[$parent]) ? true : false;
@@ -243,7 +247,7 @@ function bibdk_custom_search_get_list_elements($elements, $parent, $default_valu
       '#default_value' => ($default) ? $element : NULL,
       '#parents' => array(str_replace('.', '_', $parent), $element),
       '#title' => t($element, array(), array('context' => 'bibdk_custom_search')),
-      '#return_value' => $element,
+      '#return_value' => $facet_term . '=' . $element,
 
       '#attributes' => array(
         'data-group' => $parent,
