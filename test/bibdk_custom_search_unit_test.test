@@ -41,7 +41,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
       'q' => 'bibdk_frontpage',
     );
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertFalse($result, 'Expand if advanced elements have been set');
+    $this->assertTrue($result, 'Expand if advanced elements have been set');
   }
 
   public function testSettingDefaultValuesForCheckboxes() {
