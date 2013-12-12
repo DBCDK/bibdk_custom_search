@@ -44,6 +44,11 @@
         $('[data-group=' + group + '].master').attr('checked', true);
       }
     });
+      $('input[type=checkbox]:checked').closest(".bibdk-custom-search-element").find("input").each(function(i) {
+          if($(this).hasClass('default-value') && !$(this).val()) {
+              $(this).attr('checked', false);
+          }
+      })
   };
 
   Drupal.setBodyClass = function(currClass) {

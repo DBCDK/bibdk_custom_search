@@ -234,6 +234,7 @@ function bibdk_custom_search_get_list_elements($elements, $parent, $default_valu
       '#parents' => array(str_replace('.', '_', $parent)),
       '#attributes' => array(
         'data-value' => $element,
+        'data-group' => $parent,
         'class' => array(($default) ? 'default' : 'visuallyhidden')
       ),
     );
