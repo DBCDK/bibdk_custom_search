@@ -17,9 +17,9 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
 
   public function test_bibdk_custom_search_is_advanced_search_expanded() {
     // Test empty query
-    $get = array();
+   /* $get = array();
     $result = _bibdk_custom_search_is_advanced_search_expanded($get);
-    $this->assertFalse($result, 'Do not expand if query is empty');
+    $this->assertFalse($result, 'Do not expand if query is empty');*/
 
     // Test default query
     $get = array(
