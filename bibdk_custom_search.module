@@ -327,7 +327,6 @@ function bibdk_custom_search_submit($form, &$form_state) {
     }
   }
 
-  dpm($extended);
   // Check to see if the form was submitted empty.
   // If it is empty, display an error message.
   // (This method is used instead of setting #required to TRUE for this field
