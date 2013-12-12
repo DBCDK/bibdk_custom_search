@@ -124,6 +124,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#attributes' => array(
       'class' => array('panel-select'),
     ),
+    '#tree' => FALSE,
   );
 
   $form['pop-over']['two-panel-multi-select']['from'] = array(
@@ -231,7 +232,8 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
 function bibdk_custom_search_get_list_elements($elements, $parent, $facet_term, $default_values) {
   $return = array();
   foreach ($elements as $element) {
-    $default = isset($default_values[$parent]) && is_array($default_values[$parent]) && in_array($element, $default_values[$parent]) ? true : false;
+    $return_value = $facet_term . '=' . $element;
+    $default = isset($default_values[$parent]) && is_array($default_values[$parent]) && in_array($return_value, $default_values[$parent]) ? true : false;
     $return[$element.'-container'] = array(
       '#type' => 'container',
       //'#tree' => false,
@@ -244,10 +246,10 @@ function bibdk_custom_search_get_list_elements($elements, $parent, $facet_term, 
     );
     $return[$element.'-container'][$element] = array(
       '#type' => 'checkbox',
-      '#default_value' => ($default) ? $element : NULL,
+      '#default_value' => ($default) ? $return_value : NULL,
       '#parents' => array(str_replace('.', '_', $parent), $element),
       '#title' => t($element, array(), array('context' => 'bibdk_custom_search')),
-      '#return_value' => $facet_term . '=' . $element,
+      '#return_value' => $return_value,
 
       '#attributes' => array(
         'data-group' => $parent,
