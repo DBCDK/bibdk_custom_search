@@ -102,7 +102,6 @@ function _bibdk_custom_search_get_pages_db() {
         ->orderBy('sort', 'ASC');
       $result = $query->execute();
 
-      //TODO: Move parsing to seperate function
       foreach ($result as $page) {
         $p_uuid = $page->p_uuid;
         $attributes = ($page->is_disabled) ? array('disabled' => 'disabled') : array();
@@ -199,7 +198,7 @@ function _bibdk_custom_search_get_options_db($value_id) {
 
     $result = _bibdk_custom_search_get_options_db_raw($value_id);
     $options = array();
-  // TODO: Remove parsing
+
     foreach ($result as $option) {
       $row = array(
         'o_uuid' => $option->o_uuid,
@@ -242,7 +241,6 @@ function _bibdk_custom_search_get_field_searchcodes() {
       $result = $query->execute();
       $fields = array();
 
-      // TODO: remove parsing
       foreach ($result as $record) {
         $fields[$record->search_code]['value_title'] = $record->value_title;
         $fields[$record->search_code]['value_type'] = $record->value_type;
