@@ -17,6 +17,9 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
 
+    /* GROUPS */
+    $group = strtolower($element->element_label);
+
     _bibdk_custom_search_translate_element($element);
 
     /* REGIONS */
@@ -30,9 +33,6 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         '#weight' => 102,
       );
     }
-
-    /* GROUPS */
-    $group = strtolower($element->element_label);
 
     // we add a subgroup because elements can have matching searchcodes
     $subgroup = $element->e_uuid;
