@@ -13,7 +13,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
   // We loop through all search elements
   foreach ($elements as $element) {
 
-    if (empty($element->search_code)){
+    if (empty($element->search_code)) {
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
 
@@ -62,9 +62,10 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
 
 
 /** Translate element values
+ *
  * @param $element
  */
-function _bibdk_custom_search_translate_element(&$element){
+function _bibdk_custom_search_translate_element(&$element) {
   // translate all values
   $element->value = _translate_boolean($element->value);
 
@@ -77,11 +78,12 @@ function _bibdk_custom_search_translate_element(&$element){
 
 
 /** Add single field to fields array
+ *
  * @param $element
  * @param $field
  * @param $default_values
  */
-function _bibdk_custom_search_add_element($element, &$field, $default_values){
+function _bibdk_custom_search_add_element($element, &$field, $default_values) {
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
@@ -119,14 +121,15 @@ function _bibdk_custom_search_add_element($element, &$field, $default_values){
       $field[$value]['#tree'] = TRUE;
       $checkbox_values = isset($field[$value]['#values']) ? $field[$value]['#values'] : array();
       // If value includes a facet get a list of options
-      if(strpos($element->value, 'facet.') !== FALSE ){
+      if (strpos($element->value, 'facet.') !== FALSE) {
         $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
         $field[$value] += $checkboxes;
-      } else {
+      }
+      else {
         $options = $element->expand ? _bibdk_custom_search_get_options_db_raw($element->expand) : array();
         $checkboxes = bibdk_custom_search_create_checkboxes($element, $default_values, $options);
-        $field[$value] +=  $checkboxes['elements'];
-        $field[$value]['#values'] =  array_merge((array)$checkbox_values, $checkboxes['values']);
+        $field[$value] += $checkboxes['elements'];
+        $field[$value]['#values'] = array_merge((array)$checkbox_values, $checkboxes['values']);
       }
       break;
     DEFAULT:
@@ -137,6 +140,7 @@ function _bibdk_custom_search_add_element($element, &$field, $default_values){
 
 /** Generate checkboxes for advanced search elements. Function works recursively
  * if a checkbox is expanded and has subelements
+ *
  * @param $element
  * @param $default_values
  * @param array $options
@@ -185,7 +189,7 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
       $option = (object)array_merge((array)$element, (array)$option);
       $option_elements = bibdk_custom_search_create_checkboxes($option, $default_values);
       $return[$key . '-fieldset'] += $option_elements['elements'];
-      $values = array_merge($values , $option_elements['values']);
+      $values = array_merge($values, $option_elements['values']);
     }
   }
   return array('elements' => $return, 'values' => $values);
