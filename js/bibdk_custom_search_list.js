@@ -13,7 +13,8 @@
         save: function (element) {
             var from = $(element).attr('data-action-selected');
             $('#' + from + ' option').each(function (i, option) {
-                $('[data-value="' + $(option).val() + '"]').removeClass('visuallyhidden').find('input').attr('checked', 'checked');
+                $('[data-value="' + $(option).val() + '"]').removeClass('visuallyhidden').find('input').attr('checked', 'checked').trigger('change');
+
             });
             $('.custom-search-list-close').trigger('click');
         },
