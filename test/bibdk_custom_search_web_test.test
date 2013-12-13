@@ -29,11 +29,6 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
 
   public function testRunner() {
-    global $_bibdk_custom_search_value_title;
-    global $_bibdk_custom_search_page_path;
-    global $_bibdk_custom_search_v_uuid;
-    global $_bibdk_custom_search_page_menu_title;
-    global $_bibdk_custom_search_page_title;
 
     // Create and log in our privileged user.
     $this->privileged_user = $this->drupalCreateUser(array(
@@ -43,103 +38,11 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
       'search content',
     ));
     $this->drupalLogin($this->privileged_user);
-    $this->_testParseFormFunction();
     $this->_testBibdkCustomSearchCreatePage();
     $this->_testBibdkCustomSearchDisable();
     $this->_testBibdkCustomSearchResult();
-    return TRUE;
   }
 
-  private function _testParseFormFunction() {
-    $elements = array(
-      '81335603-ae1d-5de4-25c7-a1538e7ad8f5' => array(
-        'element_label' => 'Forfatter',
-        'description' => 'fx nesbo',
-        'help_text' => 'Sog forfatter:
-Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
-        'region' => 'main',
-        'access_key' => 'f',
-        'tab_index' => '0',
-        'values' => array(
-          '1150ebb6-8e38-27d4-b929-840f71d17137' => array(
-            'value_title' => 'ophav',
-            'value_type' => 'textfield',
-            'search_code' => 'dkcclterm.fo',
-            'default_value' => '',
-            'options' => array(
-              'nnj' => array(
-                'label' => 'fjhfjhgfjh',
-                'v_uuid' => '1150ebb6-8e38-27d4-b929-840f71d17137',
-              )
-            )
-          )
-        )
-      )
-    );
-    $page = array(
-      'pid' => '5',
-      'p_uuid' => 'd3099a71-b1b6-f5c4-4170-6b8593ad446b',
-      'page_title' => 'Alle materialer',
-      'page_path' => 'bibdk_frontpage',
-      'menu_title' => 'Alle materialer',
-      'delimiter' => NULL,
-      'expand' => '1',
-      'sort' => '-10',
-    );
-    $expected_result = array(
-      'bibdk_custom_search_element_81335603-ae1d-5de4-25c7-a1538e7ad8f5' =>
-      array(
-        '#type' => 'fieldset',
-        '#collapsible' => FALSE,
-        '#collapsed' => FALSE,
-        '#tree' => TRUE,
-        '#region' => 'main',
-        '#theme' => 'bibdk_search_element',
-        '#title_text' => 'Forfatter',
-        '#description_text' => 'fx nesbo',
-        '#help_text' => 'Sog forfatter:
-Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fra titlen - det skal skrives i titelboksen.',
-        '#attributes' =>
-        array(
-          'class' =>
-          array(
-            0 => 'forfatter',
-            1 => 'element-wrapper',
-          ),
-        ),
-        '1150ebb6-8e38-27d4-b929-840f71d17137' =>
-        array(
-          '#type' => 'textfield',
-          '#title' => 'ophav',
-          '#title_display' => 'invisible',
-          '#default_value' => '',
-          '#disabled' => 0,
-          '#attributes' =>
-          array(
-            'tabindex' =>
-            array(
-              0 => '0',
-            ),
-            'accesskey' =>
-            array(
-              0 => 'f',
-            ),
-            'data-term' =>
-            array(
-              0 => '1150ebb6-8e38-27d4-b929-840f71d17137',
-            ),
-          ),
-          '#tree' => FALSE,
-          '#size' => 30,
-          '#maxlength' => 64,
-        ),
-      ),
-      '#collapsed' => '1',
-      '#main_search_name' => 'Alle materialer',
-    );
-    $result = _bibdk_custom_search_advanced_fields_parse_form($elements, $page);
-    $this->assertEqual($result, $expected_result, 'Render array correctly parsed');
-  }
 
   private function _testBibdkCustomSearchCreatePage() {
     global $_bibdk_custom_search_value_title;
@@ -147,6 +50,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     global $_bibdk_custom_search_v_uuid;
     global $_bibdk_custom_search_page_menu_title;
     global $_bibdk_custom_search_page_title;
+    global $_bibdk_custom_search_value_search_code;
 
     // Test creation of a custom search page.
     $edit = array();
@@ -174,7 +78,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->clickLink('edit');
     $edit = array();
     $edit['element_value[value_type]'] = 'textfield';
-    $edit['element_value[search_code]'] = $this->randomName(8);
+    $edit['element_value[search_code]'] = $_bibdk_custom_search_value_search_code = $this->randomName(8);
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName(
       'element_value[value_type]',
@@ -323,7 +227,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     );
     $this->assertText($element_label, format_string('The element label "@element_label" was found', array('@element_label' => $element_label)));
     $this->assertText($element_description, format_string('The element description "@element_description" was found', array('@element_description' => substr($element_description, 0, 40) . '[...]')));
-    $this->assertFieldByName($_bibdk_custom_search_v_uuid);
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title .']');
     $this->assertNoPattern('/<form .*<form .*<\/form/sm', format_string('No nested forms found.'));
 
   }
@@ -331,9 +235,9 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
   private function _testBibdkCustomSearchDisable() {
     global $_bibdk_custom_search_value_title;
     global $_bibdk_custom_search_page_path;
-    global $_bibdk_custom_search_v_uuid;
     global $_bibdk_custom_search_page_menu_title;
     global $_bibdk_custom_search_page_title;
+    global $_bibdk_custom_search_value_search_code;
 
     // Test setting a custom search value to 'disabled'.
     $this->drupalGet('admin/config/search/bibdk_custom_search/values');
@@ -349,7 +253,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'search_block_form'
     );
-    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . $_bibdk_custom_search_v_uuid));
+    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code) . '-' . strtolower($_bibdk_custom_search_value_title)));
     $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title)));
 
 
@@ -375,7 +279,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->assertFieldByName(
       'search_block_form'
     );
-    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . $_bibdk_custom_search_v_uuid));
+    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code) . '-' . strtolower($_bibdk_custom_search_value_title)));
     $this->assertTrue($disabled_field, format_string('The values ("@value_title") in the element was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title)));
 
     // Test setting a custom search page to 'disabled'.
@@ -419,6 +323,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     global $_bibdk_custom_search_v_uuid;
     global $_bibdk_custom_search_page_menu_title;
     global $_bibdk_custom_search_page_title;
+    global $_bibdk_custom_search_value_search_code;
 
     // assert default value in textfield elements
     $this->drupalGet('');
@@ -426,12 +331,12 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
 
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[$_bibdk_custom_search_v_uuid] = 'bar';
+    $edit[$_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']' ] = 'bar';
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that value is present in search result
-    $this->assertFieldByName($_bibdk_custom_search_v_uuid);
-    $this->assertFieldByName($_bibdk_custom_search_v_uuid, 'bar', 'default value in the custom search field is the search term.');
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']');
+    $this->assertFieldByName($_bibdk_custom_search_value_search_code . '[' . $_bibdk_custom_search_value_title . ']', 'bar', 'default value in the custom search field is the search term.');
 
     // assert default value in checkbox elements
     // first, set a checkbox element
@@ -454,13 +359,13 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[$_bibdk_custom_search_v_uuid . '[' . $option_label . ']'] = TRUE;
+    $edit[$_bibdk_custom_search_value_search_code . '[' . $option_value . ']'] = TRUE;
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that value is present in search result
     $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
+      //'@value' => $_bibdk_custom_search_value_search_code,
       ':value' => $option_value,
-      ':value' => $option_value
     ));
     $this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
 
@@ -518,7 +423,7 @@ Skriv den eller de dele af navnet, du er sikker paa. Kombiner evt. med et ord fr
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    $edit[$_bibdk_custom_search_v_uuid] = $option_value_0;
+    $edit[$_bibdk_custom_search_value_search_code] = $option_value_0;
     $this->drupalPost(NULL, $edit, 'Search');
 
     // assert that second option is selected by default in search result form.
