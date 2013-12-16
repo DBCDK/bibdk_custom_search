@@ -186,6 +186,9 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
       '#parents' => array($parent),
     );
     foreach ($options as $option) {
+      if (empty($option->value)){
+        continue;
+      }
       $option = (object)array_merge((array)$element, (array)$option);
       $option_elements = bibdk_custom_search_create_checkboxes($option, $default_values);
       $return[$key . '-fieldset'] += $option_elements['elements'];
