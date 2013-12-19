@@ -36,6 +36,7 @@
 
         // Autoselect the 'all' values under checkboxes
         $('input[type=checkbox].master').attr('checked', true);
+        $('input[type=checkbox].default-value').attr('checked', true);
         $('input[type=checkbox]').change(function (e) {
             var group = $(this).attr('data-group');
             if ($(this).attr('checked')) {
@@ -51,11 +52,11 @@
                 $('[data-group=' + group + '].master').attr('checked', true);
             }
         });
-        $('input[type=checkbox]:checked').closest(".bibdk-custom-search-element").find("input").each(function (i) {
-            if ($(this).hasClass('default-value') && !$(this).val()) {
+        $('input[type=checkbox]:checked:not(.default-value)').closest(".bibdk-custom-search-element").find("input").each(function (i) {
+            if ($(this).hasClass('default-value')) {
                 $(this).attr('checked', false);
             }
-        })
+        });
     };
 
     Drupal.setBodyClass = function (currClass) {
@@ -124,7 +125,7 @@
                 // clear top-level default if other checkboxes is selected, and default value is null.
                 if (!$(this).hasClass('default-value') && $(this).is(':checked')) {
                     $(this).closest(".bibdk-custom-search-element").find("input").each(function (i) {
-                        if ($(this).hasClass('default-value') && !$(this).val()) {
+                        if ($(this).hasClass('default-value')) {
                             $(this).attr('checked', false);
                         }
                     })
@@ -138,9 +139,7 @@
                         }
                     })
                     if (!counter) {
-                        $(this).closest(".bibdk-custom-search-element").find("input.default-value").filter(function () {
-                            return $(this).val() == '';
-                        }).attr('checked', true);
+                        $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
                     }
                 }
             });
