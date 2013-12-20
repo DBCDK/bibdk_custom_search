@@ -116,7 +116,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
   $form['pop-over']['header'] = array(
     '#theme' => 'html_tag',
     '#tag' => 'h3',
-    '#value' => t('add options to '.$type, array(), array('context' => 'bibdk_custom_search')),
+    '#value' => t('add options to ' . $type, array(), array('context' => 'bibdk_custom_search')),
   );
 
   $form['pop-over']['two-panel-multi-select'] = array(
@@ -178,7 +178,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
 
   $form['pop-over']['close_button'] = array(
     '#type' => 'button',
-    '#value' => 'close',
+    '#value' => t('close', array(), array('context' => 'bibdk_custom_search')),
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-close'),
@@ -188,7 +188,7 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
 
   $form['pop-over']['save_button'] = array(
     '#type' => 'button',
-    '#value' => 'save',
+    '#value' => t('save', array(), array('context' => 'bibdk_custom_search')),
     '#executes_submit_callback' => false,
     '#attributes' => array(
       'class' => array('custom-search-list-save'),
