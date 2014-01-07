@@ -73,7 +73,7 @@ function _bibdk_custom_search_translate_element(&$element) {
   $element->element_label = bibdk_custom_search_translate($element->element_label, 'element_label');
   $element->description = bibdk_custom_search_translate($element->description, 'description');
   $element->help_text = bibdk_custom_search_translate($element->help_text, 'help_text');
-
+  $element->label = bibdk_custom_search_translate($element->label, 'label');
 }
 
 
