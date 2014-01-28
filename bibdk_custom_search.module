@@ -456,7 +456,7 @@ function _bibdk_custom_search_get_searchpage_buttons($req) {
     return null;
   }
   $searchpages['#type'] = 'markup';
-  $searchpages['#prefix'] = '<nav id="search-tabs" class="clearfix"><ul class="horizontal-nav clearfix">';
+  $searchpages['#prefix'] = '<nav id="search-tabs" class="clearfix"><ul class="nav--horizontal">';
   $searchpages['#suffix'] = '</ul></nav>';
 
   foreach ($pages as $page) {

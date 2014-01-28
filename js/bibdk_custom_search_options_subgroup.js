@@ -143,7 +143,7 @@
                     }
                 }
             });
-            $('#search-form .horizontal-nav li', context).click(function (e) {
+            $('#search-form .nav--horizontal li', context).click(function (e) {
                 e.preventDefault();
                 Drupal.getSearchPage($(this));
             });

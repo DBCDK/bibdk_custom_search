@@ -7,5 +7,5 @@
 
 print theme('links', array(
   'links' => $pages,
-  'attributes' => array('class' => array('horizontal-nav', 'clearfix')),
+  'attributes' => array('class' => array('nav--horizontal')),
 ));
