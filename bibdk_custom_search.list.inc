@@ -82,9 +82,12 @@ function bibdk_custom_search_list_options($result, $ignore_values) {
   if (!is_array($result) || empty($result))
     return array();
 
+  $options = array();
+  $result = array_keys($result);
   // Set keys = values in options array
-  $options = array_keys($result);
-  $options = array_combine($options, $options);
+  foreach($result as $option) {
+    $options[$option] = t($option, array(), array('context' => 'material_type'));
+  }
 
   // Sort alphabetically
   ksort($options);
@@ -248,7 +251,7 @@ function bibdk_custom_search_get_list_elements($elements, $parent, $facet_term, 
       '#type' => 'checkbox',
       '#default_value' => ($default) ? $return_value : NULL,
       '#parents' => array(str_replace('.', '_', $parent), $element),
-      '#title' => t($element, array(), array('context' => 'bibdk_custom_search')),
+      '#title' => $element,
       '#return_value' => $return_value,
 
       '#attributes' => array(
