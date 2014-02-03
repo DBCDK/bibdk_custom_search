@@ -606,7 +606,7 @@ function _translate_boolean($value) {
   $booleanDanish = array(
     ' OG ',
     ' ELLER ',
-    ' IKKE'
+    ' IKKE '
   );
 
   switch ($language->language) {
@@ -620,7 +620,7 @@ function _translate_boolean($value) {
       break;
   }
 
-  return str_ireplace($replaceFrom, $replaceTo, $value);
+  return str_replace($replaceFrom, $replaceTo, $value);
 
 }
 
