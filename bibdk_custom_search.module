@@ -18,20 +18,6 @@ module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.advanced_
  * Implements hook_menu().
  */
 function bibdk_custom_search_menu() {
-  $items['testing'] = array(
-    'title' => 'Custom searchpage AJAX callback',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('bibdk_custom_search_form'),
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-    'file' => 'bibdk_custom_search.list.inc'
-  );
-  $items['frontpage/searchpage_callback'] = array(
-    'title' => 'Custom searchpage AJAX callback',
-    'page callback' => 'bibdk_custom_searchpage_ajax_callback',
-    'access arguments' => array('access content'),
-    'type' => MENU_CALLBACK,
-  );
   $items['admin/config/search/bibdk_custom_search'] = array(
     'title' => 'bibdk search pages',
     'description' => 'Customize the default search, add custom search pages, and change labels, values & ordering.',
