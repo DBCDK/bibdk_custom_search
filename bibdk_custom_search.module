@@ -471,7 +471,7 @@ function bibdk_custom_search_searchpage_button_link($text, $path, $class = '') {
     '#path' => $path,
     '#options' => array(
       'attributes' => array(
-        'id' => 'custom-search-page-link-' . _bibdk_custom_search_trim_string($path),
+        'id' => 'custom-search-page-link-' . _bibdk_custom_search_trim_string($text),
 
       ),
       'html' => false,
