@@ -447,25 +447,42 @@ function _bibdk_custom_search_get_searchpage_buttons($req) {
 
   foreach ($pages as $page) {
     $class = ($page['href'] == $req) ? 'active' : '';
-    $searchpages[$page['title']] = array(
-      '#type' => 'button',
-      '#value' => $page['title'],
-      '#executes_submit_callback' => TRUE,
-      '#submit' => array('bibdk_custom_search_new_searchpage_picked'),
-      '#attributes' => array(
-        'class' => array(
-          $class
-        ),
-        'data-type' => array(
-          $page['href'],
-        ),
-      ),
-      '#dest' => $page['href'],
+    $searchpages[$page['title']] = bibdk_custom_search_searchpage_button_link($page['title'], $page['href'], $class);
+    $searchpages[$page['title']] += array(
       '#prefix' => '<li>',
       '#suffix' => '</li>',
     );
   }
   return $searchpages;
+}
+
+/**
+ * Create searchpage button link
+ *
+ * @param $text
+ * @param $path
+ * @param null $class
+ * @return array render array
+ */
+function bibdk_custom_search_searchpage_button_link($text, $path, $class = '') {
+  $link = array(
+    '#theme' => 'link',
+    '#text' => $text,
+    '#path' => $path,
+    '#options' => array(
+      'attributes' => array(
+        'id' => 'custom-search-page-link-' . _bibdk_custom_search_trim_string($path),
+
+      ),
+      'html' => false,
+    ),
+  );
+
+  if (!empty($class)) {
+    $link['#options']['attributes']['class'][] = $class;
+  }
+
+  return $link;
 }
 
 function bibdk_custom_searchpage_ajax_callback() {
