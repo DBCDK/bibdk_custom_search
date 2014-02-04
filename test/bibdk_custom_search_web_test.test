@@ -293,7 +293,8 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     $this->drupalGet(''); //verbose
     $this->assertFieldByName('search_block_form');
-    $this->assertNoLink($_bibdk_custom_search_page_menu_title, 0, format_string('The page "@page_menu_title" is present in the menu.', array('@page_menu_title' => $_bibdk_custom_search_page_menu_title)));
+
+    $this->assertLink($_bibdk_custom_search_page_menu_title, 0, format_string('The page "@page_menu_title" is present in the menu.', array('@page_menu_title' => $_bibdk_custom_search_page_menu_title)));
 
     // disable page
     $this->drupalGet('admin/config/search/bibdk_custom_search');
