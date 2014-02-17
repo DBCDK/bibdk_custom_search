@@ -206,6 +206,7 @@ Select and radio options are removed'),
         '#title_display'  => 'invisible',
         '#title'          => t('Value submenu'),
         '#default_value'  => $option['value'],
+        '#maxlength'      => 255,
         '#size'           => 36,
       );
       $form['element_value_options'][$i]['expand'] = array(
@@ -222,6 +223,7 @@ Select and radio options are removed'),
         '#title'          => t('Option value'),
         '#title_display'  => 'invisible',
         '#default_value'  => $option['value'],
+        '#maxlength'      => 255,
         '#size'           => 36,
       );
       $form['element_value_options'][$i]['expand'] = array(
@@ -277,6 +279,7 @@ Select and radio options are removed'),
     '#type'           => 'textfield',
     '#title'          => t('Option value'),
     '#title_display'  => 'invisible',
+    '#maxlength'      => 255,
     '#default_value'  => '',
     '#size'           => 36,
   );
@@ -326,6 +329,7 @@ Select and radio options are removed'),
     '#type'           => 'textfield',
     '#title'          => t('Option value'),
     '#title_display'  => 'invisible',
+    '#maxlength'      => 255,
     '#default_value'  => '',
     '#size'           => 36,
   );

@@ -94,23 +94,6 @@
         $('.text-white').addClass('toggled');
     };
 
-    Drupal.getSearchPage = function (element) {
-        var type = element.find('input').attr('data-type');
-
-        element.addClass('ajax-progress');
-        element.append('<span class="throbber">&nbsp;</span>');
-
-        $.ajax({
-            url: Drupal.settings.basePath + Drupal.settings.pathPrefix + 'frontpage/searchpage_callback',
-            type: 'GET',
-            data: {
-                type: type
-            },
-            dataType: 'json',
-            success: Drupal.response
-        });
-    };
-
     Drupal.behaviors.bibdkCustomSearchCheckboxes = {
         attach: function (context, settings) {
             $('.form-type-checkbox input').change(function () {
@@ -142,10 +125,6 @@
                         $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
                     }
                 }
-            });
-            $('#search-form .horizontal-nav li', context).click(function (e) {
-                e.preventDefault();
-                Drupal.getSearchPage($(this));
             });
         }
     };
