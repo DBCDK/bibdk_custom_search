@@ -9,6 +9,7 @@
  */
 function _bibdk_custom_search_create_advanced_form($elements, $current_page, $default_values) {
   $fields = array();
+  $fieldCount = -1;
 
   // We loop through all search elements
   foreach ($elements as $element) {
@@ -53,8 +54,18 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
       );
     }
 
+    if ($current_page['pid'] == '3' ) {
+      // music tab 
+      if (isset($default_values[$element->search_code][0]) ) {
+        // preformer - from element-array
+        $fieldCount++;
+      } else {
+        $fieldCount = -1;
+      }
+    }
+    
     /* VALUES */
-    _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
+    _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values, $fieldCount);
 
   }
   return $fields;
@@ -83,7 +94,7 @@ function _bibdk_custom_search_translate_element(&$element) {
  * @param $field
  * @param $default_values
  */
-function _bibdk_custom_search_add_element($element, &$field, $default_values) {
+function _bibdk_custom_search_add_element($element, &$field, $default_values, $fieldCount) {
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
@@ -105,7 +116,12 @@ function _bibdk_custom_search_add_element($element, &$field, $default_values) {
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
+      if ($fieldCount >= 0 && $fieldCount <= 1 ) {
+        //searchcode in array
+        $field[$value]['#default_value'] = isset($default_values[$element->search_code][$fieldCount]) ? $default_values[$element->search_code][$fieldCount] : \NULL;
+      } else {
+        $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : \NULL;
+      } 
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;
