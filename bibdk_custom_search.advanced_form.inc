@@ -52,7 +52,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         ),
       );
     }
-
+    
     /* VALUES */
     _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
 
@@ -83,7 +83,7 @@ function _bibdk_custom_search_translate_element(&$element) {
  * @param $field
  * @param $default_values
  */
-function _bibdk_custom_search_add_element($element, &$field, $default_values) {
+function _bibdk_custom_search_add_element($element, &$field, &$default_values ) {
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
@@ -105,7 +105,7 @@ function _bibdk_custom_search_add_element($element, &$field, $default_values) {
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : \NULL;
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;

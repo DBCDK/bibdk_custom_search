@@ -267,13 +267,14 @@ function bibdk_custom_search_element_edit_submit($form, &$form_state) {
 
   $element = $form_state['values']['bibdk_custom_search_page_element'];
   $e_uuid = $form_state['values']['bibdk_custom_search_page_element']['e_uuid'];
+  $text_format = 'html_5';
 
   $result = db_update('bibdk_custom_search_elements')
     ->fields(array(
       'element_title' => check_plain($element['element_title']),
       'element_label' => check_plain($element['element_label']),
       'description' => check_plain($element['description']),
-      'help_text' => check_plain($element['help_text']),
+      'help_text' => check_markup($element['help_text'], $text_format),
       'tab_index' => check_plain($element['tab_index']),
       'access_key' => check_plain($element['access_key']),
       'is_disabled' => check_plain($element['is_disabled']),
