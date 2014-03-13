@@ -124,8 +124,7 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       }
       if ( $element->expand ) {
         // does this element have a sub-group
-        $field[$value]['#data_toggle_key'] = drupal_html_id($element->value);
-        $field[$value]['#options'][$element->value] = '<span data-child="' . $field[$value]['#data_toggle_key'] . '" class="toggle-subgroup"> + </span>' . $element->label;
+        $field[$value]['#data_toggle_key'] = $element->value;
         $options = _bibdk_custom_search_get_options_db_raw($element->expand);
         if ( !empty($options) ) {
           foreach ($options as $option) {
