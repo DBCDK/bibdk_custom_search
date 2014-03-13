@@ -6,6 +6,7 @@
 
     Drupal.bibdkCustomSearchOptionsSubgroup = function () {
         $('fieldset[data-child]').hide();
+        // $('div[data-child]').hide();
         // If child checkbox is checked remove checked from parent
         $('fieldset[data-child] input').change(function () {
             if ($(this).attr('checked') == true) {
