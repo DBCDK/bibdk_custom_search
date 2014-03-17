@@ -123,15 +123,25 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
         $field[$value]['#options'][$element->value] = $element->label;
       }
       if ( $element->expand ) {
-        // does this element have a sub-group
-        $field[$value]['#data_toggle_key'] = $element->value;
+        // this element have a sub-group
         $options = _bibdk_custom_search_get_options_db_raw($element->expand);
         if ( !empty($options) ) {
           foreach ($options as $option) {
-            $field[$value]['#data_toggle_value'][] = $option->value;
             $field[$value]['#options'][$option->value] = $option->label;
           }
         }
+
+        // add info for hide/show sub-group
+        reset($options);
+        $first = current($options);
+        $last  = end($options);
+        $data_toggle['options']['first']['value'] = $first->value;
+        $data_toggle['options']['first']['label'] = $first->label;
+        $data_toggle['options']['last']['value'] = $last->value;
+        $data_toggle['options']['last']['label'] = $last->label;
+        $data_toggle['key'] = $element->value;
+
+        $field[$value]['#data_toggle'][] = $data_toggle;
       }
       break;
     CASE 'checkboxes':
