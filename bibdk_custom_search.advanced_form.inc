@@ -106,7 +106,7 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : \NULL;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;
