@@ -87,6 +87,7 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
+      '#id' => $element->v_uuid,
       '#type' => $element->value_type,
       '#title' => $element->value_title,
       '#title_display' => 'invisible',
