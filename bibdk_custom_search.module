@@ -588,10 +588,18 @@ function bibdk_custom_search_theme() {
       'path' => $path,
       'template' => 'bibdk-custom-advanced-search-menu',
     ),
+    'bibdk_custom_search_radio_buttons' => array(
+      'render element' => 'form',
+      'path' => $path,
+      'template' => 'bibdk-custom-search-radio-buttons',
+    ),
   );
 
   return $bibdk_custom_search_theme_array;
 }
+
+
+
 
 
 /**
