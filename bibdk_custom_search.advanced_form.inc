@@ -52,11 +52,12 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         ),
       );
     }
-    
+
     /* VALUES */
     _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
 
   }
+
   return $fields;
 }
 
@@ -105,15 +106,42 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : \NULL;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;
     CASE 'select':
-    CASE 'radios':
       $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
       if (!$element->option_disabled) {
         $field[$value]['#options'][$element->value] = $element->label;
+      }
+      break;
+    CASE 'radios':
+      $field[$value]['#theme'] = 'bibdk_custom_search_radio_buttons';
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+      if (!$element->option_disabled) {
+        $field[$value]['#options'][$element->value] = $element->label;
+      }
+      if ( $element->expand ) {
+        // this element have a sub-group
+        $options = _bibdk_custom_search_get_options_db_raw($element->expand);
+        if ( !empty($options) ) {
+          foreach ($options as $option) {
+            $field[$value]['#options'][$option->value] = $option->label;
+          }
+        }
+
+        // add info for hide/show sub-group
+        reset($options);
+        $first = current($options);
+        $last  = end($options);
+        $data_toggle['options']['first']['value'] = $first->value;
+        $data_toggle['options']['first']['label'] = $first->label;
+        $data_toggle['options']['last']['value'] = $last->value;
+        $data_toggle['options']['last']['label'] = $last->label;
+        $data_toggle['key'] = $element->value;
+
+        $field[$value]['#data_toggle'][] = $data_toggle;
       }
       break;
     CASE 'checkboxes':
@@ -137,6 +165,8 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
   }
 
 }
+
+
 
 /** Generate checkboxes for advanced search elements. Function works recursively
  * if a checkbox is expanded and has subelements
