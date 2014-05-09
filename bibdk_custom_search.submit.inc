@@ -11,7 +11,6 @@ function bibdk_custom_search_get_submitted_searchcodes($get_values) {
   if (isset($_GET['destination'])) {
     unset($_GET['destination']);
   }
-  dpm($get_values);
 
   /*$form_id = $form['form_id']['#value'];
   $keys = $get_values[$form_id];
