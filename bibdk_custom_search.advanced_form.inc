@@ -106,19 +106,20 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
+      $field[$value]['#default_value'] = isset($default_values[$value]) ? array_shift($default_values[$value]) : NULL;
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;
     CASE 'select':
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+
+      $field[$value]['#default_value'] = isset($default_values[$value]) ? $default_values[$value] : $element->default_value;
       if (!$element->option_disabled) {
         $field[$value]['#options'][$element->value] = $element->label;
       }
       break;
     CASE 'radios':
       $field[$value]['#theme'] = 'bibdk_custom_search_radio_buttons';
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? $default_values[$element->search_code] : $element->default_value;
       if (!$element->option_disabled) {
         $field[$value]['#options'][$element->value] = $element->label;
       }
