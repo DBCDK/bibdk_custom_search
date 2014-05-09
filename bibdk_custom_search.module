@@ -504,8 +504,7 @@ function bibdk_custom_searchpage_ajax_callback() {
     'request' => $type,
     'label_type' => $label_type
   ));
-
-  exit();
+  drupal_exit();
 }
 
 /**
