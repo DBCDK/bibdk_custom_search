@@ -7,13 +7,15 @@ function bibdk_custom_search_get_submitted_searchcodes($get_values) {
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
   $extended = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
   $controls = module_invoke_all('ting_search_get_controls', $get_values);
-
   $query = $controls + $extended;
-
   return $query;
 }
 
-
+/** process the get values from a search reguest
+ * @param $get_values
+ * @param $extended_fields
+ * @return array
+ */
 function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields) {
   $extended = array();
 
@@ -35,7 +37,6 @@ function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields)
         else {
           $extended['qe'][$key][] = _translate_boolean($value);
         }
-
       }
     }
   }
