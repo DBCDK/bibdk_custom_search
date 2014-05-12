@@ -367,8 +367,10 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     $edit = array();
     $edit['search_block_form'] = 'foo';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
     $edit[$_bibdk_custom_search_value_search_code_1 . '[' . $_bibdk_custom_search_value_title_1 . ']' ] = 'bar';
-    $this->drupalPost(NULL, $edit, 'Search');
+
+    $this->drupalGet('search/work', array('query' => $edit));
 
     /**
      * assert that value is present in search result
@@ -399,8 +401,9 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
     $edit[$_bibdk_custom_search_value_search_code_1 . '[' . $option_value . ']'] = TRUE;
-    $this->drupalPost(NULL, $edit, 'Search');
+    $this->drupalGet('search/work', array('query' => $edit));
 
     /**
      * assert that value is present in search result
@@ -467,8 +470,9 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
     $edit[$_bibdk_custom_search_value_search_code_1] = $option_value_0;
-    $this->drupalPost(NULL, $edit, 'Search');
+    $this->drupalGet('search/work', array('query' => $edit));
 
     // assert that second option is selected by default in search result form.
     $this->assertRaw(
@@ -500,8 +504,9 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
     $edit[$_bibdk_custom_search_value_search_code_1] = $option_value_0;
-    $this->drupalPost(NULL, $edit, 'Search');
+    $this->drupalGet('search/work', array('query' => $edit));
 
     // assert that value is present in search result
     $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
@@ -578,8 +583,9 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet('');
     $edit = array();
     $edit['search_block_form'] = 'foo';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
     $edit[$_bibdk_custom_search_value_search_code_1] = $option_value_0;
-    $this->drupalPost(NULL, $edit, 'Search');
+    $this->drupalGet('search/work', array('query' => $edit));
 
     $field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
       //'@value' => $_bibdk_custom_search_value_search_code_1,

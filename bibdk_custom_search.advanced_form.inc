@@ -52,15 +52,12 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         ),
       );
     }
-
     /* VALUES */
     _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
 
   }
-
   return $fields;
 }
-
 
 /** Translate element values
  *
@@ -167,8 +164,6 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
 
 }
 
-
-
 /** Generate checkboxes for advanced search elements. Function works recursively
  * if a checkbox is expanded and has subelements
  *
@@ -182,8 +177,7 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
 
   // Get default values
   $default = ($element->default_value == $element->value) ? $element->default_value : NULL;
-  $default = isset($default_values[$element->search_code]) && is_array($default_values[$element->search_code]) && in_array($element->value, $default_values[$element->search_code]) ? $element->value : $default;
-
+  $default = isset($default_values[$element->search_code][$element->value]) ? $element->value : $default;
   // Create checkbox
   $return = array();
   $return[$element->value] = array(
