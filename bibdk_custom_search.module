@@ -235,7 +235,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   $form = array(
     '#type' => 'fieldset',
     '#theme' => 'bibdk_custom_advanced_search_menu',
-    '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($_GET),
+    '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($default_values),
     '#attributes' => array(
       'class' => array(_bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
       ),
