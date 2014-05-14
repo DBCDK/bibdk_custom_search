@@ -1,5 +1,12 @@
 <?php
 
+/** Implements hook_ting_openformat_conditions
+ * @param $query
+ */
+function bibdk_custom_search_ting_openformat_conditions($query) {
+  return bibdk_custom_search_get_submitted_searchcodes($_REQUEST);
+}
+
 /**
  * Process a block search form submission.
  **/
@@ -19,6 +26,9 @@ function bibdk_custom_search_get_submitted_searchcodes($get_values) {
 function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields) {
   $extended = array();
 
+  if (isset($get_values['search_block_form'])){
+    $extended['qe']['query'] = $get_values['search_block_form'];
+  }
   foreach ($get_values as $_key => $values) {
     $key = str_replace('_', '.', $_key);
     $no_searchcode = preg_match('@n/a@', $key);
