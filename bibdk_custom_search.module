@@ -12,7 +12,7 @@ module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.export');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.list');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.db_queries');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.advanced_form');
-module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.submit');
+module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.conditions');
 
 
 /**
