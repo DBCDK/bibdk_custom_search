@@ -285,6 +285,11 @@ function _bibdk_custom_search_is_advanced_search_expanded($get) {
     unset($query['year.op']);
   }
 
+  // remove base query
+  if ( isset($query['query']) ) {
+    unset($query['query']);
+  }
+
   // specialized search pages are only toggled visible if one of the elements are used
   // not including the delimiter
   if ( isset($query['delimiter']) ) {
