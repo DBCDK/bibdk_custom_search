@@ -187,10 +187,23 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
 
     // invalid value
     $get_values = array (
-      'search_block_form' => 'foo',
+      'invalid' => 'foo',
     );
     $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
     $expected_result = array();
+    $this->assertEqual($expected_result, $result, 'invalid field returns empty array');
+
+    // basic query
+    $get_values = array (
+      'search_block_form' => 'foo',
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array (
+      'qe' =>
+        array (
+          'query' => 'foo',
+        ),
+    );
     $this->assertEqual($expected_result, $result, 'invalid field returns empty array');
 
 
