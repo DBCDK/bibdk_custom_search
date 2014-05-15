@@ -412,7 +412,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
       //'@value' => $_bibdk_custom_search_value_search_code_1,
       ':value' => $option_value,
     ));
-    //$this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
+    $this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
 
     /**
      * assert default value in select elements

@@ -225,10 +225,47 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
     $expected_result = array('page_id' => 'foo');
     $this->assertEqual($expected_result, $result, 'page_id is returned');
+  }
+
+  public function test_bibdk_custom_search_translate_default_values() {
+    global $language;
+
+    $language->language = 'da';
+
+    $default_values = array(
+      'test' => 'but not for me',
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $this->assertEqual($default_values, $result, 'no changes to default value');
+
+    $default_values = array(
+      'test' => array('but not for me'),
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $this->assertEqual($default_values, $result, 'no changes to default value');
+
+    $default_values = array(
+      'test' => array('but NOT for me'),
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $expected_result = array(
+      'test' => array('but IKKE for me'),
+    );
+    $this->assertEqual($expected_result, $result, 'Changes made to default value');
+
+    $default_values = array(
+      'test' => 'but NOT for me',
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $expected_result = array(
+      'test' => 'but IKKE for me',
+    );
+    $this->assertEqual($expected_result, $result, 'Changes made to default value');
+
+
 
 
   }
-
 
 
 }

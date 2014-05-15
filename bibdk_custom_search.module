@@ -224,16 +224,15 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   }
 
   // Get default values
-  $default_values = $_REQUEST;
+  $default_values = bibdk_custom_search_translate_default_values($_REQUEST);
+  if (isset($page['page_path']))
+    $default_values['q'] = $page['page_path'];
 
   // Move elements with no search code to top level of default values array
   if (isset($default_values['n/a'])) {
     $default_values += $default_values['n/a'];
     unset($default_values['n/a']);
   }
-
-  if (isset($page['page_path']))
-    $default_values['q'] = $page['page_path'];
 
   $form = array(
     '#type' => 'fieldset',
@@ -246,7 +245,6 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
     ),
   );
 
-  $default_values = isset($default_values['qe']) ? $default_values['qe'] : array();
   $form += _bibdk_custom_search_create_advanced_form($result, $page, $default_values);
 
   // Page specific elements
@@ -552,6 +550,23 @@ function _translate_boolean($value) {
 
 }
 
+/** translate booleans in default_values
+/** translate booleans in default_values
+ * @param $default_values
+ */
+function bibdk_custom_search_translate_default_values($default_values) {
+  foreach ($default_values as $key => $values) {
+    if (!is_array($values)) {
+      $default_values[$key] = _translate_boolean($values);
+    }
+    else {
+      foreach ($values as $index => $value) {
+        $default_values[$key][$index] = _translate_boolean($value);
+      }
+    }
+  }
+  return $default_values;
+}
 
 /** Wrapper for ting_openformat_get_cql_commando
  * see ting_openformat.module
