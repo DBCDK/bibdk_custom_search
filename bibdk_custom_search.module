@@ -232,6 +232,9 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
     unset($default_values['n/a']);
   }
 
+  if (isset($page['page_path']))
+    $default_values['q'] = $page['page_path'];
+
   $form = array(
     '#type' => 'fieldset',
     '#theme' => 'bibdk_custom_advanced_search_menu',
@@ -243,6 +246,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
     ),
   );
 
+  $default_values = isset($default_values['qe']) ? $default_values['qe'] : array();
   $form += _bibdk_custom_search_create_advanced_form($result, $page, $default_values);
 
   // Page specific elements
