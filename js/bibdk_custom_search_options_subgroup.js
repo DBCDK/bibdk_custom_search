@@ -2,7 +2,18 @@
 
     $(document).ready(function () {
         Drupal.bibdkCustomSearchOptionsSubgroup();
+        Drupal.bibdkCustomSearchClearEmptyFields();
     });
+
+    Drupal.bibdkCustomSearchClearEmptyFields = function () {
+        $('#search-block-form').submit(function(e) {
+            $('input[name]').each(function(){
+                if($(this).val() === '') {
+                    $(this).attr('name', '');
+                }
+            });
+        });
+    }
 
     Drupal.bibdkCustomSearchOptionsSubgroup = function () {
         $('fieldset[data-child]').hide();
