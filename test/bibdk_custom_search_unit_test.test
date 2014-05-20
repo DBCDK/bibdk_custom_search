@@ -87,8 +87,185 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $expected_result = 'mig OR dig';
 
     $this->assertEqual($string, $expected_result, 'string is not translated');
+  }
+
+
+  public function test_bibdk_custom_search_get_advanced_values() {
+    $extended_fields = array (
+      'term.genre' =>
+        array (
+          'value_title' => 'film, genre',
+          'value_type' => 'checkboxes',
+          'search_code' => 'term.genre',
+          'default_value' => '',
+        ),
+      'dkcclterm.ti' =>
+        array (
+          'value_title' => 'musik, alle titler',
+          'value_type' => 'textfield',
+          'search_code' => 'dkcclterm.ti',
+          'default_value' => '',
+        ),
+    );
+
+    // No advanced fields
+    $get_values = array (
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array();
+    $this->assertEqual($expected_result, $result, 'No advanced fields returns empty array');
+
+    // 1 advanced field
+    $get_values = array ('dkcclterm_ti' =>
+      array (
+        'titel' => 'foo',
+      ),
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array(
+      'qe' => array('dkcclterm.ti' => array('foo'))
+    );
+    $this->assertEqual($expected_result, $result, '1 advanced field returned');
+
+    // 2 advanced field
+    $get_values = array (
+      'dkcclterm_ti' =>
+      array (
+        'titel' => 'foo',
+      ),
+      'term_genre' =>
+        array (
+          'genre' => 'bar',
+        ),
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array(
+      'qe' => array(
+        'dkcclterm.ti' => array('foo'),
+        'term.genre' => array('bar')
+      )
+    );
+    $this->assertEqual($expected_result, $result, '2 advanced fields returned');
+
+    // 2 fields of same type
+    $get_values = array (
+      'dkcclterm_ti' =>
+      array (
+        'titel' => 'foo',
+        'titel2' => 'bar',
+      ),
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array(
+      'qe' => array(
+        'dkcclterm.ti' => array('foo', 'bar'),
+      )
+    );
+    $this->assertEqual($expected_result, $result, '2 fields of same type returned');
+
+
+    // field with no searchcode
+    $get_values = array (
+      'n/amaterialetype' =>
+        array (
+          'term.type=(avis ELLER tidsskrift)' => 'term.type=(avis ELLER tidsskrift)',
+        ),
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array (
+      'qe' =>
+        array (
+          'n/a' =>
+            array (
+              'n/amaterialetype' => array ('term.type=(avis OR tidsskrift)'),
+            ),
+        ),
+    );
+    $this->assertEqual($expected_result, $result, 'field without searchcode correctly returned');
+
+
+
+    // invalid value
+    $get_values = array (
+      'invalid' => 'foo',
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array();
+    $this->assertEqual($expected_result, $result, 'invalid field returns empty array');
+
+    // basic query
+    $get_values = array (
+      'search_block_form' => 'foo',
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array (
+      'qe' =>
+        array (
+          'query' => 'foo',
+        ),
+    );
+    $this->assertEqual($expected_result, $result, 'invalid field returns empty array');
+
+
+    // delimiter
+    $get_values = array (
+      'delimiter' => 'foo',
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array(
+      'qe' => array('delimiter' => 'foo')
+    );
+    $this->assertEqual($expected_result, $result, 'delimiter is returned');
+
+
+    // page_id
+    $get_values = array (
+      'page_id' => 'foo',
+    );
+    $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
+    $expected_result = array('page_id' => 'foo');
+    $this->assertEqual($expected_result, $result, 'page_id is returned');
+  }
+
+  public function test_bibdk_custom_search_translate_default_values() {
+    global $language;
+
+    $language->language = 'da';
+
+    $default_values = array(
+      'test' => 'but not for me',
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $this->assertEqual($default_values, $result, 'no changes to default value');
+
+    $default_values = array(
+      'test' => array('but not for me'),
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $this->assertEqual($default_values, $result, 'no changes to default value');
+
+    $default_values = array(
+      'test' => array('but NOT for me'),
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $expected_result = array(
+      'test' => array('but IKKE for me'),
+    );
+    $this->assertEqual($expected_result, $result, 'Changes made to default value');
+
+    $default_values = array(
+      'test' => 'but NOT for me',
+    );
+    $result = bibdk_custom_search_translate_default_values($default_values);
+    $expected_result = array(
+      'test' => 'but IKKE for me',
+    );
+    $this->assertEqual($expected_result, $result, 'Changes made to default value');
+
 
 
 
   }
+
+
 }

@@ -36,11 +36,10 @@ function hook_bibdk_custom_search_add_js($element_uuids) {
 /**
  * Get search control values to use in drupal_goto().
  *
- * @param $form
- * @param $form_state
+ * @param $values
  * @return array
  */
-function hook_ting_search_get_controls($form, $form_state) {
+function hook_ting_search_get_controls($values) {
 }
 
 /**

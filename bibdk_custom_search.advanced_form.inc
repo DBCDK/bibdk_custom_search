@@ -52,15 +52,12 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         ),
       );
     }
-
     /* VALUES */
     _bibdk_custom_search_add_element($element, $fields[$region][$group][$subgroup], $default_values);
 
   }
-
   return $fields;
 }
-
 
 /** Translate element values
  *
@@ -106,19 +103,20 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       $field[$value]['#size'] = 30;
     CASE 'textfield':
       $field[$value]['#maxlength'] = 64;
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? array_shift($default_values[$element->search_code]) : NULL;
+      $field[$value]['#default_value'] = isset($default_values[$value]) ? array_shift($default_values[$value]) : NULL;
       $field[$value]['#parents'] = array($value, $element->value_title);
       $field[$value]['#tree'] = FALSE;
       break;
     CASE 'select':
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+
+      $field[$value]['#default_value'] = isset($default_values[$value]) ? $default_values[$value] : $element->default_value;
       if (!$element->option_disabled) {
         $field[$value]['#options'][$element->value] = $element->label;
       }
       break;
     CASE 'radios':
       $field[$value]['#theme'] = 'bibdk_custom_search_radio_buttons';
-      $field[$value]['#default_value'] = isset($default_values[$element->search_code][0]) ? $default_values[$element->search_code][0] : $element->default_value;
+      $field[$value]['#default_value'] = isset($default_values[$element->search_code]) ? $default_values[$element->search_code] : $element->default_value;
       if (!$element->option_disabled) {
         $field[$value]['#options'][$element->value] = $element->label;
       }
@@ -166,8 +164,6 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
 
 }
 
-
-
 /** Generate checkboxes for advanced search elements. Function works recursively
  * if a checkbox is expanded and has subelements
  *
@@ -181,8 +177,7 @@ function bibdk_custom_search_create_checkboxes($element, $default_values, $optio
 
   // Get default values
   $default = ($element->default_value == $element->value) ? $element->default_value : NULL;
-  $default = isset($default_values[$element->search_code]) && is_array($default_values[$element->search_code]) && in_array($element->value, $default_values[$element->search_code]) ? $element->value : $default;
-
+  $default = isset($default_values[$element->search_code][$element->value]) ? $element->value : $default;
   // Create checkbox
   $return = array();
   $return[$element->value] = array(
