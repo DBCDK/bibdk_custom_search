@@ -1,6 +1,4 @@
 <?php
-
-
 /** Ajax callback
  *
  * @param $term_type
@@ -37,7 +35,7 @@ function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_
   if (isset($default_values[$term_type])){
     $form += bibdk_custom_list_create_default_checkboxes($default_values[$term_type]);
   }
-  $form += bibdk_custom_search_list_link($facet_term, $facet_type, $term_type, $default_values);
+  $form += bibdk_custom_search_list_link($facet_term, $facet_type, $term_type);
   return $form;
 
 }
@@ -55,7 +53,7 @@ function bibdk_custom_list_create_default_checkboxes($default_values) {
     $return[$value] = array(
       '#type' => 'checkbox',
       '#default_value' => $value,
-      '#title' => $label[1],
+      '#title' => t($label[1], array(), array('context' => 'material_type')),
       '#return_value' => $value,
       '#attributes' => array(),
     );
@@ -80,6 +78,8 @@ function bibdk_custom_search_list_select_form($facet_type, $facet_term, $term_ty
   if (empty($options)) {
     return array();
   }
+
+  $options = bibdk_custom_search_list_options_translate($options);
 
   // Create form
   return bibdk_custom_search_get_list_popup_form($options, $facet_type, $term_type);
@@ -127,7 +127,6 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
  * @return array
  */
 function bibdk_custom_search_list_options($result, $term_type, $ignore_values) {
-
   if (!is_array($result) || empty($result)) {
     return array();
   }
@@ -136,7 +135,7 @@ function bibdk_custom_search_list_options($result, $term_type, $ignore_values) {
   $result = array_keys($result);
   // Set keys = values in options array
   foreach ($result as $option) {
-    $options[$term_type . '=' . $option] = t($option, array(), array('context' => 'material_type'));
+    $options[$term_type . '=' . $option] = $option;
   }
 
   // Sort alphabetically
@@ -147,6 +146,14 @@ function bibdk_custom_search_list_options($result, $term_type, $ignore_values) {
 
   return $options;
 
+}
+
+function bibdk_custom_search_list_options_translate($options) {
+  foreach ($options as $key => $option) {
+    $options[$key] = t($option, array(), array('context' => 'material_type'));
+  }
+
+  return $options;
 }
 
 /** Create form with more options as a pop-over box
@@ -261,10 +268,9 @@ function bibdk_custom_search_get_list_popup_form($options, $facet_type, $term_ty
  * @param $facet_term
  * @param $facet_type
  * @param $term_type
- * @param $default_values
  * @return array
  */
-function bibdk_custom_search_list_link($facet_term, $facet_type, $term_type, $default_values) {
+function bibdk_custom_search_list_link($facet_term, $facet_type, $term_type) {
   $type_id = str_replace('.', '-', $facet_type);
   $id = 'custom-search-options-list-' . $type_id;
   $wrapper_id = 'add_options_list-' . $type_id;
