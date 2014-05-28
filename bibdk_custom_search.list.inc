@@ -1,42 +1,92 @@
 <?php
 
 
+/** Ajax callback
+ *
+ * @param $term_type
+ * @param $facet_term
+ * @param $facet_type
+ * @return array|mixed
+ */
+function bibdk_custom_search_list_ajax_callback($term_type, $facet_term, $facet_type) {
+
+  $term_type = urldecode($term_type);
+  return bibdk_custom_search_list_select_form($facet_type, $facet_term, $term_type);
+}
+
 
 /** Returns a link, a list of options and a list of form elements, for a defined
  * facet
+ *
  * @param $facet_type type of facet e.g. facet.type
  * @param $term_type Sets the parent of the returned elements
  * @param array $default_values elements that has a default value
  * @param array $ignore_values elements that should not be returned
  * @return array Render-array
  */
-function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array(), $ignore_values= array()) {
-  if (strpos($facet_type, '=')){
+function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array()) {
+  if (strpos($facet_type, '=')) {
     $exploded = explode('=', $facet_type);
     $facet_term = $exploded[0];
     $facet_type = $exploded[1];
-  } else {
+  }
+  else {
     $facet_term = $term_type;
   }
+  $form = array();
+  if (isset($default_values[$term_type])){
+    $form += bibdk_custom_list_create_default_checkboxes($default_values[$term_type]);
+  }
+  $form += bibdk_custom_search_list_link($facet_term, $facet_type, $term_type, $default_values);
+  return $form;
+
+}
+
+/** Creates default value checkboxes
+ *
+ * @param $default_values
+ * @return array
+ */
+function bibdk_custom_list_create_default_checkboxes($default_values) {
+
+  $return = array();
+  foreach ($default_values as $value) {
+    $label = explode('=', $value);
+    $return[$value] = array(
+      '#type' => 'checkbox',
+      '#default_value' => $value,
+      '#title' => $label[1],
+      '#return_value' => $value,
+      '#attributes' => array(),
+    );
+  }
+  return $return;
+}
+
+/** Wrapper function: fetches options from webservice and adds them to a pop-up form
+ *
+ * @param $facet_type
+ * @param $facet_term
+ * @param $term_type
+ * @param array $ignore_values
+ * @return array|mixed
+ */
+function bibdk_custom_search_list_select_form($facet_type, $facet_term, $term_type, $ignore_values = array()) {
   // Get options from webservice
   $result = bibdk_custom_search_list_from_webservice($facet_type);
   // Create options array with webservice result
-  $options = bibdk_custom_search_list_options($result, $ignore_values);
-
+  $options = bibdk_custom_search_list_options($result, $facet_term, $ignore_values);
   // If no options are set we do not return form elements
-  if (empty($options)){
+  if (empty($options)) {
     return array();
   }
 
   // Create form
-  $form = array();
-  $form += bibdk_custom_search_get_list_elements($options, $term_type, $facet_term, $default_values);
-  $form += bibdk_custom_search_get_list_popup_form($options, $facet_type);
-
-  return $form;
+  return bibdk_custom_search_get_list_popup_form($options, $facet_type, $term_type);
 }
 
 /** Get elements from webservice
+ *
  * @param $type  type of facet e.g. facet.type
  * @param int $number_requested number of elements to request from service
  * @return bool|stdClass|string
@@ -44,7 +94,7 @@ function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_
 function bibdk_custom_search_list_from_webservice($type, $number_requested = 1000) {
 
   $cache_key = 'bibdk_custom_search_list_from_webservice' . $type;
-  if ($cache = cache_get($cache_key, 'cache')){
+  if ($cache = cache_get($cache_key, 'cache')) {
     return $cache->data;
   }
 
@@ -59,10 +109,9 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
   $client = new ting_client_class();
 
   $result = $client->do_request('search', $params);
-
   $facets = isset($result->facets[$type]) ? $result->facets[$type]->terms : array();
 
-  if (!empty($facets)){
+  if (!empty($facets)) {
     cache_set($cache_key, $facets, 'cache');
   }
 
@@ -77,16 +126,17 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
  * @param $type
  * @return array
  */
-function bibdk_custom_search_list_options($result, $ignore_values) {
+function bibdk_custom_search_list_options($result, $term_type, $ignore_values) {
 
-  if (!is_array($result) || empty($result))
+  if (!is_array($result) || empty($result)) {
     return array();
+  }
 
   $options = array();
   $result = array_keys($result);
   // Set keys = values in options array
-  foreach($result as $option) {
-    $options[$option] = t($option, array(), array('context' => 'material_type'));
+  foreach ($result as $option) {
+    $options[$term_type . '=' . $option] = t($option, array(), array('context' => 'material_type'));
   }
 
   // Sort alphabetically
@@ -100,26 +150,27 @@ function bibdk_custom_search_list_options($result, $ignore_values) {
 }
 
 /** Create form with more options as a pop-over box
+ *
  * @param $options
- * @param $type
+ * @param $facet_type
  * @return mixed
  */
-function bibdk_custom_search_get_list_popup_form($options, $type) {
+function bibdk_custom_search_get_list_popup_form($options, $facet_type, $term_type) {
 
-  $type_id = str_replace('.', '-', $type);
+  $type_id = str_replace('.', '-', $facet_type);
   $id = 'custom-search-options-list-' . $type_id;
   $form['pop-over'] = array(
     '#type' => 'container',
     '#attributes' => array(
       'id' => $id,
-      'class' => array('visuallyhidden', 'custom-search-options-list'),
+      'class' => array('custom-search-options-list'),
     ),
   );
 
   $form['pop-over']['header'] = array(
     '#theme' => 'html_tag',
     '#tag' => 'h3',
-    '#value' => t('add options to ' . $type, array(), array('context' => 'bibdk_custom_search')),
+    '#value' => t('add options to ' . $facet_type, array(), array('context' => 'bibdk_custom_search')),
   );
 
   $form['pop-over']['two-panel-multi-select'] = array(
@@ -196,22 +247,51 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
     '#attributes' => array(
       'class' => array('custom-search-list-save'),
       'data-action-selected' => array('select-to-list-' . $type_id),
-      'data-action-send-to' => array($type . '-options-array'),
+      'data-action-send-to' => array($facet_type . '-options-array'),
+      'data-type' => array('n/a' . $type_id),
+      'data-type-wrapper' => array($term_type),
     ),
   );
 
-  $form['container-link'] = array(
-    '#theme' => 'link',
-    '#text' => t('see all options'),
-    '#options' => array(
-      'attributes' => array(
-        'class' => array('popover-button-list'),
-        'data-id' => $id,
-      ),
-      'fragment' => 'show-options',
-      'html' => true,
-      'absolute' => false,
-      'external' => true,
+  return $form;
+}
+
+/** Adds link that fetches popupform via ajax
+ *
+ * @param $facet_term
+ * @param $facet_type
+ * @param $term_type
+ * @param $default_values
+ * @return array
+ */
+function bibdk_custom_search_list_link($facet_term, $facet_type, $term_type, $default_values) {
+  $type_id = str_replace('.', '-', $facet_type);
+  $id = 'custom-search-options-list-' . $type_id;
+  $wrapper_id = 'add_options_list-' . $type_id;
+
+  $form = array();
+
+  $form['add_options_list-' . $term_type] = array(
+    '#type' => 'container',
+    '#attributes' => array(
+      'id' => $wrapper_id,
+    ),
+  );
+
+  $form['container-link-' . $type_id] = array(
+    '#type' => 'link',
+    '#title' => t('see all options'),
+    '#href' => '',
+    '#name' => 'op-' . $type_id,
+    '#attributes' => array(
+      'class' => array('popover-button-list', 'button-as-link'),
+      'data-id' => $id,
+    ),
+    '#ajax' => array(
+      'path' => "bibdk_custom_search/ajax/list/" . urlencode($term_type) . "/$facet_term/$facet_type",
+      'wrapper' => $wrapper_id,
+      'method' => 'replace',
+      'event' => 'click',
     ),
     '#attached' => array(
       'js' => array(
@@ -221,44 +301,5 @@ function bibdk_custom_search_get_list_popup_form($options, $type) {
   );
 
   return $form;
-
 }
 
-/** Create list render array elements
- * @param $elements
- * @param $parent
- * @param $default_values
- * @return array
- */
-
-// bibdk_custom_search_get_list_elements($options, $term_type, $facet_type, $default_values);
-function bibdk_custom_search_get_list_elements($elements, $parent, $facet_term, $default_values) {
-  $return = array();
-  foreach ($elements as $element) {
-    $return_value = $facet_term . '=' . $element;
-    $default = isset($default_values[$parent]) && is_array($default_values[$parent]) && in_array($return_value, $default_values[$parent]) ? true : false;
-    $return[$element.'-container'] = array(
-      '#type' => 'container',
-      //'#tree' => false,
-      '#parents' => array(str_replace('.', '_', $parent)),
-      '#attributes' => array(
-        'data-value' => $element,
-        'data-group' => $parent,
-        'class' => array(($default) ? 'default' : 'visuallyhidden')
-      ),
-    );
-    $return[$element.'-container'][$element] = array(
-      '#type' => 'checkbox',
-      '#default_value' => ($default) ? $return_value : NULL,
-      '#parents' => array(str_replace('.', '_', $parent), $element),
-      '#title' => $element,
-      '#return_value' => $return_value,
-
-      '#attributes' => array(
-        'data-group' => $parent,
-      ),
-    );
-  }
-
-  return $return;
-}
