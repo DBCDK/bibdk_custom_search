@@ -614,6 +614,7 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars) {
   $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
   $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
+  $vars['element_id'] = isset($vars['form']['#element_id']) ? $vars['form']['#element_id'] : "";
 }
 
 /**
