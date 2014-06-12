@@ -100,7 +100,7 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
 
   $params = array(
     'query' => '*',
-    'facets' => array($type),
+    'facets' => $type,
     'numFacets' => $number_requested,
     'numResults' => 0,
     'objectFormat' => 'DKABM',
