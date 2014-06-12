@@ -44,6 +44,8 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         '#collapsed' => FALSE,
         '#tree' => FALSE,
         '#theme' => 'bibdk_search_element',
+        '#element_id' => drupal_html_id('input ' . $element->element_label),
+        '#element_title' => $element->element_label,
         '#title_text' => $element->element_label,
         '#description_text' => $element->description,
         '#help_text' => $element->help_text,
@@ -85,9 +87,10 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
+      '#id' => $field['#element_id'],
       '#type' => $element->value_type,
-      '#title' => $element->value_title,
-      '#title_display' => 'invisible',
+      '#title' => $field['#element_title'],
+      '#title_display' => 'attribute',
       '#disabled' => $element->is_disabled || $element->value_disabled,
       '#attributes' => array(
         'tabindex' => $element->tab_index,
