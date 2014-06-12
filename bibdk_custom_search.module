@@ -122,6 +122,16 @@ function bibdk_custom_search_menu() {
     'access arguments' => array('administer bibdk custom search pages'),
     'file' => 'includes/bibdk_custom_search.values.admin.inc',
   );
+
+  $items['bibdk_custom_search/ajax/list/%/%/%'] =  array(
+    'title' => 'AJAX MENU ITEM',
+    'type' => MENU_CALLBACK,
+    'page arguments' => array(3,4,5),
+    'page callback' => "bibdk_custom_search_list_ajax_callback",
+    'file' => 'bibdk_custom_search.list.inc',
+    'access arguments' => array('access content'),
+    'delivery callback' => 'ajax_deliver',
+  );
   return $items;
 }
 
@@ -171,9 +181,9 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   $search_info = search_get_default_module_info();
   $form['#action'] = url('search/' . $search_info['path'], array('fragment' => 'content'));
 
-  unset($form['form_id']);
-  unset($form['form_build_id']);
-  unset($form['form_token']);
+  //unset($form['form_id']);
+  //unset($form['form_build_id']);
+  //unset($form['form_token']);
 
   // Set default value of main search field
   $default_value = (isset($_REQUEST['search_block_form'])) ? $_REQUEST['search_block_form'] : $form['search_block_form']['#default_value'];
