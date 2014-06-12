@@ -16,8 +16,10 @@
             $('#' + from + ' option').each(function (i, option) {
                 var value = $(option).val();
                 var label = $(option).html();
-                var checkbox = '<div class="form-item form-type-checkbox"><input class=" form-checkbox" type="checkbox" checked="true" name="' + term_type_wrapper + '[' + value + ']" value="' + value + '" tabindex="0">  <label class="option">' + label + '</label></div>'
-                $(element).closest('.custom-search-options-list').before(checkbox);
+                if($('input[value=' + value + ']').length == 0){
+                    var checkbox = '<div class="form-item form-type-checkbox"><input class=" form-checkbox" type="checkbox" checked="true" name="' + term_type_wrapper + '[' + value + ']" value="' + value + '" tabindex="0">  <label class="option">' + label + '</label></div>'
+                    $(element).closest('.custom-search-options-list').before(checkbox);
+                }
             });
             $('.custom-search-list-close').trigger('click');
         },
