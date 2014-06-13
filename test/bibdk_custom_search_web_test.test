@@ -50,6 +50,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
 
   private function _testBibdkCustomSearchCreatePage() {
+    global $_bibdk_custom_search_element_label_1;
     global $_bibdk_custom_search_value_title_1;
     global $_bibdk_custom_search_page_path;
     global $_bibdk_custom_search_v_uuid_1;
@@ -118,7 +119,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     $this->clickLink('edit');
     $edit = array();
-    $element_label = $edit['bibdk_custom_search_page_element[element_label]'] = $this->randomName(8);
+    $_bibdk_custom_search_element_label_1 = $element_label = $edit['bibdk_custom_search_page_element[element_label]'] = $this->randomName(8);
     $edit['bibdk_custom_search_page_element[access_key]'] = $this->randomName(1);
     $edit['bibdk_custom_search_page_element[tab_index]'] = rand(0, 100);
     $element_description = $edit['bibdk_custom_search_page_element[description]'] = $this->randomName(40);
@@ -255,6 +256,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
 
   private function _testBibdkCustomSearchDisable() {
+    global $_bibdk_custom_search_element_label_1;
     global $_bibdk_custom_search_value_title_1;
     global $_bibdk_custom_search_page_path;
     global $_bibdk_custom_search_page_menu_title;
@@ -280,9 +282,12 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $disabled_field = $this->xpath(
       '//input[@id=:id and @disabled="disabled"]',
       array(
-        ':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code_1) . '-' . strtolower($_bibdk_custom_search_value_title_1)
+        ':id' => 'input-' . strtolower($_bibdk_custom_search_element_label_1)
       )
     );
+    $this->verbose('$_bibdk_custom_search_element_label_1 :' . $_bibdk_custom_search_element_label_1);
+    $this->verbose('_bibdk_custom_search_value_title_1 :' . $_bibdk_custom_search_value_title_1);
+    $this->verbose('_bibdk_custom_search_value_search_code_1' . $_bibdk_custom_search_value_search_code_1);
     $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title_1)));
 
 
@@ -310,7 +315,11 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->assertFieldByName(
       'search_block_form'
     );
-    $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code_1) . '-' . strtolower($_bibdk_custom_search_value_title_1)));
+    // $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(':id' => 'edit-' . strtolower($_bibdk_custom_search_value_search_code_1) . '-' . strtolower($_bibdk_custom_search_value_title_1)));
+    $disabled_field = $this->xpath(
+      '//input[@id=:id and @disabled="disabled"]',
+      array(':id' => 'input-' . strtolower($_bibdk_custom_search_element_label_1))
+    );
     $this->assertTrue($disabled_field, format_string('The values ("@value_title") in the element was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title_1)));
 
     /**
