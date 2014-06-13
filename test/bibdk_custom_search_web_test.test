@@ -285,9 +285,6 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
         ':id' => 'input-' . strtolower($_bibdk_custom_search_element_label_1)
       )
     );
-    $this->verbose('$_bibdk_custom_search_element_label_1 :' . $_bibdk_custom_search_element_label_1);
-    $this->verbose('_bibdk_custom_search_value_title_1 :' . $_bibdk_custom_search_value_title_1);
-    $this->verbose('_bibdk_custom_search_value_search_code_1' . $_bibdk_custom_search_value_search_code_1);
     $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title_1)));
 
 
