@@ -122,6 +122,16 @@ function bibdk_custom_search_menu() {
     'access arguments' => array('administer bibdk custom search pages'),
     'file' => 'includes/bibdk_custom_search.values.admin.inc',
   );
+
+  $items['bibdk_custom_search/ajax/list/%/%/%'] =  array(
+    'title' => 'AJAX MENU ITEM',
+    'type' => MENU_CALLBACK,
+    'page arguments' => array(3,4,5),
+    'page callback' => "bibdk_custom_search_list_ajax_callback",
+    'file' => 'bibdk_custom_search.list.inc',
+    'access arguments' => array('access content'),
+    'delivery callback' => 'ajax_deliver',
+  );
   return $items;
 }
 
@@ -171,9 +181,9 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   $search_info = search_get_default_module_info();
   $form['#action'] = url('search/' . $search_info['path'], array('fragment' => 'content'));
 
-  unset($form['form_id']);
-  unset($form['form_build_id']);
-  unset($form['form_token']);
+  //unset($form['form_id']);
+  //unset($form['form_build_id']);
+  //unset($form['form_token']);
 
   // Set default value of main search field
   $default_value = (isset($_REQUEST['search_block_form'])) ? $_REQUEST['search_block_form'] : $form['search_block_form']['#default_value'];
@@ -233,17 +243,23 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
     $default_values += $default_values['n/a'];
     unset($default_values['n/a']);
   }
+  
+  $visuallyhidden = _bibdk_custom_search_is_advanced_search_expanded($default_values);
 
   $form = array(
     '#type' => 'fieldset',
     '#theme' => 'bibdk_custom_advanced_search_menu',
-    '#visuallyhidden' => _bibdk_custom_search_is_advanced_search_expanded($default_values),
+    '#visuallyhidden' => $visuallyhidden,
     '#attributes' => array(
-      'class' => array(_bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
+        'class' => array(_bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
       ),
       'data-type' => array($_GET['q']),
     ),
   );
+  
+  if ( $visuallyhidden ) {
+    $form['#attributes']['class'][] = 'is-visible';
+  }
 
   $form += _bibdk_custom_search_create_advanced_form($result, $page, $default_values);
 
@@ -614,6 +630,7 @@ function bibdk_custom_search_preprocess_bibdk_search_element(&$vars) {
   $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
   $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
+  $vars['element_id'] = isset($vars['form']['#element_id']) ? $vars['form']['#element_id'] : "";
 }
 
 /**

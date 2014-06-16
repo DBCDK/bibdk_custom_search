@@ -12,6 +12,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
 
   public function setUp() {
     module_load_include('module', 'bibdk_custom_search', 'bibdk_custom_search');
+    module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.list');
     parent::setUp();
   }
 
@@ -261,6 +262,44 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
       'test' => 'but IKKE for me',
     );
     $this->assertEqual($expected_result, $result, 'Changes made to default value');
+  }
+
+  public function test_bibdk_custom_search_list_options() {
+    $term_type = 'term.type';
+    $ignore_values = array();
+    $result = array();
+
+    // Test empty array
+    $options = bibdk_custom_search_list_options($result, $term_type, $ignore_values);
+    $this->assertEqual($options, array(), 'Empty array returns empty array');
+
+    $result = array(
+      'cd' => 12,
+      'bog' => 11,
+      'film' => 10,
+    );
+
+    // Test results array + sorting
+    $expected_results = array(
+      'term.type=bog' => 'bog',
+      'term.type=cd' => 'cd',
+      'term.type=film' => 'film',
+    );
+    $options = bibdk_custom_search_list_options($result, $term_type, $ignore_values);
+    $this->assertEqual($options, $expected_results, 'Result is given as searchcode -> label, and is sorted alfabetically');
+
+    // Test ignore values
+    $ignore_values = array('film');
+    $expected_results = array(
+      'term.type=bog' => 'bog',
+      'term.type=cd' => 'cd',
+    );
+    $options = bibdk_custom_search_list_options($result, $term_type, $ignore_values);
+    $this->assertEqual($options, $expected_results, 'Ignore values are removed');
+
+
+
+
 
 
 

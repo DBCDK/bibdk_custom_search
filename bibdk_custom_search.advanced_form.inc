@@ -44,6 +44,8 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
         '#collapsed' => FALSE,
         '#tree' => FALSE,
         '#theme' => 'bibdk_search_element',
+        '#element_id' => drupal_html_id('input ' . $element->element_label),
+        '#element_title' => $element->element_label,
         '#title_text' => $element->element_label,
         '#description_text' => $element->description,
         '#help_text' => $element->help_text,
@@ -85,9 +87,10 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
   $value = str_replace('.', '_', $element->search_code);
   if (!isset($field[$value])) {
     $field[$value] = array(
+      '#id' => $field['#element_id'],
       '#type' => $element->value_type,
-      '#title' => $element->value_title,
-      '#title_display' => 'invisible',
+      '#title' => $field['#element_title'],
+      '#title_display' => 'attribute',
       '#disabled' => $element->is_disabled || $element->value_disabled,
       '#attributes' => array(
         'tabindex' => $element->tab_index,
@@ -148,7 +151,7 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
       $checkbox_values = isset($field[$value]['#values']) ? $field[$value]['#values'] : array();
       // If value includes a facet get a list of options
       if (strpos($element->value, 'facet.') !== FALSE) {
-        $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values, $checkbox_values);
+        $checkboxes = bibdk_custom_search_get_list_options($element->value, $element->search_code, $default_values);
         $field[$value] += $checkboxes;
       }
       else {
@@ -172,12 +175,15 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
  * @param array $options
  * @return array
  */
-function bibdk_custom_search_create_checkboxes($element, $default_values, $options = array()) {
+function bibdk_custom_search_create_checkboxes($element, &$default_values, $options = array()) {
   $parent = str_replace('.', '_', $element->search_code);
 
   // Get default values
   $default = ($element->default_value == $element->value) ? $element->default_value : NULL;
-  $default = isset($default_values[$element->search_code][$element->value]) ? $element->value : $default;
+  if (isset($default_values[$parent][$element->value])){
+    $default = $element->value;
+    unset($default_values[$element->search_code][$element->value]);
+  }
   // Create checkbox
   $return = array();
   $return[$element->value] = array(
