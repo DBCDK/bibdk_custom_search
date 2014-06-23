@@ -5,14 +5,12 @@
  * Bring customizations to the default search box
  */
 
-/*
- *  TO DO (optionally): wildcard matching on search page path?
- */
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.export');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.list');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.db_queries');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.advanced_form');
 module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.conditions');
+module_load_include('inc', 'bibdk_custom_search', 'bibdk_custom_search.usersettings');
 
 
 /**
@@ -27,6 +25,7 @@ function bibdk_custom_search_menu() {
     'access arguments' => array('administer bibdk custom search pages'),
     'file' => 'includes/bibdk_custom_search.pages.admin.inc',
   );
+
   $items['admin/config/search/bibdk_custom_search/settings'] = array(
     'title' => 'Pages',
     'description' => 'Create, alter or delete search pages.',
@@ -40,6 +39,13 @@ function bibdk_custom_search_menu() {
     'page arguments' => array('bibdk_custom_search_page_edit', 4),
     'access arguments' => array('administer bibdk custom search pages'),
     'file' => 'includes/bibdk_custom_search.pages.admin.inc',
+  );
+  $items['admin/config/search/bibdk_custom_search/settings'] = array(
+    'title' => 'Add search page settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('bibdk_custom_search_usersettings_admin'),
+    'access arguments' => array('administer bibdk custom search pages'),
+    'file' => 'bibdk_custom_search.usersettings.inc',
   );
   $items['admin/config/search/bibdk_custom_search/%/remove_element/%'] = array(
     'title' => 'Edit search page',
@@ -243,7 +249,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
     $default_values += $default_values['n/a'];
     unset($default_values['n/a']);
   }
-  
+
   $visuallyhidden = _bibdk_custom_search_is_advanced_search_expanded($default_values);
 
   $form = array(
@@ -256,7 +262,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
       'data-type' => array($_GET['q']),
     ),
   );
-  
+
   if ( $visuallyhidden ) {
     $form['#attributes']['class'][] = 'is-visible';
   }
@@ -524,6 +530,10 @@ function bibdk_custom_search_theme() {
       'path' => $path,
       'template' => 'bibdk-custom-search-radio-buttons',
     ),
+    'bibdk_custom_search_usersettings_admin' => array(
+      'render element' => 'form',
+      'file' => 'bibdk_custom_search.usersettings.inc',
+    )
   );
 
   return $bibdk_custom_search_theme_array;
