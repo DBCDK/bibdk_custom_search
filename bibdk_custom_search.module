@@ -40,8 +40,8 @@ function bibdk_custom_search_menu() {
     'access arguments' => array('administer bibdk custom search pages'),
     'file' => 'includes/bibdk_custom_search.pages.admin.inc',
   );
-  $items['admin/config/search/bibdk_custom_search/settings'] = array(
-    'title' => 'Add search page settings',
+  $items['admin/config/search/bibdk_settings'] = array(
+    'title' => 'Custom search user settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bibdk_custom_search_usersettings_admin'),
     'access arguments' => array('administer bibdk custom search pages'),

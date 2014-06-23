@@ -59,7 +59,7 @@ class BibdkCustomSearchUsersettingsTestCase extends DrupalWebTestCase {
     $edit['rows[new][id]'] = 'description_test';
     $edit['rows[new][pid]'] = 'description_test';
 
-    $this->drupalPost('admin/config/search/bibdk_custom_search/settings', $edit, 'Save');
+    $this->drupalPost('admin/config/search/bibdk_settings', $edit, 'Save');
   }
 
   private function testUsersettingsView() {
