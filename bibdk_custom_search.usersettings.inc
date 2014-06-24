@@ -12,7 +12,11 @@ function bibdk_custom_search_bibdk_usersettings_user_tabs() {
     'description' => t('tab_materials_description'),
     'weight' => -5,
   );
-
+  $tab['start_page'] = array(
+    'title' => t('Start Page'),
+    'description' => t('tab_start_page_description'),
+    'weight' => -4,
+  );
   return $tab;
 }
 
@@ -21,7 +25,51 @@ function bibdk_custom_search_bibdk_usersettings_user_tabs() {
  * implements hook_bibdk_usersettings_user_settings
  */
 function bibdk_custom_search_bibdk_usersettings_user_settings() {
+  $form = array();
 
+  $form += bibdk_custom_search_usersettings_materials();
+  $form += bibdk_custom_search_usersettings_start_page();
+
+  return $form;
+}
+
+/** Add usersettings page for setting start page
+ * @return array
+ */
+function bibdk_custom_search_usersettings_start_page() {
+  $start_page = bibdk_usersettings_user_settings_get('bibdk_custom_search_start_page', null);
+
+  $pages = _bibdk_custom_search_get_pages_db();
+
+
+  foreach ($pages as $key => $page) {
+     $options[$page['href']] = $page['title'];
+  }
+
+  $form = array(
+    'start_page' => array(),
+  );
+
+  $form['start_page']['bibdk_custom_search_start_page'] = array(
+    '#type' => 'radios',
+    '#title' => t('Choose start page'),
+    '#options' => $options,
+    '#default_value' => $start_page
+  );
+
+  $form['start_page'] += array(
+    '#type' => 'container',
+    '#weight' => -1,
+    '#tab' => 'start_page',
+  );
+
+  return $form;
+
+}
+
+
+
+function bibdk_custom_search_usersettings_materials () {
   //Get values from database
   $default_values = bibdk_usersettings_user_settings_get('bibdk_custom_search_materials', array());
   $elements = variable_get('bibdk_custom_search_user_settings', array());
@@ -49,7 +97,9 @@ function bibdk_custom_search_bibdk_usersettings_user_settings() {
   );
 
   return $form;
+
 }
+
 
 /** Set default values for usersetting elements
  *
@@ -202,8 +252,8 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
       ),
     ),
     'pid' => array(
-      '#type' => 'textfield',
-      '#default_value' => 0,
+      '#type' => 'hidden',
+      '#value' => 0,
       '#size' => 3,
       '#attributes' => array(
         'class' => array('usersetting-item-pid'),
@@ -220,6 +270,9 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
         'source' => array('rows', 'new', 'description'),
       ),
     ),
+    'remove' => array(
+      '#markup' => '',
+    ),
     '#depth' => 0,
   );
 
@@ -230,8 +283,9 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
       'description',
       'value',
       'weight',
-      'id',
-      'pid'
+      '',
+      '',
+      'remove'
     ),
   );
 
@@ -263,7 +317,6 @@ function bibdk_custom_search_usersettings_admin_validate(&$form, &$form_state) {
 function bibdk_custom_search_usersettings_admin_element($element) {
 
   $return = array(
-
     // Description of element
     'description' => array(
       '#type' => 'textfield',
@@ -300,14 +353,19 @@ function bibdk_custom_search_usersettings_admin_element($element) {
 
     // ID of parent element
     'pid' => array(
-      '#type' => 'textfield',
-      '#default_value' => $element->pid,
+      '#type' => 'hidden',
+      '#value' => $element->pid,
       '#size' => 3,
 
       '#attributes' => array(
         'class' => array('usersetting-item-pid'),
       ),
     ),
+    'remove' => array(
+      '#type' => 'checkbox',
+      '#default_value' => false,
+    ),
+
     '#depth' => ($element->pid) ? 1 : 0,
   );
 
@@ -360,7 +418,9 @@ function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
   if (!empty($rows)) {
     foreach ($rows as $row) {
       $object = (object)$row;
-      $objects[$object->id] = $object;
+      if ($object->remove !== 1){
+        $objects[$object->id] = $object;
+      }
     }
   }
 
