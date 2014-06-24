@@ -78,23 +78,27 @@ function bibdk_custom_search_usersettings_materials () {
   bibdk_custom_search_usersettings_set_subelements($elements);
 
   $form = array(
-    'materials' => array(),
+    'materials' => array(
+      '#type' => 'container',
+      '#weight' => -1,
+      '#tab' => 'materials',
+      '#attached' => array(
+        'js' => array(
+          drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_usersettings.js',
+        ),
+      ),
+    ),
   );
+
+  $form['materials']['description'] = array(
+    '#markup' => t('bibdk_custom_search_materials_description', array(), array('context' => "bibdk_custom_search")),
+  );
+
 
   foreach ($elements as $group) {
     $form['materials']['bibdk_custom_search_materials'][$group->id] = bibdk_custom_search_usersettings_form_group($group);
   }
 
-  $form['materials'] += array(
-    '#type' => 'container',
-    '#weight' => -1,
-    '#tab' => 'materials',
-    '#attached' => array(
-      'js' => array(
-        drupal_get_path('module', 'bibdk_custom_search') . '/js/bibdk_custom_search_usersettings.js',
-      ),
-    ),
-  );
 
   return $form;
 
@@ -136,6 +140,11 @@ function bibdk_custom_search_usersettings_form_group($group) {
 
   $form = array(
     '#type' => 'container',
+    '#attributes' => array(
+      'class' => array(
+        'usersettings-group-wrapper'
+      ),
+    ),
   );
 
   // Create parent element
@@ -253,7 +262,7 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
     ),
     'pid' => array(
       '#type' => 'hidden',
-      '#value' => 0,
+      '#default_value' => 0,
       '#size' => 3,
       '#attributes' => array(
         'class' => array('usersetting-item-pid'),
@@ -354,7 +363,7 @@ function bibdk_custom_search_usersettings_admin_element($element) {
     // ID of parent element
     'pid' => array(
       '#type' => 'hidden',
-      '#value' => $element->pid,
+      '#default_value' => $element->pid,
       '#size' => 3,
 
       '#attributes' => array(
@@ -439,7 +448,7 @@ function theme_bibdk_custom_search_usersettings_admin($variables) {
 
   foreach (element_children($form['rows']) as $id) {
     $class = array('draggable');
-    $indent = theme('indentation', array('size' => $form['rows'][$id]['#depth']));
+    $indent = '' ;// theme('indentation', array('size' => $form['rows'][$id]['#depth']));
     $data = array();
     foreach (element_children($form['rows'][$id]) as $element_key) {
       $element = & $form['rows'][$id][$element_key];
