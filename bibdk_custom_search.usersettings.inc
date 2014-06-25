@@ -214,7 +214,7 @@ function bibdk_custom_search_ting_openformat_query_filter() {
   $filter = array();
 
   foreach ($elements as $element) {
-    if ($default_values[$element->id] == 1) {
+    if (isset($default_values[$element->id]) && $default_values[$element->id] == 1) {
       $filter[$element->description] = $element->value;
     }
   }
