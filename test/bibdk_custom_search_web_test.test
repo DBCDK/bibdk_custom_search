@@ -373,8 +373,8 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     $edit = array();
     $edit['search_block_form'] = 'foo';
-    //$edit['page_id'] = variable_get('site_frontpage', 'node');
-    //$edit[$_bibdk_custom_search_value_search_code_1 . '[' . $_bibdk_custom_search_value_title_1 . ']' ] = 'bar';
+    $edit['page_id'] = variable_get('site_frontpage', 'node');
+    $edit[$_bibdk_custom_search_value_search_code_1 . '[' . $_bibdk_custom_search_value_title_1 . ']' ] = 'bar';
 
     $this->drupalGet('search/work', array('query' => $edit));
 
