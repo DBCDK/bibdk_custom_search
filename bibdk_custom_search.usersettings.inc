@@ -399,7 +399,6 @@ function bibdk_custom_search_usersettings_create_machinename($name, $existing_na
 function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
 
   $rows = $form_state['values']['rows'];
-  dpm($rows);
 
   uasort($rows, 'drupal_sort_weight');
 
