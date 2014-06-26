@@ -40,7 +40,8 @@ function bibdk_custom_search_usersettings_start_page() {
   $start_page = bibdk_usersettings_user_settings_get('bibdk_custom_search_start_page', null);
 
   $pages = _bibdk_custom_search_get_pages_db();
-
+  if (count($pages) == 0)
+    return array();
 
   foreach ($pages as $key => $page) {
      $options[$page['href']] = $page['title'];
@@ -64,7 +65,6 @@ function bibdk_custom_search_usersettings_start_page() {
   );
 
   return $form;
-
 }
 
 

@@ -42,12 +42,12 @@ class BibdkCustomSearchUsersettingsTestCase extends DrupalWebTestCase {
     $edit['rows[new][description]'] = 'description_test';
     $edit['rows[new][value]'] = 'value_test';
     $edit['rows[new][id]'] = 'description_test';
-    $this->drupalPost('admin/config/search/bibdk_custom_search/settings', $edit, 'Save');
+    $this->drupalPost('admin/config/search/bibdk_settings', $edit, 'Save');
 
     $edit['rows[new][description]'] = 'description_test_1';
     $edit['rows[new][value]'] = 'value_test_1';
     $edit['rows[new][id]'] = 'description_test';
-    $this->drupalPost('admin/config/search/bibdk_custom_search/settings', $edit, 'Save');
+    $this->drupalPost('admin/config/search/bibdk_settings', $edit, 'Save');
 
     $this->assertFieldByName('rows[description_test][description]', 'description_test');
     $this->assertFieldByName('rows[description_test_1][description]', 'description_test_1');
