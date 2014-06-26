@@ -34,17 +34,19 @@ function bibdk_custom_search_bibdk_usersettings_user_settings() {
 }
 
 /** Add usersettings page for setting start page
+ *
  * @return array
  */
 function bibdk_custom_search_usersettings_start_page() {
   $start_page = bibdk_usersettings_user_settings_get('bibdk_custom_search_start_page', null);
 
   $pages = _bibdk_custom_search_get_pages_db();
-  if (count($pages) == 0)
+  if (count($pages) == 0) {
     return array();
+  }
 
   foreach ($pages as $key => $page) {
-     $options[$page['href']] = $page['title'];
+    $options[$page['href']] = $page['title'];
   }
 
   $form = array(
@@ -68,8 +70,7 @@ function bibdk_custom_search_usersettings_start_page() {
 }
 
 
-
-function bibdk_custom_search_usersettings_materials () {
+function bibdk_custom_search_usersettings_materials() {
   //Get values from database
   $default_values = bibdk_usersettings_user_settings_get('bibdk_custom_search_materials', array());
   $elements = variable_get('bibdk_custom_search_user_settings', array());
@@ -184,6 +185,7 @@ function bibdk_custom_search_usersettings_form_group($group) {
 }
 
 /** Create single element for usersettings form
+ *
  * @param $element
  * @param $attributes
  * @return array
@@ -225,6 +227,7 @@ function bibdk_custom_search_ting_openformat_query_filter() {
 
 
 /** Admin form for bibdk custom search usersettings
+ *
  * @param $form
  * @param $form_state
  * @return mixed
@@ -246,44 +249,22 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
   }
 
   // Add input fields for adding new elements
-  $form['rows']['new'] = array(
-    'description' => array(
-      '#type' => 'textfield',
+  $form['rows']['new'] = bibdk_custom_search_usersettings_admin_element();
+  $form['rows']['new']['id'] = array(
+    '#type' => 'machine_name',
+    '#title' => t("Machine Name"),
+    '#description' => t("machine-friendly name."),
+    '#size' => 15,
+    '#maxlength' => 15,
+    '#machine_name' => array(
+      'exists' => '_bibdk_custom_search_usersettings_machinename_exists',
+      'source' => array('rows', 'new', 'description'),
     ),
-    'value' => array(
-      '#type' => 'textfield',
-    ),
-    'weight' => array(
-      '#type' => 'weight',
-      '#delta' => 10,
-      '#attributes' => array(
-        'class' => array('usersetting-item-weight'),
-      ),
-    ),
-    'pid' => array(
-      '#type' => 'hidden',
-      '#default_value' => 0,
-      '#size' => 3,
-      '#attributes' => array(
-        'class' => array('usersetting-item-pid'),
-      ),
-    ),
-    'id' => array(
-      '#type' => 'machine_name',
-      '#title' => t("Machine Name"),
-      '#description' => t("machine-friendly name."),
-      '#size' => 15,
-      '#maxlength' => 15,
-      '#machine_name' => array(
-        'exists' => '_bibdk_custom_search_usersettings_machinename_exists',
-        'source' => array('rows', 'new', 'description'),
-      ),
-    ),
-    'remove' => array(
-      '#markup' => '',
-    ),
-    '#depth' => 0,
   );
+  $form['rows']['new']['remove'] = array(
+    '#markup' => '',
+  );
+
 
   $form['rows']['#tree'] = true;
   $form['header'] = array(
@@ -308,6 +289,7 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
 /** implements form_validate
  *
  * Remove all validation errors, so machine name don't create problems
+ * + There are no required fields
  *
  * @param $form
  * @param $form_state
@@ -323,26 +305,26 @@ function bibdk_custom_search_usersettings_admin_validate(&$form, &$form_state) {
  * @param $element
  * @return array
  */
-function bibdk_custom_search_usersettings_admin_element($element) {
+function bibdk_custom_search_usersettings_admin_element($element = null) {
 
   $return = array(
     // Description of element
     'description' => array(
       '#type' => 'textfield',
-      '#default_value' => $element->description,
+      '#default_value' => isset($element->description) ? $element->description : null,
     ),
 
     //value of element
     'value' => array(
       '#type' => 'textfield',
-      '#default_value' => $element->value,
+      '#default_value' => isset($element->value) ? $element->value : null,
     ),
 
     //weight of element
     'weight' => array(
       '#type' => 'weight',
       '#title' => t('Weight'),
-      '#default_value' => $element->weight,
+      '#default_value' => isset($element->weight) ? $element->weight : null,
       '#delta' => 10,
       '#attributes' => array(
         'class' => array('usersetting-item-weight'),
@@ -352,7 +334,7 @@ function bibdk_custom_search_usersettings_admin_element($element) {
     // ID of element
     'id' => array(
       '#type' => 'hidden',
-      '#value' => $element->id,
+      '#value' => isset($element->id) ? $element->id : null,
       '#size' => 3,
 
       '#attributes' => array(
@@ -363,19 +345,20 @@ function bibdk_custom_search_usersettings_admin_element($element) {
     // ID of parent element
     'pid' => array(
       '#type' => 'hidden',
-      '#default_value' => $element->pid,
+      '#default_value' => isset($element->pid) ? $element->pid : 0,
       '#size' => 3,
 
       '#attributes' => array(
         'class' => array('usersetting-item-pid'),
       ),
     ),
+
     'remove' => array(
       '#type' => 'checkbox',
       '#default_value' => false,
     ),
 
-    '#depth' => ($element->pid) ? 1 : 0,
+    '#depth' => isset($element->pid) && $element->pid !== 0 ? 1 : 0,
   );
 
   return $return;
@@ -416,6 +399,7 @@ function bibdk_custom_search_usersettings_create_machinename($name, $existing_na
 function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
 
   $rows = $form_state['values']['rows'];
+  dpm($rows);
 
   uasort($rows, 'drupal_sort_weight');
 
@@ -424,12 +408,19 @@ function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
     $objects[$object->id] = $object;
   }
   unset($rows['new']);
+
   if (!empty($rows)) {
+    foreach ($rows as $key => $row) {
+      if ($row['remove'] == 1 || $row['id'] == null) {
+        unset($rows[$key]);
+      }
+    }
     foreach ($rows as $row) {
       $object = (object)$row;
-      if ($object->remove !== 1){
-        $objects[$object->id] = $object;
+      if ($object->pid !== 0 && !isset($rows[$object->pid])) {
+        $object->pid = 0;
       }
+      $objects[$object->id] = $object;
     }
   }
 
@@ -448,7 +439,7 @@ function theme_bibdk_custom_search_usersettings_admin($variables) {
 
   foreach (element_children($form['rows']) as $id) {
     $class = array('draggable');
-    $indent = '' ;// theme('indentation', array('size' => $form['rows'][$id]['#depth']));
+    $indent = theme('indentation', array('size' => $form['rows'][$id]['#depth']));
     $data = array();
     foreach (element_children($form['rows'][$id]) as $element_key) {
       $element = & $form['rows'][$id][$element_key];
