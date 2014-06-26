@@ -4,7 +4,6 @@
         attach: function (context) {
 
             $('[data-setting-child]', context).each(function (i, element) {
-                console.log(element);
                 var parentId = this.getAttribute('data-setting-child');
                 var parentValue = $('[data-setting-parent=' + parentId + ']:checked').val();
                 if (parentValue == 1) {
