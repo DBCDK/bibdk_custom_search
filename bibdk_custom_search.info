@@ -6,6 +6,7 @@ package = Bibliotek.dk
 
 dependencies[] = uuid
 dependencies[] = ting_openformat
+dependencies[] = bibdk_usersettings
 
 files[] = bibdk_custom_search.export.inc
 files[] = test/bibdk_custom_search_unit_test.test
