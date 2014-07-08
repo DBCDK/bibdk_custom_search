@@ -364,7 +364,7 @@ function bibdk_custom_search_usersettings_admin_element($element = null) {
       '#default_value' => false,
     ),
 
-    '#depth' => isset($element->pid) && $element->pid !== '0' ? 1 : 0,
+    '#depth' => isset($element->pid) && $element->pid != '0' ? 1 : 0,
   );
 
   return $return;
@@ -455,7 +455,7 @@ function theme_bibdk_custom_search_usersettings_admin($variables) {
       'class' => $class,
     );
   }
-  drupal_add_tabledrag($table_id, 'match', 'parent', 'usersetting-item-pid', 'usersetting-item-pid', 'usersetting-item-id', true);
+  drupal_add_tabledrag($table_id, 'match', 'parent', 'usersetting-item-pid', 'usersetting-item-pid', 'usersetting-item-id', true, 1);
   drupal_add_tabledrag($table_id, 'order', 'sibling ', 'usersetting-item-weight', NULL, NULL, TRUE);
 
   $form['wrapper']['table'] = array(
