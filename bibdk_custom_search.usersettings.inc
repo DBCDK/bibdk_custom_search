@@ -233,6 +233,11 @@ function bibdk_custom_search_ting_openformat_query_filter() {
  * @return mixed
  */
 function bibdk_custom_search_usersettings_admin($form, $form_state) {
+  $form['wrapper'] = array(
+    '#type' => 'fieldset',
+    '#title'        => t('Custom search filters'),
+    '#description'  => t('Create new filter options by adding a description and a searchcode. </br> It is possible to use the operators <b>OG</b> and <b>ELLER</b> in the searchcode'),
+  );
 
   $elements = variable_get('bibdk_custom_search_user_settings', array());
 
@@ -283,6 +288,7 @@ function bibdk_custom_search_usersettings_admin($form, $form_state) {
     '#type' => 'submit',
     '#value' => t('Save'),
   );
+
   return $form;
 }
 
@@ -358,7 +364,7 @@ function bibdk_custom_search_usersettings_admin_element($element = null) {
       '#default_value' => false,
     ),
 
-    '#depth' => isset($element->pid) && $element->pid !== 0 ? 1 : 0,
+    '#depth' => isset($element->pid) && $element->pid !== '0' ? 1 : 0,
   );
 
   return $return;
@@ -398,6 +404,7 @@ function bibdk_custom_search_usersettings_create_machinename($name, $existing_na
  */
 function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
 
+  $objects = array();
   $rows = $form_state['values']['rows'];
 
   uasort($rows, 'drupal_sort_weight');
@@ -422,7 +429,6 @@ function bibdk_custom_search_usersettings_admin_submit($form, &$form_state) {
       $objects[$object->id] = $object;
     }
   }
-
   variable_set('bibdk_custom_search_user_settings', $objects);
 }
 
@@ -452,11 +458,12 @@ function theme_bibdk_custom_search_usersettings_admin($variables) {
   drupal_add_tabledrag($table_id, 'match', 'parent', 'usersetting-item-pid', 'usersetting-item-pid', 'usersetting-item-id', true);
   drupal_add_tabledrag($table_id, 'order', 'sibling ', 'usersetting-item-weight', NULL, NULL, TRUE);
 
-  $output = theme('table', array(
-    'header' => $header,
-    'rows' => $rows,
-    'attributes' => array('id' => $table_id),
-  ));
+  $form['wrapper']['table'] = array(
+    '#theme'  => 'table',
+    '#header' => $header,
+    '#rows' => $rows,
+    '#attributes' => array('id' => $table_id),
+  );
 
-  return $output . drupal_render_children($form);
+  return drupal_render_children($form);
 }
