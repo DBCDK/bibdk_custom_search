@@ -6,12 +6,14 @@
  * @return array
  */
 function bibdk_custom_search_bibdk_usersettings_user_tabs() {
-
-  $tab['materials'] = array(
-    'title' => t('Materials'),
-    'description' => t('tab_materials_description'),
-    'weight' => -5,
-  );
+  $filters = variable_get('bibdk_custom_search_user_settings', array());
+  if (!empty($filters)){
+    $tab['materials'] = array(
+      'title' => t('Materials'),
+      'description' => t('tab_materials_description'),
+      'weight' => -5,
+    );
+  }
   $tab['start_page'] = array(
     'title' => t('Start Page'),
     'description' => t('tab_start_page_description'),
