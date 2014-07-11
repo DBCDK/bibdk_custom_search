@@ -128,7 +128,7 @@ function _bibdk_custom_search_add_element($element, &$field, &$default_values ) 
         $options = _bibdk_custom_search_get_options_db_raw($element->expand);
         if ( !empty($options) ) {
           foreach ($options as $option) {
-            $field[$value]['#options'][$option->value] = $option->label;
+            $field[$value]['#options'][$option->value] = bibdk_custom_search_translate($option->label, 'label');
           }
         }
 
@@ -217,6 +217,7 @@ function bibdk_custom_search_create_checkboxes($element, &$default_values, $opti
       '#parents' => array($parent),
     );
     foreach ($options as $option) {
+      $option->label = bibdk_custom_search_translate($option->label, 'label');
       if (empty($option->value)){
         continue;
       }
