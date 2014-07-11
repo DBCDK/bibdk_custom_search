@@ -296,15 +296,96 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     );
     $options = bibdk_custom_search_list_options($result, $term_type, $ignore_values);
     $this->assertEqual($options, $expected_results, 'Ignore values are removed');
+  }
 
+  public function test_bibdk_custom_search_usersettings_set_default_values() {
 
+    // Test empty default
+    $elements = array();
+    $default_values = array();
+    bibdk_custom_search_usersettings_set_default_values($elements, $default_values);
+    $this->assertEqual($elements, array());
 
+    // Test array of elements
+    $elements = $this->_bibdk_custom_search_usersettings_get_elements();
+    $default_values = array(
+      '1' => 1,
+      '2' => 0,
+      '3' => 0,
+      'test' => 1,
+    );
 
+    bibdk_custom_search_usersettings_set_default_values($elements, $default_values);
 
+    $this->assertTrue($elements[1]->default_value, 'default value set to true');
+    $this->assertTrue($elements['test']->default_value, 'default value set to true');
+    $this->assertFalse($elements[2]->default_value, 'default value set to false');
+    $this->assertFalse($elements[3]->default_value, 'default value set to false');
 
+  }
+
+  public function test_bibdk_custom_search_usersettings_set_subelements() {
+
+    // Test empty default
+    $elements = array();
+    bibdk_custom_search_usersettings_set_subelements($elements);
+    $this->assertEqual($elements, array());
+
+    // Test elements with subgroups
+    $elements = $this->_bibdk_custom_search_usersettings_get_elements();
+
+    bibdk_custom_search_usersettings_set_subelements($elements);
+
+    $this->assertTrue(isset($elements['1']->subelements[3]), 'subelement is set');
+    $this->assertEqual($elements['1']->subelements[3]->pid, $elements['1']->id, 'subelement pid is equal parent id');
+    $this->assertFalse(isset($elements['3']), 'subelement is removed from parent tree');
+
+    $this->assertFalse(isset($elements->subelements), 'subelement is not set');
+
+  }
+
+  public function test_bibdk_custom_search_usersettings_machinename_exists() {
+    $existing_names = array(
+      'hest' => 'hest',
+      'fisk' => 'fisk',
+      '0' => '0'
+    );
+
+    $name = 'hest';
+    $new_name = bibdk_custom_search_usersettings_create_machinename($name, $existing_names);
+    $this->assertIdentical($new_name, 'hest_1');
+
+    $name = '0';
+    $new_name = bibdk_custom_search_usersettings_create_machinename($name, $existing_names);
+    $this->assertIdentical($new_name, '0_1');
+
+    $name = 'unique';
+    $new_name = bibdk_custom_search_usersettings_create_machinename($name, $existing_names);
+    $this->assertIdentical($new_name, $name);
 
 
   }
 
+  private function _bibdk_custom_search_usersettings_get_elements () {
+    $elements = array();
+    $element = new stdClass();
+    $element->id = '1';
+    $element->pid = 0;
+    $elements[1] = $element;
+    $element = new stdClass();
+    $element->id = '2';
+    $element->pid = 0;
+    $elements[2] = $element;
+    $element = new stdClass();
+    $element->id = '3';
+    $element->pid = 1;
+    $elements[3] = $element;
+    $element = new stdClass();
+    $element->id = 'test';
+    $elements['test'] = $element;
+    $element->pid = 0;
+
+    return $elements;
+  }
 
 }
