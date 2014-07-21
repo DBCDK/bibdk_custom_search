@@ -539,16 +539,6 @@ function bibdk_custom_search_theme() {
   return $bibdk_custom_search_theme_array;
 }
 
-/** Wrapper for ting_openformat_get_cql_commando
- * see ting_openformat.module
- *
- * @param $cql
- * @return string
- */
-function _bibdk_custom_search_get_cql($cql) {
-  return function_exists('ting_openformat_get_cql_commando') ? ting_openformat_get_cql_commando($cql) : ' ' . $cql . ' ';
-}
-
 /**
  * Implements hook_block_info().
  */
