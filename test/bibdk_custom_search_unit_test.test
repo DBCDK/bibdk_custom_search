@@ -228,42 +228,6 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $this->assertEqual($expected_result, $result, 'page_id is returned');
   }
 
-  public function test_bibdk_custom_search_translate_default_values() {
-    global $language;
-
-    $language->language = 'da';
-
-    $default_values = array(
-      'test' => 'but not for me',
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $this->assertEqual($default_values, $result, 'no changes to default value');
-
-    $default_values = array(
-      'test' => array('but not for me'),
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $this->assertEqual($default_values, $result, 'no changes to default value');
-
-    $default_values = array(
-      'test' => array('but NOT for me'),
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $expected_result = array(
-      'test' => array('but IKKE for me'),
-    );
-    $this->assertEqual($expected_result, $result, 'Changes made to default value');
-
-    $default_values = array(
-      'test' => 'but NOT for me',
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $expected_result = array(
-      'test' => 'but IKKE for me',
-    );
-    $this->assertEqual($expected_result, $result, 'Changes made to default value');
-  }
-
   public function test_bibdk_custom_search_list_options() {
     $term_type = 'term.type';
     $ignore_values = array();
