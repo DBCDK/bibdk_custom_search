@@ -539,43 +539,6 @@ function bibdk_custom_search_theme() {
   return $bibdk_custom_search_theme_array;
 }
 
-
-
-
-
-/**
- * Translate boolean operators used in form values.
- */
-function _translate_boolean($value) {
-  global $language;
-
-  $booleanEnglish = array(
-    ' AND ',
-    ' OR ',
-    ' NOT '
-  );
-
-  $booleanDanish = array(
-    ' OG ',
-    ' ELLER ',
-    ' IKKE '
-  );
-
-  switch ($language->language) {
-    CASE 'en-gb':
-      $replaceFrom = $booleanDanish;
-      $replaceTo = $booleanEnglish;
-      break;
-    DEFAULT:
-      $replaceFrom = $booleanEnglish;
-      $replaceTo = $booleanDanish;
-      break;
-  }
-
-  return str_replace($replaceFrom, $replaceTo, $value);
-
-}
-
 /** Wrapper for ting_openformat_get_cql_commando
  * see ting_openformat.module
  *

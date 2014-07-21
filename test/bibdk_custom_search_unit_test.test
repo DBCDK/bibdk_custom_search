@@ -40,57 +40,6 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($result, 'Expand if advanced elements have been set');
   }
 
-  public function test_translate_boolean ()  {
-    global $language;
-
-    $language->language = 'da';
-
-    // Test booleans are translated to danish cql
-    $string = _translate_boolean('but not for me');
-    $expected_result = 'but not for me';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('but NOT for me');
-    $expected_result = 'but IKKE for me';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    $string = _translate_boolean('anders and mickey');
-    $expected_result = 'anders and mickey';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('anders AND mickey');
-    $expected_result = 'anders OG mickey';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    $string = _translate_boolean('me or you');
-    $expected_result = 'me or you';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('me OR you');
-    $expected_result = 'me ELLER you';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    // Test for english language
-    $language->language = 'en-gb';
-
-    $string = _translate_boolean('mig eller dig');
-    $expected_result = 'mig eller dig';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('mig ELLER dig');
-    $expected_result = 'mig OR dig';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-  }
-
-
   public function test_bibdk_custom_search_get_advanced_values() {
     $extended_fields = array (
       'term.genre' =>

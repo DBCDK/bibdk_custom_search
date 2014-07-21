@@ -42,10 +42,10 @@ function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields)
 
       if ($value) {
         if ($no_searchcode) {
-          $extended['qe']['n/a'][$key][] = _translate_boolean($value);
+          $extended['qe']['n/a'][$key][] = $value;
         }
         else {
-          $extended['qe'][$key][] = _translate_boolean($value);
+          $extended['qe'][$key][] = $value;
         }
       }
     }
