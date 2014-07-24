@@ -118,7 +118,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $get_values = array (
       'n/amaterialetype' =>
         array (
-          'term.type=(avis ELLER tidsskrift)' => 'term.type=(avis ELLER tidsskrift)',
+          'term.type=(avis or tidsskrift)' => 'term.type=(avis or tidsskrift)',
         ),
     );
     $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
@@ -127,7 +127,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
         array (
           'n/a' =>
             array (
-              'n/amaterialetype' => array ('term.type=(avis OR tidsskrift)'),
+              'n/amaterialetype' => array ('term.type=(avis or tidsskrift)'),
             ),
         ),
     );
