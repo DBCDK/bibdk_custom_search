@@ -40,57 +40,6 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $this->assertTrue($result, 'Expand if advanced elements have been set');
   }
 
-  public function test_translate_boolean ()  {
-    global $language;
-
-    $language->language = 'da';
-
-    // Test booleans are translated to danish cql
-    $string = _translate_boolean('but not for me');
-    $expected_result = 'but not for me';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('but NOT for me');
-    $expected_result = 'but IKKE for me';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    $string = _translate_boolean('anders and mickey');
-    $expected_result = 'anders and mickey';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('anders AND mickey');
-    $expected_result = 'anders OG mickey';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    $string = _translate_boolean('me or you');
-    $expected_result = 'me or you';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('me OR you');
-    $expected_result = 'me ELLER you';
-
-    $this->assertEqual($string, $expected_result, 'string is translated');
-
-    // Test for english language
-    $language->language = 'en-gb';
-
-    $string = _translate_boolean('mig eller dig');
-    $expected_result = 'mig eller dig';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-
-    $string = _translate_boolean('mig ELLER dig');
-    $expected_result = 'mig OR dig';
-
-    $this->assertEqual($string, $expected_result, 'string is not translated');
-  }
-
-
   public function test_bibdk_custom_search_get_advanced_values() {
     $extended_fields = array (
       'term.genre' =>
@@ -169,7 +118,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $get_values = array (
       'n/amaterialetype' =>
         array (
-          'term.type=(avis ELLER tidsskrift)' => 'term.type=(avis ELLER tidsskrift)',
+          'term.type=(avis or tidsskrift)' => 'term.type=(avis or tidsskrift)',
         ),
     );
     $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
@@ -178,7 +127,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
         array (
           'n/a' =>
             array (
-              'n/amaterialetype' => array ('term.type=(avis OR tidsskrift)'),
+              'n/amaterialetype' => array ('term.type=(avis or tidsskrift)'),
             ),
         ),
     );
@@ -226,42 +175,6 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     $result = _bibdk_custom_search_get_advanced_values($get_values, $extended_fields);
     $expected_result = array('page_id' => 'foo');
     $this->assertEqual($expected_result, $result, 'page_id is returned');
-  }
-
-  public function test_bibdk_custom_search_translate_default_values() {
-    global $language;
-
-    $language->language = 'da';
-
-    $default_values = array(
-      'test' => 'but not for me',
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $this->assertEqual($default_values, $result, 'no changes to default value');
-
-    $default_values = array(
-      'test' => array('but not for me'),
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $this->assertEqual($default_values, $result, 'no changes to default value');
-
-    $default_values = array(
-      'test' => array('but NOT for me'),
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $expected_result = array(
-      'test' => array('but IKKE for me'),
-    );
-    $this->assertEqual($expected_result, $result, 'Changes made to default value');
-
-    $default_values = array(
-      'test' => 'but NOT for me',
-    );
-    $result = bibdk_custom_search_translate_default_values($default_values);
-    $expected_result = array(
-      'test' => 'but IKKE for me',
-    );
-    $this->assertEqual($expected_result, $result, 'Changes made to default value');
   }
 
   public function test_bibdk_custom_search_list_options() {

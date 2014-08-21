@@ -66,9 +66,6 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
  * @param $element
  */
 function _bibdk_custom_search_translate_element(&$element) {
-  // translate all values
-  $element->value = _translate_boolean($element->value);
-
   // Translate all labels, descriptions and help-texts
   $element->element_label = bibdk_custom_search_translate($element->element_label, 'element_label');
   $element->description = bibdk_custom_search_translate($element->description, 'description');
