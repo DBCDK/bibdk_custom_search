@@ -16,6 +16,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $current_page, $de
     if (empty($element->search_code)) {
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
+    $element->value = urlencode($element->value);
 
     /* GROUPS */
     $group = strtolower($element->element_label);
