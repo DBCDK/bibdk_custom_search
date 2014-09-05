@@ -2,10 +2,22 @@
 
     $(document).ready(function () {
         Drupal.bibdkCustomSearchOptionsSubgroup();
+        Drupal.bibdkCustomSearchClearEmptyFields();
     });
+
+    Drupal.bibdkCustomSearchClearEmptyFields = function () {
+        $('#search-block-form').submit(function(e) {
+            $('input[name]').each(function(){
+                if($(this).val() === '') {
+                    $(this).attr('name', '');
+                }
+            });
+        });
+    }
 
     Drupal.bibdkCustomSearchOptionsSubgroup = function () {
         $('fieldset[data-child]').hide();
+        // $('div[data-child]').hide();
         // If child checkbox is checked remove checked from parent
         $('fieldset[data-child] input').change(function () {
             if ($(this).attr('checked') == true) {
