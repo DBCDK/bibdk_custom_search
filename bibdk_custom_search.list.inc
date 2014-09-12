@@ -23,8 +23,9 @@ function bibdk_custom_search_list_ajax_callback($term_type, $facet_term, $facet_
  * @return array Render-array
  */
 function bibdk_custom_search_get_list_options($facet_type, $term_type, $default_values = array()) {
-  if (strpos($facet_type, '=')) {
-    $exploded = explode('=', $facet_type);
+  $facet_type_decoded = urldecode($facet_type);
+  if (strpos($facet_type_decoded, '=')) {
+    $exploded = explode('=', $facet_type_decoded);
     $facet_term = $exploded[0];
     $facet_type = $exploded[1];
   }
