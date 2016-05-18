@@ -11,7 +11,6 @@
  * @return array
  */
 function bibdk_custom_search_bib_open_format_search_conditions_alter(&$conditions) {
-  dpm(__FUNCTION__);
   $submitted_searchcodes = bibdk_custom_search_get_submitted_searchcodes($_REQUEST);
   if (!empty($_REQUEST['qe'])) {
     $conditions['qe'] = $_REQUEST['qe'];
