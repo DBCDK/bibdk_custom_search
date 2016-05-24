@@ -77,10 +77,11 @@ function bibdk_custom_list_create_default_checkboxes($default_values) {
   $return = array();
   foreach ($default_values as $value) {
     $label = explode('=', $value);
+    $label = !empty($label[1]) ? $label[1] : NULL;
     $return[$value] = array(
       '#type' => 'checkbox',
       '#default_value' => $value,
-      '#title' => t($label[1], array(), array('context' => 'material_type')),
+      '#title' => t($label, array(), array('context' => 'material_type')),
       '#return_value' => $value,
       '#attributes' => array(),
     );

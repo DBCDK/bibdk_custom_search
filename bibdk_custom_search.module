@@ -204,10 +204,10 @@ function bibdk_custom_search_theme() {
       'path' => $path,
       'template' => 'bibdk_custom_search-sort-options-form',
     ),
-    'bibdk_search_element' => array(
-      'render element' => 'form',
+    'bibdk_custom_search_advanced_search_element' => array(
       'path' => $path,
-      'template' => 'bibdk_custom_search-search-element-form',
+      'render element' => 'form',
+      'template' => 'bibdk-custom-search-search-element-form',
     ),
     'bibdk_custom_search_advanced_search_panel_wrapper' => array(
       'path' => $path,
@@ -256,6 +256,28 @@ function bibdk_custom_search_permission() {
 /**
  * Implements hook_form_FORM_ID_alter() for form search_block_form.
  *
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ * @return mixed
+ */
+function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+  _bibdk_custom_search_form_search_form_alter($form, $form_state, $form_id);
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter() for form search_form.
+ *
+ * @param $form
+ * @param $form_state
+ * @param $form_id
+ * @return mixed
+ */
+function bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_id) {
+  _bibdk_custom_search_form_search_form_alter($form, $form_state, $form_id);
+}
+
+/**
  * Alters the search form to contain advanced search fields.
  * Converts the form to use get method to speed up form submission
  *
@@ -264,9 +286,9 @@ function bibdk_custom_search_permission() {
  * @param $form_id
  * @return mixed
  */
-function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_id) {
 
-  // if ( module_exists('ting_openformat') ) {
+  if ( module_exists('ting_openformat') || module_exists('bib_open_format_search') ) {
     // The searchform is changed to submit using a get method in order to skip the
     // post part of a drupal form submission giving faster response for the user
     // In this process unnecessary form elements are removed such as form_id,
@@ -275,13 +297,23 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     $form['#method'] = 'get';
     $search_info = search_get_default_module_info();
     $form['#action'] = url('search/' . $search_info['path'], array('fragment' => 'content'));
-  // }
+  }
 
   // Set default value of main search field
   $default_value = (isset($_REQUEST['search_block_form'])) ? $_REQUEST['search_block_form'] : $form['search_block_form']['#default_value'];
-  $form['search_block_form']['#default_value'] = $default_value;
-  $form['search_block_form']['#attributes']['placeholder'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
-  $form['search_block_form']['#attributes']['class'][] = 'search-block-form';
+  $form['basic'] = array();
+  $form['basic']['#type'] = 'container';
+  $form['basic']['#attributes']['class'][] = 'container-inline';
+  $form['basic']['search_block_form']['#default_value'] = $default_value;
+  $form['basic']['search_block_form']['#attributes']['title'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
+  $form['basic']['search_block_form']['#attributes']['placeholder'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
+  $form['basic']['search_block_form']['#attributes']['class'][] = 'search-block-form';
+  $form['basic']['search_block_form']['#type'] = 'textfield';
+  $form['basic']['search_block_form']['#title'] = t('Search', array(), array('context' => 'bibdk_custom_search'));
+  $form['basic']['search_block_form']['#title_display'] = 'invisible';
+  $form['basic']['search_block_form']['#size'] = '40';
+  $form['basic']['submit']['#type'] = 'submit';
+  $form['basic']['submit']['#value'] = t('Submit', array(), array('context' => 'bibdk_custom_search'));;
 
   // Define page_id
   $page_id = (isset($_GET['page_id'])) ? $_GET['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
@@ -310,8 +342,8 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
     'every_page' => TRUE
   ));
 
-  return $form;
 }
+
 
 /**
  * Generates a select dropdown form element to contain materials. To be shown
@@ -597,7 +629,7 @@ function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
  *
  * @param $vars
  */
-function bibdk_custom_search_preprocess_bibdk_search_element(&$vars) {
+function bibdk_custom_search_preprocess_bibdk_custom_search_advanced_search_element(&$vars) {
   $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
   $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
