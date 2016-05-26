@@ -15,9 +15,9 @@ function bibdk_custom_search_get_submitted_searchcodes($get_values) {
   if (!empty($get_values['select_material_type']) && $get_values['select_material_type'] != $get_values['page_id']){
     $page = _bibdk_custom_search_get_page_db($get_values['select_material_type']);
     $get_values['page_id'] = $get_values['select_material_type'];
-    $_GET['page_id'] = $get_values['select_material_type'];
+    $_REQUEST['page_id'] = $get_values['select_material_type'];
     $get_values['delimiter'] = $page['delimiter'];
-    $_GET['delimiter'] = $page['delimiter'];
+    $_REQUEST['delimiter'] = $page['delimiter'];
   }
 
   $extended_fields = _bibdk_custom_search_get_field_searchcodes();
@@ -50,8 +50,7 @@ function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields)
     if (!is_array($values)) {
       $values = array($values);
     }
-    foreach ($values as $value) {
-
+    foreach ($values as $_i => $value) {
       if ($value) {
         if ($no_searchcode) {
           $extended['qe']['n/a'][$key][] = $value;

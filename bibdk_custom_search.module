@@ -5,6 +5,7 @@
  * Bring customizations to the default search box
  */
 
+
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.export.inc');
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.list.inc');
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.db_queries.inc');
@@ -14,6 +15,7 @@ require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.conditions.ting_openformat.inc');
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.usersettings.inc');
 require_once(drupal_get_path('module', 'bibdk_custom_search') . '/includes/bibdk_custom_search.blocks.inc');
+
 
 /**
  * Implements hook_menu().
@@ -153,6 +155,7 @@ function bibdk_custom_search_menu() {
   return $items;
 }
 
+
 /**
  * Implements hook_theme().
  */
@@ -228,6 +231,7 @@ function bibdk_custom_search_theme() {
   return $bibdk_custom_search_theme_array;
 }
 
+
 /**
  * Implements hook_help().
  */
@@ -241,6 +245,7 @@ function bibdk_custom_search_help($path, $arg) {
   }
 }
 
+
 /**
  * Implements hook_permission().
  */
@@ -252,6 +257,7 @@ function bibdk_custom_search_permission() {
     ),
   );
 }
+
 
 /**
  * Implements hook_form_FORM_ID_alter() for form search_block_form.
@@ -265,6 +271,7 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
   _bibdk_custom_search_form_search_form_alter($form, $form_state, $form_id);
 }
 
+
 /**
  * Implements hook_form_FORM_ID_alter() for form search_form.
  *
@@ -277,6 +284,7 @@ function bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_
   _bibdk_custom_search_form_search_form_alter($form, $form_state, $form_id);
 }
 
+
 /**
  * Alters the search form to contain advanced search fields.
  * Converts the form to use get method to speed up form submission
@@ -288,7 +296,16 @@ function bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_
  */
 function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_id) {
 
-  if ( module_exists('ting_openformat') || module_exists('bib_open_format_search') ) {
+  // Define page_id
+  $page_id = (isset($_REQUEST['page_id'])) ? $_REQUEST['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
+  $form['#attributes']['data-type'] = array($page_id);
+  $form['page_id'] = array(
+    '#type' => 'hidden',
+    '#value' => $page_id,
+  );
+
+  if ( module_exists('ting_openformat') || module_exists('_bib_open_format_search') ) {
+  // if ( module_exists('ting_openformat') || module_exists('bib_open_format_search') ) {
     // The searchform is changed to submit using a get method in order to skip the
     // post part of a drupal form submission giving faster response for the user
     // In this process unnecessary form elements are removed such as form_id,
@@ -297,6 +314,12 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
     $form['#method'] = 'get';
     $search_info = search_get_default_module_info();
     $form['#action'] = url('search/' . $search_info['path'], array('fragment' => 'content'));
+  }
+
+  if ( module_exists('bib_open_format_search') ) {
+    // override default form submission (search_box_form_submit())
+    $form['#submit'] = array('bibdk_custom_search_submit');
+    $form['#validate'] = array('bibdk_custom_search_validate');
   }
 
   // Set default value of main search field
@@ -314,14 +337,6 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
   $form['basic']['search_block_form']['#size'] = '40';
   $form['basic']['submit']['#type'] = 'submit';
   $form['basic']['submit']['#value'] = t('Submit', array(), array('context' => 'bibdk_custom_search'));;
-
-  // Define page_id
-  $page_id = (isset($_GET['page_id'])) ? $_GET['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
-  $form['#attributes']['data-type'] = array($page_id);
-  $form['page_id'] = array(
-    '#type' => 'hidden',
-    '#value' => $page_id,
-  );
 
   $pages = _bibdk_custom_search_get_pages_db();
   // Gets the searchpages navigationbar if pages exists
@@ -341,7 +356,66 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
     'scope' => 'footer',
     'every_page' => TRUE
   ));
+}
 
+/**
+ * Override search_form_validate()
+ */
+function bibdk_custom_search_validate($form, &$form_state) {
+  // $form['basic']['processed_keys'] and $form_state['values']['keys'] isn't set when submitting
+  // the search result page search form. We don't need it anyway, since we redirect to GET on submit.
+}
+
+
+/**
+ * Override search_form_submit()
+ */
+function bibdk_custom_search_submit(&$form, &$form_state) {
+
+  // The search form relies on control of the redirect destination for its
+  // functionality, so we override any static destination set in the request,
+  // for example by drupal_access_denied() or drupal_not_found()
+  // (see http://drupal.org/node/292565).
+  if (isset($_GET['destination'])) {
+    unset($_GET['destination']);
+  }
+
+  $page_id = $form_state['values']['page_id'];
+  $submitted_searchcodes = bibdk_custom_search_get_submitted_searchcodes($_REQUEST);
+  unset($submitted_searchcodes['qe']['query']);
+  if ( !empty($submitted_searchcodes['qe']['n/a']) ) {
+    $_na = $submitted_searchcodes['qe']['n/a'];
+    unset($submitted_searchcodes['qe']['n/a']);
+    $submitted_searchcodes['qe'] += $_na;
+  }
+  // TO DO: $searchcodes_inputcheck['year.op'] is specific for Bibliotek.dk & Netpunkt.
+  //        - it ought to be a more generic test model.
+  $searchcodes_inputcheck = $submitted_searchcodes['qe'];
+  unset($searchcodes_inputcheck['year.op']);
+
+  // Check to see if the form was submitted empty.
+  // If it is empty, display an error message.
+  // (This method is used instead of setting #required to TRUE for this field
+  // because that results in a confusing error message.  It would say a plain
+  // "field is required" because the search keywords field has no title.
+  if ($form_state['values']['search_block_form'] == '' && sizeof($searchcodes_inputcheck) == 0) {
+    form_set_error('keys', t('Please enter some keywords.'));
+  }
+
+  $form_id = $form['form_id']['#value'];
+  $info = search_get_default_module_info();
+  if ($info) {
+    $options['query'] = array(
+      'search_block_form' => trim($form_state['values']['search_block_form']),
+      'page_id' => $page_id
+    );
+    $options['query'] += $submitted_searchcodes['qe'];
+    $options['fragment'] = 'content';
+    drupal_goto('search/' . $info['path'] . '/' . trim($form_state['values']['search_block_form']), $options);
+  }
+  else {
+    form_set_error(NULL, t('Search is currently disabled.'), 'error');
+  }
 }
 
 
@@ -371,6 +445,7 @@ function _bibdk_custom_search_get_mobile_material_selector($page_id, $pages) {
   return $select;
 }
 
+
 /**
  * Get form for advanced search fields
  *
@@ -392,7 +467,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   }
 
   // Get default values
-  $default_values = $_REQUEST;
+  $default_values = $_GET;
   if (isset($page['page_path'])) {
     $default_values['q'] = $page['page_path'];
   }
@@ -408,6 +483,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
   return $advanced_search_panel;
 }
 
+
 /**
  * Delivers the advanced search panel
  *
@@ -417,6 +493,7 @@ function _bibdk_custom_search_get_advanced_fields_form($destination = FALSE) {
  * @return array
  */
 function _bibdk_custom_search_get_search_panel($page, $result, $default_values) {
+  global $base_path;
   $is_visible = _bibdk_custom_search_is_advanced_search_expanded($default_values);
   $toggled = ($is_visible) ? 'toggled' : '';
   $expand_hidden = ($is_visible) ? 'hidden' : '';
@@ -429,6 +506,7 @@ function _bibdk_custom_search_get_search_panel($page, $result, $default_values) 
     '#toggled' => $toggled,
     '#expand_hidden' => $expand_hidden,
     '#collaps_hidden' => $collaps_hidden,
+    '#base_path' => $base_path,
     '#attributes' => array(
       'class' => array(
         _bibdk_custom_search_trim_string(($page['page_title']) ? $page['page_title'] : FALSE),
@@ -462,6 +540,7 @@ function _bibdk_custom_search_get_search_panel($page, $result, $default_values) 
 
   return $advanced_search_panel;
 }
+
 
 /**
  * Check if advanced searchsettings have been activated in previous search
@@ -501,6 +580,7 @@ function _bibdk_custom_search_is_advanced_search_expanded($get) {
   return TRUE;
 }
 
+
 /**
  * Strips a string for spaces and lowersaces it
  *
@@ -517,6 +597,7 @@ function _bibdk_custom_search_trim_string($string) {
   )));
 }
 
+
 /**
  * Strips a string for spaces, æøå and lowercawes it
  *
@@ -532,6 +613,7 @@ function _bibdk_custom_search_machine_readable($string) {
     '_'
   ), $string));
 }
+
 
 /**
  * Renders a form button for each page in pages array
@@ -556,6 +638,7 @@ function _bibdk_custom_search_get_searchpage_buttons($req, $pages) {
 
   return $searchpages;
 }
+
 
 /**
  * Create searchpage button link
@@ -586,30 +669,6 @@ function bibdk_custom_search_searchpage_button_link($text, $path, $class = '') {
   return $link;
 }
 
-/**
- * @deprecated seems like an old function that should be deleted /mmj
- */
-function bibdk_custom_searchpage_ajax_callback() {
-  $type = $_GET['type'];
-  $_GET['q'] = $type;
-
-  $bodyClass = 'page-' . strtr($type, array(
-      '/' => '-',
-      '_' => '-',
-    ));
-
-  $form = drupal_render(drupal_get_form('search_block_form'));
-
-  $label_type = t('label_' . str_replace('/', '_', $type), array(), array('context' => 'bibdk_custom_search'));
-
-  drupal_json_output(array(
-    'bodyclass' => $bodyClass,
-    'form' => $form,
-    'request' => $type,
-    'label_type' => $label_type
-  ));
-  drupal_exit();
-}
 
 /**
  * Submit handler for search page selection.
@@ -623,6 +682,7 @@ function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
   drupal_goto($dest);
 }
 
+
 /**
  * Extract title, description and helptext from render-array, and set them as
  * individual variables to be set in the template
@@ -630,11 +690,14 @@ function bibdk_custom_search_new_searchpage_picked($form, $form_state) {
  * @param $vars
  */
 function bibdk_custom_search_preprocess_bibdk_custom_search_advanced_search_element(&$vars) {
+  global $base_path;
+  $vars['base_path'] = $base_path;
   $vars['title'] = isset($vars['form']['#title_text']) ? $vars['form']['#title_text'] : "";
   $vars['help'] = isset($vars['form']['#help_text']) ? $vars['form']['#help_text'] : "";
   $vars['description'] = isset($vars['form']['#description_text']) ? $vars['form']['#description_text'] : "";
   $vars['element_id'] = isset($vars['form']['#element_id']) ? $vars['form']['#element_id'] : "";
 }
+
 
 /**
  * Translates a string and appends the given context.
@@ -650,6 +713,7 @@ function bibdk_custom_search_translate_update($string, $context) {
   return t($string, array(), array('context' => "bibdk_custom_search:$context"));
 }
 
+
 /**
  * Translates a string and appends the given context.
  *
@@ -660,6 +724,7 @@ function bibdk_custom_search_translate_update($string, $context) {
 function bibdk_custom_search_translate($string, $context) {
   return t($string, array(), array('context' => "bibdk_custom_search:$context"));
 }
+
 
 /** Implements hook_preprocess_page
  *
