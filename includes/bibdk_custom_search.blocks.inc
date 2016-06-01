@@ -36,7 +36,7 @@ function bibdk_custom_search_block_view($delta='') {
 function _bibdk_custom_search_pages_navigation() {
   $block = array();
 
-  $page_id = (isset($_GET['page_id'])) ? $_GET['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
+  $page_id = (isset($_REQUEST['page_id'])) ? $_REQUEST['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
   $pages = _bibdk_custom_search_get_pages_db();
 
   // Gets the searchpages navigationbar if pages exists

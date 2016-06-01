@@ -154,8 +154,11 @@ function bibdk_custom_search_user_settings($tab) {
   }
 }
 
+/**
+ * Make form for materials in user settings 
+ */
 function bibdk_custom_search_usersettings_materials() {
-  //Get values from database
+  // Get values from database
   $default_values = bibdk_custom_search_user_settings_get('bibdk_custom_search_materials', array());
   $elements = variable_get('bibdk_custom_search_user_settings', array());
 

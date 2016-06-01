@@ -42,7 +42,7 @@ function _bibdk_custom_search_create_advanced_form($elements, $default_values) {
         '#collapsible' => FALSE,
         '#collapsed' => FALSE,
         '#tree' => FALSE,
-        '#theme' => 'bibdk_search_element',
+        '#theme' => 'bibdk_custom_search_advanced_search_element',
         '#element_id' => drupal_html_id('input ' . $element->element_label),
         '#element_title' => $element->element_label,
         '#title_text' => $element->element_label,

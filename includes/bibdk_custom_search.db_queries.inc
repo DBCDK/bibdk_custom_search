@@ -119,6 +119,9 @@ function _bibdk_custom_search_get_pages_db() {
 }
 
 
+/**
+ * Get search pages from db
+ */
 function bibdk_custom_search_get_custom_search_pages() {
   static $elements;
   if (isset($elements)) {
@@ -153,6 +156,10 @@ function bibdk_custom_search_get_custom_search_pages() {
   return $elements;
 }
 
+
+/**
+ * Get search options from db
+ */
 function _bibdk_custom_search_get_options_db_raw($value_id){
 
   $cache_id = 'bibdk_custom_search_options_' . $value_id;
