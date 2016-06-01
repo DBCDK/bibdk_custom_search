@@ -297,9 +297,12 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
 
   if ( module_exists('ting_openformat') || module_exists('bib_open_format_search') ) {
     // override default form submission (search_box_form_submit() sets form_set_error if search_block_form is empty).
-    $form['#submit'] = array('bibdk_custom_search_submit');
-    // override default form validation (returns error when submitting the search result page search form).
-    $form['#validate'] = array('bibdk_custom_search_validate');
+    $n = array_search('search_box_form_submit',$form['#submit']);
+    if ( $n !== FALSE ) {
+      unset($form['#submit'][$n]);
+    }
+    $form['#submit'][] = 'bibdk_custom_search_submit';
+    $form['#validate'][] = 'bibdk_custom_search_validate';
   }
 
   // Set default value of main search field
@@ -341,6 +344,7 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
 
 /**
  * Override search_form_validate()
+ * Default form validation (returns error when submitting the search result page search form).
  */
 function bibdk_custom_search_validate($form, &$form_state) {
   // $form['basic']['processed_keys'] and $form_state['values']['keys'] isn't set when submitting
@@ -362,7 +366,7 @@ function bibdk_custom_search_submit(&$form, &$form_state) {
   }
 
   $page_id = $form_state['values']['page_id'];
-  $submitted_searchcodes = bibdk_custom_search_get_submitted_searchcodes($_REQUEST);
+  $submitted_searchcodes = bibdk_custom_search_get_submitted_searchcodes($_POST);
   unset($submitted_searchcodes['qe']['query']);
   if ( !empty($submitted_searchcodes['qe']['n/a']) ) {
     $_na = $submitted_searchcodes['qe']['n/a'];
@@ -391,6 +395,11 @@ function bibdk_custom_search_submit(&$form, &$form_state) {
       'page_id' => $page_id
     );
     $options['query'] += $submitted_searchcodes['qe'];
+    foreach ($options['query'] as $key => $query_item) {
+      if ( is_array($query_item) ) {
+        $options['query'][$key] = array_unique($query_item);
+      }
+    }
     $options['fragment'] = 'content';
     drupal_goto('search/' . $info['path'] . '/' . trim($form_state['values']['search_block_form']), $options);
   }
