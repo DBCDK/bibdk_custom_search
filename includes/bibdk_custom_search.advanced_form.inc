@@ -181,9 +181,10 @@ function bibdk_custom_search_create_checkboxes($element, &$default_values, $opti
 
   // Get default values
   $default = ($element->default_value == $element->value) ? $element->default_value : NULL;
-  if (isset($default_values[$parent][$element->value])) {
+  if ( isset($default_values[$parent]) && in_array($element->value, $default_values[$parent])) {
     $default = $element->value;
-    unset($default_values[$element->search_code][$element->value]);
+    $key = array_search($element->value, $default_values[$parent]);
+    unset($default_values[$parent][$key]);
   }
   // Create checkbox
   $return = array();
