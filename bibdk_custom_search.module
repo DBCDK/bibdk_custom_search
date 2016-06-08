@@ -278,7 +278,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
 
 /**
  * Alters the search form to contain advanced search fields.
- * Converts the form to use get method to speed up form submission
  *
  * @param $form
  * @param $form_state
@@ -286,7 +285,6 @@ function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, 
  * @return mixed
  */
 function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form_id) {
-
   // Define page_id
   $page_id = (isset($_REQUEST['page_id'])) ? $_REQUEST['page_id'] : ((isset($_GET['q'])) ? $_GET['q'] : NULL);
   $form['#attributes']['data-type'] = array($page_id);
