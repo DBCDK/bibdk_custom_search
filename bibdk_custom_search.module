@@ -303,21 +303,17 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
     $form['#validate'][] = 'bibdk_custom_search_validate';
   }
 
+
   // Set default value of main search field
   $default_value = (isset($_REQUEST['search_block_form'])) ? $_REQUEST['search_block_form'] : $form['search_block_form']['#default_value'];
-  $form['basic'] = array();
-  $form['basic']['#type'] = 'container';
-  $form['basic']['#attributes']['class'][] = 'container-inline';
-  $form['basic']['search_block_form']['#default_value'] = $default_value;
-  $form['basic']['search_block_form']['#attributes']['title'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
-  $form['basic']['search_block_form']['#attributes']['placeholder'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
-  $form['basic']['search_block_form']['#attributes']['class'][] = 'search-block-form';
-  $form['basic']['search_block_form']['#type'] = 'textfield';
-  $form['basic']['search_block_form']['#title'] = t('Search', array(), array('context' => 'bibdk_custom_search'));
-  $form['basic']['search_block_form']['#title_display'] = 'invisible';
-  $form['basic']['search_block_form']['#size'] = '40';
-  $form['basic']['submit']['#type'] = 'submit';
-  $form['basic']['submit']['#value'] = t('Submit', array(), array('context' => 'bibdk_custom_search'));;
+  $form['search_block_form']['#default_value'] = $default_value;
+  $form['search_block_form']['#attributes']['title'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
+  $form['search_block_form']['#attributes']['placeholder'] = t('placeholder_text', array(), array('context' => 'bibdk_custom_search'));
+  $form['search_block_form']['#attributes']['class'][] = 'search-block-form';
+  $form['search_block_form']['#type'] = 'textfield';
+  $form['search_block_form']['#title'] = t('Search', array(), array('context' => 'bibdk_custom_search'));
+  $form['search_block_form']['#title_display'] = 'invisible';
+  $form['search_block_form']['#size'] = '40';
 
   $pages = _bibdk_custom_search_get_pages_db();
   // Gets the searchpages navigationbar if pages exists
@@ -345,7 +341,7 @@ function _bibdk_custom_search_form_search_form_alter(&$form, &$form_state, $form
  * Default form validation (returns error when submitting the search result page search form).
  */
 function bibdk_custom_search_validate($form, &$form_state) {
-  // $form['basic']['processed_keys'] and $form_state['values']['keys'] isn't set when submitting
+  // $form['processed_keys'] and $form_state['values']['keys'] isn't set when submitting
   // the search result page search form. We don't need it anyway, since we redirect to GET on submit.
 }
 
