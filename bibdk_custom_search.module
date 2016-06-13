@@ -385,7 +385,7 @@ function bibdk_custom_search_submit(&$form, &$form_state) {
   $info = search_get_default_module_info();
   if ($info) {
     $options['query'] = array(
-      'search_block_form' => trim($form_state['values']['search_block_form']),
+      'search_block_form' => (!empty($_POST['search_block_form'])) ? trim($_POST['search_block_form']) : '',
       'page_id' => $page_id
     );
     $options['query'] += $submitted_searchcodes['qe'];
@@ -395,7 +395,7 @@ function bibdk_custom_search_submit(&$form, &$form_state) {
       }
     }
     $options['fragment'] = 'content';
-    drupal_goto('search/' . $info['path'] . '/' . trim($form_state['values']['search_block_form']), $options);
+    drupal_goto('search/' . $info['path'], $options);
   }
   else {
     form_set_error(NULL, t('Search is currently disabled.'), 'error');
