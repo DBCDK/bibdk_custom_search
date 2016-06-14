@@ -259,14 +259,14 @@ function bibdk_custom_search_permission() {
 
 
 /**
- * Implements hook_form_FORM_ID_alter().
+ * Implements hook_form_alter().
  *
  * @param $form
  * @param $form_state
  * @param $form_id
  * @return mixed
  */
-function bibdk_custom_search_form_search_block_form_alter(&$form, &$form_state, $form_id) {
+function bibdk_custom_search_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'search_block_form';
     case 'search_form';
