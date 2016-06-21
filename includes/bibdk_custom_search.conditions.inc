@@ -66,6 +66,14 @@ function _bibdk_custom_search_get_advanced_values($get_values, $extended_fields)
     $extended['qe']['delimiter'] = $delimiter;
   }
 
+  if(isset($get_values['sort'])) {
+    $extended['qe']['sort'] = $get_values['sort'];
+  }
+
+  if(isset($get_values['profile'])) {
+    $extended['qe']['profile'] = $get_values['profile'];
+  }
+
   if (isset($get_values['page_id'])) {
     $extended['page_id'] = $get_values['page_id'];
   }
