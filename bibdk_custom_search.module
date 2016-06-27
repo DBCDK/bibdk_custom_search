@@ -269,7 +269,7 @@ function bibdk_custom_search_permission() {
 function bibdk_custom_search_form_alter(&$form, &$form_state, $form_id) {
   switch ($form_id) {
     case 'search_block_form';
-    case 'search_form';
+    // case 'search_form';
       _bibdk_custom_search_form_search_form_alter($form, $form_state, $form_id);
       break;
   }
@@ -724,4 +724,27 @@ function bibdk_custom_search_preprocess_page(&$vars) {
   if (drupal_is_front_page() && ($front !== '<front>' && $front !== 'bibdk_frontpage') && strpos($_SERVER['REQUEST_URI'], 'bibdk_frontpage') === FALSE) {
     drupal_goto($front);
   }
+}
+
+
+/**
+ * Implements template_preprocess_hook().
+ *
+ * Order radio options into subfolders, if defined in configuration
+ * Note: i bibliotek.dk ligger denne funktion i template.php. Bør ligge hér
+ */
+function template_preprocess_bibdk_custom_search_radio_buttons(&$variables) {
+  if (empty($variables['form']['#data_toggle'])) {
+    return;
+  }
+  foreach ($variables['form']['#data_toggle'] as $n => $toggle) {
+    $key = $toggle['key'];
+    $u_key = drupal_html_id($toggle['key']);
+    $first = $toggle['options']['first']['value'];
+    $last = $toggle['options']['last']['value'];
+    $variables['form'][$key]['#title'] = '<span data-child="' . $u_key . '" class="toggle-subgroup"> + </span>' . $variables['form'][$key]['#title'];
+    $variables['form'][$first]['#prefix'] = '<fieldset id="edit-term-' . $key . '" class="sub-elements form-wrapper" data-child="' . $u_key . '" style="display: block;">';
+    $variables['form'][$last]['#suffix'] = '</fieldset>';
+  }
+  unset($variables['form']['#data_toggle']);
 }
