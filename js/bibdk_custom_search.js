@@ -55,6 +55,7 @@
         }
       });
     },
+    // deprecated: use MODULE_process_HOOK instead, ex. netpunkt_frontend_process_bibdk_custom_search_radio_buttons
     splitInColumns: function(context){
       // ***** Split radio elements in columns ***** //
       var count = 0;
@@ -90,7 +91,7 @@
       getAdvancedSearchPanel();
       CustomSearch.toggleAdvancedSearchPanel(context);
       CustomSearch.handleSheetMusic(context);
-      CustomSearch.splitInColumns(context);
+      // CustomSearch.splitInColumns(context);
     }
   };
 }(jQuery));
