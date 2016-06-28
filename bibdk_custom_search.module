@@ -41,7 +41,7 @@ function bibdk_custom_search_menu() {
   );
 
   $items['admin/config/search/bibdk_custom_search'] = array(
-    'title' => 'bibdk search pages',
+    'title' => 'Custom search pages',
     'description' => 'Customize the default search, add custom search pages, and change labels, values & ordering.',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('bibdk_custom_search_admin'),
