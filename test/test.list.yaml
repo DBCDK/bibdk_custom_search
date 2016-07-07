@@ -7,8 +7,8 @@ simpletest :
   path : test/bibdk_custom_search_unit_test.test
 - name : BibdkCustomSearchWebTestCase
   path : test/bibdk_custom_search_web_test.test
-- name : BibdkCustomSearchListTestCase
-  path : test/bibdk_custom_search_test_list.test
+# - name : BibdkCustomSearchListTestCase
+#   path : test/bibdk_custom_search_test_list.test
 # - name : <test suite>
 #   path :
 #     Path to file, if different from default path, and named different than <test suite>.test

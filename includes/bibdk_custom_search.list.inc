@@ -1,5 +1,11 @@
 <?php
 
+/*
+ * Function is specific for Bibliotek.dk, with a dependency to ting_openformat
+ * - ought to be a seperate module that hooks into ting_openformat?
+ */
+
+
 /**
  * Ajax callback
  *
