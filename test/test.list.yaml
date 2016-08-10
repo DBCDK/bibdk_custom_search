@@ -3,8 +3,8 @@
 
 simpletest :
 # DrupalUnitTestCase and DrupalWebTestCase
-- name : BibdkCustomSearchUnitTestCase
-  path : test/bibdk_custom_search_unit_test.test
+#- name : BibdkCustomSearchUnitTestCase
+#  path : test/bibdk_custom_search_unit_test.test
 - name : BibdkCustomSearchWebTestCase
   path : test/bibdk_custom_search_web_test.test
 # - name : BibdkCustomSearchListTestCase
