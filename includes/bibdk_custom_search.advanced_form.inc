@@ -16,9 +16,6 @@ function _bibdk_custom_search_create_advanced_form($elements, $default_values) {
     if (empty($element->search_code)) {
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
-    // JGN: Cause double urlencode - should be fixed in javascript
-    // BUG 17887: url encode values 
-    // $element->value = urlencode($element->value);
 
     /* GROUPS */
     $group = strtolower($element->element_label);
@@ -207,9 +204,9 @@ function bibdk_custom_search_create_checkboxes($element, &$default_values, $opti
 
   // Create nested checkbox options
   if ($element->expand) {
-    $key = $element->value;
+    $key = urlencode($element->value);
     $return[$element->value]['#attributes'] += array(
-      'data-parent' => $parent,
+      'data-parent' => urlencode($parent),
     );
     $return[$element->value]['#title'] = '<span data-child="' . $key . '" class="toggle-subgroup"> + </span>' . $return[$element->value]['#title'];
     $return[$key . '-fieldset'] = array(
