@@ -16,6 +16,8 @@ function _bibdk_custom_search_create_advanced_form($elements, $default_values) {
     if (empty($element->search_code)) {
       $element->search_code = 'n/a' . strtolower($element->element_label);
     }
+    // JGN: Cause double urlencode - should be fixed in javascript
+    // BUG 17887: url encode values 
     // $element->value = urlencode($element->value);
 
     /* GROUPS */
