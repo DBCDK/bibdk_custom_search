@@ -10,15 +10,17 @@
   };
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
+
     $('fieldset[data-child]').hide();
     // If child checkbox is checked remove checked from parent
-    $('fieldset[data-child] input').change(function() {
 
+    $('fieldset[data-child] input').change(function() {
       if($(this).attr('checked') == 'checked') {
         var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
         $('[data-parent][value="' + parentKey + '"]').attr('checked', false);
       }
     });
+
     // If parent checkbox is checked remove checked from children
     $('input[data-parent]').change(function() {
       if($(this).attr('checked') == 'checked') {
@@ -26,11 +28,16 @@
         $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
       }
     });
-    $('.toggle-subgroup').click(function(e) {
-      e.preventDefault();
-      $(this).toggleClass('toggled');
-      var childKey = $(this).attr('data-child');
-      $('fieldset[data-child="' + childKey + '"]').toggle();
+    
+    $('.toggle-subgroup').once('toggle-subgroup', function () {
+      $(this).click(function(e) {
+        console.log('toggle-subgroup');
+        e.preventDefault();
+        $(this).toggleClass('toggled');
+        var childKey = $(this).attr('data-child');
+        console.log(childKey);
+        $('fieldset[data-child="' + childKey + '"]').toggle();
+      });
     });
 
     /* Expand all subgroups with selected values*/
