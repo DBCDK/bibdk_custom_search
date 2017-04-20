@@ -1,6 +1,6 @@
 (function($) {
   Drupal.bibdkCustomSearchClearEmptyFields = function() {
-    $('#search-block-form').submit(function(e) {
+    $('#search-block-form') .submit(function(e) {
       $('input[name]').each(function() {
         if($(this).val() === '') {
           $(this).attr('name', '');
@@ -11,40 +11,44 @@
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
 
-    $('fieldset[data-child]').hide();
     // If child checkbox is checked remove checked from parent
-
-    $('fieldset[data-child] input').change(function() {
-      if($(this).attr('checked') == 'checked') {
-        var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
-        $('[data-parent][value="' + parentKey + '"]').attr('checked', false);
-      }
+    $('fieldset[data-child] input').once('child-checked', function () {
+      $(this).change(function() {
+        if($(this).attr('checked') === 'checked') {
+          var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
+          $('[data-parent][value="' + parentKey + '"]').attr('checked', false);
+        }
+      });
     });
 
     // If parent checkbox is checked remove checked from children
-    $('input[data-parent]').change(function() {
-      if($(this).attr('checked') == 'checked') {
-        var childKey = $(this).attr('value')
-        $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
-      }
+    $('input[data-parent]').once('parent-checked', function () {
+      $('fieldset[data-child]').hide();
+
+      $(this).change(function() {
+        if($(this).attr('checked') === 'checked') {
+          var childKey = $(this).attr('value')
+          $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
+        }
+      });
     });
     
     $('.toggle-subgroup').once('toggle-subgroup', function () {
       $(this).click(function(e) {
-        console.log('toggle-subgroup');
         e.preventDefault();
         $(this).toggleClass('toggled');
         var childKey = $(this).attr('data-child');
-        console.log(childKey);
         $('fieldset[data-child="' + childKey + '"]').toggle();
       });
     });
 
     /* Expand all subgroups with selected values*/
-    $('fieldset[data-child] input:checked').each(function(i, element) {
-      var childKey = $(element).closest('fieldset[data-child]').attr('data-child');
-      var trigger = $('[data-child="' + childKey + '"]:not(.toggled).toggle-subgroup');
-      trigger.trigger('click');
+    $('fieldset[data-child] input:checked').once('toggle-expand', function() {
+      $(this).each(function(i, element) {
+        var childKey = $(element).closest('fieldset[data-child]').attr('data-child');
+        var trigger = $('[data-child="' + childKey + '"]:not(.toggled).toggle-subgroup');
+        trigger.trigger('click');
+      });
     });
 
     // Autoselect the 'all' values under checkboxes
@@ -61,7 +65,7 @@
           $('[data-group="' + group + '"].master').attr('checked', false)
         }
       }
-      else if($('[data-group="' + group + '"]:checked').length == 0) {
+      else if($('[data-group="' + group + '"]:checked').length === 0) {
         $('[data-group="' + group + '"].master').attr('checked', true);
       }
     });
@@ -73,7 +77,9 @@
   };
 
   Drupal.setBodyClass = function(currClass) {
-    var classesArr = $('body').attr('class').split(' ');
+    var $body = $('body');
+
+    var classesArr = $body.attr('class').split(' ');
 
     for(var i = 0; i < classesArr.length; i++) {
       if(classesArr[i].indexOf('page-bibdk-frontpage') >= 0) {
@@ -81,8 +87,6 @@
       }
     }
     classesArr.push(currClass);
-
-    var $body = $('body');
 
     $body.removeClass();
     $body.addClass(classesArr.join(' '));
@@ -111,35 +115,37 @@
 
   Drupal.behaviors.bibdkCustomSearchCheckboxes = {
     attach: function(context, settings) {
-      $('.form-type-checkbox input').change(function() {
-        // clear other checkboxes if top-level default is selected, and default value is null.
-        if($(this).hasClass('default-value') && $(this).is(':checked') && !$(this).val()) {
-          $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-            if(!$(this).hasClass('default-value')) {
-              $(this).attr('checked', false);
-            }
-          })
-        }
-        // clear top-level default if other checkboxes is selected, and default value is null.
-        if(!$(this).hasClass('default-value') && $(this).is(':checked')) {
-          $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-            if($(this).hasClass('default-value')) {
-              $(this).attr('checked', false);
-            }
-          })
-        }
-        // set top-level default as selected, if all other checkboxes are unchecked.
-        if(!$(this).is(':checked')) {
-          var counter = 0;
-          $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-            if($(this).is(':checked')) {
-              counter++;
-            }
-          })
-          if(!counter) {
-            $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
+      $('.form-type-checkbox input').once('checkbox-check', function() {
+        $(this).change(function() {
+          // clear other checkboxes if top-level default is selected, and default value is null.
+          if($(this).hasClass('default-value') && $(this).is(':checked') && !$(this).val()) {
+            $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
+              if(!$(this).hasClass('default-value')) {
+                $(this).attr('checked', false);
+              }
+            })
           }
-        }
+          // clear top-level default if other checkboxes is selected, and default value is null.
+          if(!$(this).hasClass('default-value') && $(this).is(':checked')) {
+            $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
+              if($(this).hasClass('default-value')) {
+                $(this).attr('checked', false);
+              }
+            })
+          }
+          // set top-level default as selected, if all other checkboxes are unchecked.
+          if(!$(this).is(':checked')) {
+            var counter = 0;
+            $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
+              if($(this).is(':checked')) {
+                counter++;
+              }
+            })
+            if(!counter) {
+              $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
+            }
+          }
+        });
       });
 
       Drupal.bibdkCustomSearchOptionsSubgroup();
