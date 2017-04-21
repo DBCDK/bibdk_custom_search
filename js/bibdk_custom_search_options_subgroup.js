@@ -11,10 +11,8 @@
 
   Drupal.bibdkCustomSearchOptionsSubgroup = function() {
 
-    $('fieldset[data-child]').hide();
-    // If child checkbox is checked remove checked from parent
-
     $('fieldset[data-child] input').change(function() {
+
       if($(this).attr('checked') == 'checked') {
         var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
         $('[data-parent][value="' + parentKey + '"]').attr('checked', false);
@@ -30,6 +28,8 @@
     });
     
     $('.toggle-subgroup').once('toggle-subgroup', function () {
+      $('fieldset[data-child]').hide();
+      // If child checkbox is checked remove checked from parent
       $(this).click(function(e) {
         console.log('toggle-subgroup');
         e.preventDefault();
