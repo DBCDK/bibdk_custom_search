@@ -142,10 +142,7 @@ function bibdk_custom_search_list_from_webservice($type, $number_requested = 100
     'numResults' => 0,
     'objectFormat' => 'DKABM',
   );
-
-  if (!class_exists('TingClient') && module_exists('libraries')) {
-    libraries_load('TingClient');
-  }
+  
   $client = new ting_client_class();
 
   $result = $client->do_request('search', $params);
