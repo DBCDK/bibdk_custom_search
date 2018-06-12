@@ -11,14 +11,12 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Custom Search Web Test',
-      'description' => 'Bibdk Custom Search test.',
-      'group' => 'Bibliotek.dk  - Custom Search',
+      'description' => 'Webtests for Custom Search.',
+      'group' => 'Bibliotek.dk',
     );
   }
 
   public function setUp() {
-    // $this->profile = 'minimal';
-    // parent::setUp('bibdk_custom_search', 'search', 'uuid', 'ting_openformat');
     parent::setUp('bibdk_custom_search', 'search', 'uuid');
     variable_set('ting_search_url', 'http://lakiseks.dbc.dk/openbibdk/next/');
     variable_set('bibdk_provider_security_code', 'testhest');

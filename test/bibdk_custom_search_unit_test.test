@@ -5,8 +5,8 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
   public static function getInfo() {
     return array(
       'name' => 'Custom Search Unit Test',
-      'description' => 'Bibdk Custom Unit test.',
-      'group' => 'Bibliotek.dk  - Custom Search',
+      'description' => 'Unit test for Custom Search.',
+      'group' => 'Bibliotek.dk',
     );
   }
 
