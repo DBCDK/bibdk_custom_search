@@ -6,7 +6,7 @@ class BibdkCustomSearchUnitTestCase extends DrupalUnitTestCase {
     return array(
       'name' => 'Custom Search Unit Test',
       'description' => 'Unit test for Custom Search.',
-      'group' => 'Bibliotek.dk',
+      'group' => 'bibliotek.dk',
     );
   }
 
