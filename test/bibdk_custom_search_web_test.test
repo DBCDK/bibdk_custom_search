@@ -12,7 +12,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     return array(
       'name' => 'Custom Search Web Test',
       'description' => 'Webtests for Custom Search.',
-      'group' => 'bibliotek.dk',
+      'group' => 'Netpunkt / Bibliotek.dk',
     );
   }
 
