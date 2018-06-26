@@ -87,13 +87,13 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $edit['element_value[search_code]'] = $_bibdk_custom_search_value_search_code_1 = $this->randomName(8);
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName('element_value[value_type]', $edit['element_value[value_type]'], format_string('The value "@value_title" have been set to a type "@type".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@type' => $edit['element_value[value_type]']
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@type' => $edit['element_value[value_type]']
+    )));
     $this->assertFieldByName('element_value[search_code]', $edit['element_value[search_code]'], format_string('The value "@value_title" have been assigned a search code "@code".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@code' => $edit['element_value[search_code]']
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@code' => $edit['element_value[search_code]']
+    )));
 
     /**
      * Test editing a custom search element.
@@ -112,21 +112,21 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $edit['bibdk_custom_search_page_element[help_text]'] = $this->randomName(10);
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName('bibdk_custom_search_page_element[element_label]', $edit['bibdk_custom_search_page_element[element_label]'], format_string('The element "@element_title" have been assigned a label "@val".', array(
-        '@element_title' => $element_title,
-        '@val' => $edit['bibdk_custom_search_page_element[element_label]']
-      )));
+      '@element_title' => $element_title,
+      '@val' => $edit['bibdk_custom_search_page_element[element_label]']
+    )));
     $this->assertFieldByName('bibdk_custom_search_page_element[access_key]', $edit['bibdk_custom_search_page_element[access_key]'], format_string('The element "@element_title" have been assigned an accesskey "@val".', array(
-        '@element_title' => $element_title,
-        '@val' => $edit['bibdk_custom_search_page_element[access_key]']
-      )));
+      '@element_title' => $element_title,
+      '@val' => $edit['bibdk_custom_search_page_element[access_key]']
+    )));
     $this->assertFieldByName('bibdk_custom_search_page_element[tab_index]', $edit['bibdk_custom_search_page_element[tab_index]'], format_string('The element "@element_title" have been assigned a tabindex "@val".', array(
-        '@element_title' => $element_title,
-        '@val' => $edit['bibdk_custom_search_page_element[tab_index]']
-      )));
+      '@element_title' => $element_title,
+      '@val' => $edit['bibdk_custom_search_page_element[tab_index]']
+    )));
     $this->assertFieldByName('bibdk_custom_search_page_element[description]', $edit['bibdk_custom_search_page_element[description]'], format_string('The element "@element_title" have been assigned a description "@val".', array(
-        '@element_title' => $element_title,
-        '@val' => substr($edit['bibdk_custom_search_page_element[description]'], 0, 40) . '[...]'
-      )));
+      '@element_title' => $element_title,
+      '@val' => substr($edit['bibdk_custom_search_page_element[description]'], 0, 40) . '[...]'
+    )));
 
     /**
      * Test adding a value to a custom search element.
@@ -153,13 +153,13 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $_bibdk_custom_search_page_path = $edit['page[page_path]'] = $frontpage;
     $this->drupalPost('admin/config/search/bibdk_custom_search/' . $p_uuid . '/edit', $edit, 'Save');
     $this->assertFieldByName('page[menu_title]', $edit['page[menu_title]'], format_string('The page "@page_title" have been assigned a menu title "@val".', array(
-        '@page_title' => $_bibdk_custom_search_page_title,
-        '@val' => $edit['page[menu_title]']
-      )));
+      '@page_title' => $_bibdk_custom_search_page_title,
+      '@val' => $edit['page[menu_title]']
+    )));
     $this->assertFieldByName('page[page_path]', $edit['page[page_path]'], format_string('The page "@page_title" have been assigned a path "@val".', array(
-        '@page_title' => $_bibdk_custom_search_page_title,
-        '@val' => $edit['page[page_path]']
-      )));
+      '@page_title' => $_bibdk_custom_search_page_title,
+      '@val' => $edit['page[page_path]']
+    )));
 
     /**
      * Test adding an element to a custom search page.
@@ -207,8 +207,8 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet($_bibdk_custom_search_page_path);
     $this->assertFieldByName('search_block_form');
     $disabled_field = $this->xpath('//input[@id=:id and @disabled="disabled"]', array(
-        ':id' => 'input-' . strtolower($_bibdk_custom_search_element_label_1)
-      ));
+      ':id' => 'input-' . strtolower($_bibdk_custom_search_element_label_1)
+    ));
     $this->assertTrue($disabled_field, format_string('The value "@value_title" was set to "disabled"', array('@value_title' => $_bibdk_custom_search_value_title_1)));
 
     /**
@@ -310,10 +310,10 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $option_value = $edit['element_value_options[0][value]'] = $this->randomName(8);
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName('element_value[value_type]', $edit['element_value[value_type]'], format_string('The value "@value_title" have been set to a type "@type", with a label "@label".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@type' => $edit['element_value[value_type]'],
-        '@label' => $option_label
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@type' => $edit['element_value[value_type]'],
+      '@label' => $option_label
+    )));
 
     $this->drupalGet('');
     $edit = array();
@@ -326,13 +326,13 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     /**
      * assert that value is present in search result
      */
-/* fails in test:
-    $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
-      //'@value' => $_bibdk_custom_search_value_search_code_1,
-      ':value' => $option_value,
-    ));
-    $this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
-*/
+    /* fails in test:
+        $disabled_field = $this->xpath('//input[@value=:value and @checked="checked"]', array(
+          //'@value' => $_bibdk_custom_search_value_search_code_1,
+          ':value' => $option_value,
+        ));
+        $this->assertTrue($disabled_field, format_string('The option "@option_label" have been checked.', array('@option_label' => $option_label)));
+    */
 
     /**
      * assert default value in select elements
@@ -348,15 +348,15 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     // assert option 1 has been saved
     $this->drupalGet('admin/config/search/bibdk_custom_search/values/' . $_bibdk_custom_search_v_uuid_1 . '/edit');
     $this->assertFieldByName('element_value_options[0][label]', $option_label_0, format_string('The value "@value_title" have added an option with the label "@label".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@value' => $option_value_0,
-        '@label' => $option_label_0
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@value' => $option_value_0,
+      '@label' => $option_label_0
+    )));
     $this->assertFieldByName('element_value_options[0][value]', $option_value_0, format_string('The value "@value_title" have added an option with the value "@value".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@value' => $option_value_0,
-        '@label' => $option_label_0
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@value' => $option_value_0,
+      '@label' => $option_label_0
+    )));
 
     // set a second select element
     $this->drupalGet('admin/config/search/bibdk_custom_search/values/' . $_bibdk_custom_search_v_uuid_1 . '/edit');
@@ -369,15 +369,15 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $this->drupalGet('admin/config/search/bibdk_custom_search/values/' . $_bibdk_custom_search_v_uuid_1 . '/edit');
     $this->assertFieldById( // it is now first row
       'edit-element-value-options-0-label', $option_label_1, format_string('The value "@value_title" have added an option with the label "@label".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@value' => $option_value_1,
-        '@label' => $option_label_1
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@value' => $option_value_1,
+      '@label' => $option_label_1
+    )));
     $this->assertFieldById('edit-element-value-options-0-value', $option_value_1, format_string('The value "@value_title" have added an option with the value "@value".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@value' => $option_value_1,
-        '@label' => $option_label_1
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@value' => $option_value_1,
+      '@label' => $option_label_1
+    )));
 
     // select second option and submit search form
     $this->drupalGet('');
@@ -389,10 +389,10 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     // assert that second option is selected by default in search result form.
     $this->assertRaw('<option value="' . $option_value_0 . '" selected="selected">' . $option_label_0 . '</option>', format_string('The option labeled "@label" with the value "@value" has been selected in values "@select".', array(
-          '@select' => $_bibdk_custom_search_value_search_code_1,
-          '@value' => $option_value_1,
-          '@label' => $option_label_1
-        )));
+      '@select' => $_bibdk_custom_search_value_search_code_1,
+      '@value' => $option_value_1,
+      '@label' => $option_label_1
+    )));
 
     /**
      * assert default value in radio elements
@@ -403,10 +403,10 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $edit['element_value[value_type]'] = 'radios';
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName('element_value[value_type]', $edit['element_value[value_type]'], format_string('The value "@value_title" have been set to a type "@type", with a label "@label".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_1,
-        '@type' => $edit['element_value[value_type]'],
-        '@label' => $option_label
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_1,
+      '@type' => $edit['element_value[value_type]'],
+      '@label' => $option_label
+    )));
 
     $this->drupalGet('');
     $edit = array();
@@ -442,7 +442,7 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
 
     // Get UUID for search element.
     $result = db_select('bibdk_custom_search_values', 'v')->fields('v', array('v_uuid'))->condition('v.value_title', $_bibdk_custom_search_value_title_2, '=')// ->range(0, 10);
-      ->execute()->fetchAssoc();
+    ->execute()->fetchAssoc();
     $_bibdk_custom_search_v_uuid_2 = $result['v_uuid'];
 
     // set type to 'radios'
@@ -451,9 +451,9 @@ class BibdkCustomSearchWebTestCase extends DrupalWebTestCase {
     $edit['element_value[value_type]'] = 'radios';
     $this->drupalPost(NULL, $edit, 'Save');
     $this->assertFieldByName('element_value[value_type]', $edit['element_value[value_type]'], format_string('The value "@value_title" have been set to a type "@type".', array(
-        '@value_title' => $_bibdk_custom_search_value_title_2,
-        '@type' => $edit['element_value[value_type]'],
-      )));
+      '@value_title' => $_bibdk_custom_search_value_title_2,
+      '@type' => $edit['element_value[value_type]'],
+    )));
     // set an option
     $this->drupalGet('admin/config/search/bibdk_custom_search/values/' . $_bibdk_custom_search_v_uuid_2 . '/edit');
     $edit = array();
