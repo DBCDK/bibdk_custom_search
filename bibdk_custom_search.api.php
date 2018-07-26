@@ -34,6 +34,14 @@ function hook_bibdk_custom_search_add_js($element_uuids) {
 }
 
 /**
+ * Alter the link element for a search page button
+ *
+ * @param array $link
+ *   The link element to alter
+ */
+function hook_bibdk_custom_search_searchpage_button_link_alter(&$link) {
+}
+/**
  * Get search control values to use in drupal_goto().
  *
  * @param $values
