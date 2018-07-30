@@ -640,7 +640,6 @@ function bibdk_custom_search_searchpage_button_link($text, $path, $class = '') {
     '#options' => array(
       'attributes' => array(
         'id' => 'custom-search-page-link-' . _bibdk_custom_search_trim_string($text),
-
       ),
       'html' => FALSE,
     ),
@@ -649,6 +648,8 @@ function bibdk_custom_search_searchpage_button_link($text, $path, $class = '') {
   if (!empty($class)) {
     $link['#options']['attributes']['class'][] = $class;
   }
+
+  drupal_alter('bibdk_custom_search_searchpage_button_link', $link);
 
   return $link;
 }
