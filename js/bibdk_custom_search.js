@@ -26,24 +26,28 @@
   var CustomSearch = {
     toggleAdvancedSearchPanel: function(context){
       // Toggle advanced search options
-      $('#custom-search--advanced-toggle', context).click(function(e) {
-        e.preventDefault();
-        $(this).toggleClass('toggled');
-        $('.toggle-text', this).toggleClass('hidden');
-        $('#search-advanced').toggleClass('hidden');
-        // Move to first input field in expanded search, if activated.
-        if($('#custom-search--advanced-toggle').hasClass('toggled') === true) {
-          $('#edit-advanced').removeClass('is-visible');
-          $('form#search-block-form input[name="search_block_form"]').not('.page-search form#search-block-form input[name="search_block_form"], .page-vejviser form#search-block-form input[name="search_block_form"]').focus();
-        }
-        else {
-          $('#edit-advanced').addClass('is-visible');
-          $('form#search-block-form').find('.bibdk-custom-search-element input[type=text], .bibdk-custom-search-element textarea').filter(':visible:first').focus();
-        }
+      $('#custom-search--advanced-toggle', context).once('custom-search-advanced-toggle', function () {
+        $(this).click(function (e) {
+          e.preventDefault();
+          $(this).toggleClass('toggled');
+          $('.toggle-text', this).toggleClass('hidden');
+          $('#search-advanced').toggleClass('hidden');
+          // Move to first input field in expanded search, if activated.
+          if($('#custom-search--advanced-toggle').hasClass('toggled') === true) {
+            $('#edit-advanced').removeClass('is-visible');
+            $('form#search-block-form input[name="search_block_form"]').not('.page-search form#search-block-form input[name="search_block_form"], .page-vejviser form#search-block-form input[name="search_block_form"]').focus();
+          }
+          else {
+            $('#edit-advanced').addClass('is-visible');
+            $('form#search-block-form').find('.bibdk-custom-search-element input[type=text], .bibdk-custom-search-element textarea').filter(':visible:first').focus();
+          }
+        });
       });
     },
+    // unused: sheet music is now radio buttons
     handleSheetMusic: function(context){
       // *************************** SHEET MUSIC *********************************************** //
+      /*
       $('#search-advanced .form-type-checkbox input').change(function() {
         // clear other checkboxes if top-level default is selected.
         if($(this).hasClass('default-value') && $(this).is(':checked') && $(this).val() == 'mu') {
@@ -54,10 +58,12 @@
           })
         }
       });
+      */
     },
     // deprecated: use MODULE_process_HOOK instead, ex. netpunkt_frontend_process_bibdk_custom_search_radio_buttons
     splitInColumns: function(context){
       // ***** Split radio elements in columns ***** //
+      /*
       var count = 0;
       var column = 0;
       var columns = [];
@@ -83,6 +89,7 @@
       function appendColumn(elem) {
         $('fieldset.noder #search-advanced .form-radios').append(elem);
       }
+      */
     }
   };
 
@@ -90,7 +97,7 @@
     attach: function(context) {
       getAdvancedSearchPanel();
       CustomSearch.toggleAdvancedSearchPanel(context);
-      CustomSearch.handleSheetMusic(context);
+      // CustomSearch.handleSheetMusic(context);
       // CustomSearch.splitInColumns(context);
     }
   };
