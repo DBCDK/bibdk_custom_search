@@ -43,53 +43,6 @@
           }
         });
       });
-    },
-    // unused: sheet music is now radio buttons
-    handleSheetMusic: function(context){
-      // *************************** SHEET MUSIC *********************************************** //
-      /*
-      $('#search-advanced .form-type-checkbox input').change(function() {
-        // clear other checkboxes if top-level default is selected.
-        if($(this).hasClass('default-value') && $(this).is(':checked') && $(this).val() == 'mu') {
-          $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-            if(!$(this).hasClass('default-value')) {
-              $(this).attr('checked', false);
-            }
-          })
-        }
-      });
-      */
-    },
-    // deprecated: use MODULE_process_HOOK instead, ex. netpunkt_frontend_process_bibdk_custom_search_radio_buttons
-    splitInColumns: function(context){
-      // ***** Split radio elements in columns ***** //
-      /*
-      var count = 0;
-      var column = 0;
-      var columns = [];
-      $('fieldset.noder #search-advanced .form-radios').children().each(function() {
-        if($(this).hasClass('column')) {
-          // means it's called a second time
-          return false;
-        }
-        if($(this).hasClass('form-type-radio')) {
-          count++;
-          column = Math.ceil(count / 5) - 1;
-        }
-        if(!columns[column]) {
-          columns[column] = document.createElement("div");
-          $(columns[column]).addClass('column');
-          $(columns[column]).addClass('column' + column);
-          $(columns[column]).addClass('form-wrapper');
-        }
-        $(columns[column]).append($(this));
-      });
-      columns.forEach(appendColumn);
-
-      function appendColumn(elem) {
-        $('fieldset.noder #search-advanced .form-radios').append(elem);
-      }
-      */
     }
   };
 
@@ -97,8 +50,6 @@
     attach: function(context) {
       getAdvancedSearchPanel();
       CustomSearch.toggleAdvancedSearchPanel(context);
-      // CustomSearch.handleSheetMusic(context);
-      // CustomSearch.splitInColumns(context);
     }
   };
 }(jQuery));
