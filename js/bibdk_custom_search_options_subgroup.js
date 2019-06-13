@@ -25,6 +25,8 @@
       $('fieldset[data-child]').hide();
       $(this).change(function() {
         if ($(this).attr('checked') === 'checked') {
+          // normalize value: f.ex. term.type="avisartikel" -> termtypeavisartikel
+          // see also: bibdk_custom_search_create_checkboxes()
           var childKey = $(this).attr('value').replace(/[\"'=\.\s]+/gi, '');
           $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
         }

@@ -204,6 +204,8 @@ function bibdk_custom_search_create_checkboxes($element, &$default_values, $opti
 
   // Create nested checkbox options
   if ($element->expand) {
+    // normalize value: f.ex. term.type="avisartikel" -> termtypeavisartikel
+    // see also: Drupal.bibdkCustomSearchOptionsSubgroup
     $key = preg_replace("/[\"'=\.\s]+/", '', $element->value);
     $return[$element->value]['#attributes'] += array(
       'data-parent' => $key,
