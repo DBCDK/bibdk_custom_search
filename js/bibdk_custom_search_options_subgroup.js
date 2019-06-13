@@ -2,7 +2,7 @@
   Drupal.bibdkCustomSearchClearEmptyFields = function() {
     $('#search-block-form') .submit(function(e) {
       $('input[name]').each(function() {
-        if($(this).val() === '') {
+        if ($(this).val() === '') {
           $(this).attr('name', '');
         }
       });
@@ -13,9 +13,9 @@
     // If child checkbox is checked remove checked from parent
     $('fieldset[data-child] input').once('child-checked', function () {
       $(this).change(function() {
-        if($(this).attr('checked') === 'checked') {
+        if ($(this).attr('checked') === 'checked') {
           var parentKey = $(this).closest('fieldset[data-child]').attr('data-child');
-          $('[data-parent][value="' + parentKey + '"]').attr('checked', false);
+          $('input[data-parent="' + parentKey + '"]').attr('checked', false);
         }
       });
     });
@@ -23,10 +23,10 @@
     // If parent checkbox is checked remove checked from children
     $('input[data-parent]').once('parent-checked', function () {
       $('fieldset[data-child]').hide();
-
       $(this).change(function() {
-        if($(this).attr('checked') === 'checked') {
-          var childKey = $(this).attr('value')
+        if ($(this).attr('checked') === 'checked') {
+          // var childKey = $(this).attr('value')
+          var childKey = $(this).attr('value').replace(/[\"'=\.\s]+/gi, '');
           $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
         }
       });
@@ -57,8 +57,8 @@
     $('input[type=checkbox].default-value').attr('checked', true);
     $('input[type=checkbox]').change(function(e) {
       var group = $(this).attr('data-group');
-      if($(this).attr('checked')) {
-        if($(this).hasClass('master')) {
+      if ($(this).attr('checked')) {
+        if ($(this).hasClass('master')) {
           $('[data-group="' + group + '"]').attr('checked', false);
           $(this).attr('checked', true);
         }
@@ -66,12 +66,12 @@
           $('[data-group="' + group + '"].master').attr('checked', false)
         }
       }
-      else if($('[data-group="' + group + '"]:checked').length === 0) {
+      else if ($('[data-group="' + group + '"]:checked').length === 0) {
         $('[data-group="' + group + '"].master').attr('checked', true);
       }
     });
     $('input[type=checkbox]:checked:not(.default-value)').closest(".bibdk-custom-search-element").find("input").each(function(i) {
-      if($(this).hasClass('default-value')) {
+      if ($(this).hasClass('default-value')) {
         $(this).attr('checked', false);
       }
     });
@@ -83,7 +83,7 @@
     var classesArr = $body.attr('class').split(' ');
 
     for(var i = 0; i < classesArr.length; i++) {
-      if(classesArr[i].indexOf('page-bibdk-frontpage') >= 0) {
+      if (classesArr[i].indexOf('page-bibdk-frontpage') >= 0) {
         classesArr.splice(i, 1);
       }
     }
@@ -105,7 +105,7 @@
     Drupal.attachBehaviors('.container', Drupal.settings);
     Drupal.toggleSearchPage();
 
-    if(typeof(window.history.pushState) == 'function') {
+    if (typeof(window.history.pushState) == 'function') {
       window.history.pushState({}, '', Drupal.settings.basePath + Drupal.settings.pathPrefix + response.request); //TODO IE Fix
     }
   };
@@ -119,30 +119,30 @@
       $('.form-type-checkbox input').once('checkbox-check', function() {
         $(this).change(function() {
           // clear other checkboxes if top-level default is selected, and default value is null.
-          if($(this).hasClass('default-value') && $(this).is(':checked') && !$(this).val()) {
+          if ($(this).hasClass('default-value') && $(this).is(':checked') && !$(this).val()) {
             $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-              if(!$(this).hasClass('default-value')) {
+              if (!$(this).hasClass('default-value')) {
                 $(this).attr('checked', false);
               }
             })
           }
           // clear top-level default if other checkboxes is selected, and default value is null.
-          if(!$(this).hasClass('default-value') && $(this).is(':checked')) {
+          if (!$(this).hasClass('default-value') && $(this).is(':checked')) {
             $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-              if($(this).hasClass('default-value')) {
+              if ($(this).hasClass('default-value')) {
                 $(this).attr('checked', false);
               }
             })
           }
           // set top-level default as selected, if all other checkboxes are unchecked.
-          if(!$(this).is(':checked')) {
+          if (!$(this).is(':checked')) {
             var counter = 0;
             $(this).closest(".bibdk-custom-search-element").find("input").each(function(i) {
-              if($(this).is(':checked')) {
+              if ($(this).is(':checked')) {
                 counter++;
               }
             })
-            if(!counter) {
+            if (!counter) {
               $(this).closest(".bibdk-custom-search-element").find("input.default-value").attr('checked', true);
             }
           }
@@ -154,4 +154,3 @@
     }
   };
 }(jQuery));
-

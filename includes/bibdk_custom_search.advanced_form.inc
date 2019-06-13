@@ -204,9 +204,11 @@ function bibdk_custom_search_create_checkboxes($element, &$default_values, $opti
 
   // Create nested checkbox options
   if ($element->expand) {
-    $key = urlencode($element->value);
+    // $key = urlencode($element->value);
+    $key = preg_replace("/[\"'=\.\s]+/", '', $element->value);
     $return[$element->value]['#attributes'] += array(
-      'data-parent' => urlencode($parent),
+      // 'data-parent' => urlencode($parent),
+      'data-parent' => $key,
     );
     $return[$element->value]['#title'] = '<span data-child="' . $key . '" class="toggle-subgroup"> + </span>' . $return[$element->value]['#title'];
     $return[$key . '-fieldset'] = array(
