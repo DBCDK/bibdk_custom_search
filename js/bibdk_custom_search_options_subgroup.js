@@ -25,7 +25,6 @@
       $('fieldset[data-child]').hide();
       $(this).change(function() {
         if ($(this).attr('checked') === 'checked') {
-          // var childKey = $(this).attr('value')
           var childKey = $(this).attr('value').replace(/[\"'=\.\s]+/gi, '');
           $('fieldset[data-child="' + childKey + '"] input').attr('checked', false);
         }
