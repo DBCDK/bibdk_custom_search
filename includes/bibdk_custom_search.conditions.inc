@@ -14,8 +14,10 @@
  * @return array
  */
 function bibdk_custom_search_get_submitted_searchcodes($get_values) {
-  $select_material_type = check_plain($get_values['select_material_type']);
-  $page_id = check_plain($get_values['page_id']);
+  $select_material_type = !empty($get_values['select_material_type']) ?
+    check_plain($get_values['select_material_type']) : NULL;
+  $page_id = isset($get_values['page_id']) ?
+    check_plain($get_values['page_id']) : NULL;
   if (!empty($select_material_type) && $select_material_type != $page_id) {
     $page = _bibdk_custom_search_get_page_db($select_material_type);
     $get_values['page_id'] = $select_material_type;
@@ -32,7 +34,7 @@ function bibdk_custom_search_get_submitted_searchcodes($get_values) {
 }
 
 /**
- * process the get values from a search request
+ * process the get values from a search reguest
  *
  * @param $get_values
  * @param $extended_fields
