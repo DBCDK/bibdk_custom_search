@@ -7,21 +7,15 @@
  * set for further process.
  * This happens if the user resized the browser window as the dropdown is only
  * visible on smaller devices.
- * The check_plain is due to Netpunkt Search module, where we use this function
- * with raw $_POST values.
  *
  * @param array $get_values
  * @return array
  */
 function bibdk_custom_search_get_submitted_searchcodes($get_values) {
-  $select_material_type = !empty($get_values['select_material_type']) ?
-    check_plain($get_values['select_material_type']) : NULL;
-  $page_id = isset($get_values['page_id']) ?
-    check_plain($get_values['page_id']) : NULL;
-  if (!empty($select_material_type) && $select_material_type != $page_id) {
-    $page = _bibdk_custom_search_get_page_db($select_material_type);
-    $get_values['page_id'] = $select_material_type;
-    $_REQUEST['page_id'] = $select_material_type;
+  if (!empty($get_values['select_material_type']) && $get_values['select_material_type'] != $get_values['page_id']){
+    $page = _bibdk_custom_search_get_page_db($get_values['select_material_type']);
+    $get_values['page_id'] = $get_values['select_material_type'];
+    $_REQUEST['page_id'] = $get_values['select_material_type'];
     $get_values['delimiter'] = $page['delimiter'];
     $_REQUEST['delimiter'] = $page['delimiter'];
   }
